@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        crossorigin="anonymous">
+
+  <title>Document</title>
+</head>
+<body>
+
+<header>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+</header>
+
+<main>
+  <div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="container">
+      <p class="mb-0 fw-bold fs-3" style=" color: #3929b5;">EDITAR PRODUCTO</p>
+      <p class="fs-5" style=" color: #6351e7;">Edite el producto seleccionado</p>
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <p class="fs-5 fw-bold" style=" color: #3929b5;">
+            Datos del registro seleccionado
+          </p>
+
+          <form action="" class="form-group">
+            <div class="row g-3 ">
+
+              <div class="col">
+                <label for="" class="form-label" style=" color: #6351e7;" >Nombre del producto</label>
+                <input type="text" class="form-control text-secondary" value="Peperos Original">
+              </div>
+
+              <div class="col">
+                <label for="" class="form-label d-block" style=" color: #6351e7;">Tipo de producto</label>
+                <select name="" id="#" class="form-control form-select text-secondary">
+                  <option value="" selected>snack</option>
+                  <option value="">Bebidas</option>
+                  <option value="">Otros</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label for="" class="form-label" style=" color: #6351e7;">Descripción del producto</label>
+                <textarea name="" id="DescripcionProducto" class="form-control text-secondary" rows="4">Pepero Original Lotte: Crujiente galleta en bastón cubierta de delicioso chocolate con leche. ¡El clásico snack coreano perfecto para disfrutar sin ensuciarte!</textarea>
+              </div>
+
+              <div class="col">
+                <label for="" class="form-label" style=" color: #6351e7;">Precio unidad</label>
+                <input type="number" class="form-control text-secondary" value="6.50">
+              </div>
+
+              <div class="col">
+                <label for="" class="form-label" style=" color: #6351e7;">Stock inicial</label>
+                <input type="number" class="form-control text-secondary" value="30">
+              </div>
+
+              <div class="col">
+                <label for="" class="form-label d-block" style=" color: #6351e7;">Tipo de producto</label>
+                <select name="" id="" class="form-control form-select text-secondary">
+                  <option value="" selected>Activo</option>
+                  <option value="">Inactivo</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <button class="btn text-white w-25" style="background-color: #3929b5;">Editar</button>
+                <button class="btn w-25 " style="border: 1px solid #3929b5 ; color: #3929b5;">Cancelar</button>
+              </div>
+
+            </div>
+
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+</footer>
+
+</body>
+</html>
+
+
+
+
+>
