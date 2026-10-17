@@ -29,11 +29,25 @@ function renderResumenPago(): void {
   const finalTotal = document.querySelector<HTMLElement>("#finalTotal");
 
   // Si estamos en la pantalla de COMPRA EXITOSA, muestra el total guardado
-  if (finalTotal) {
-    const lastTotal = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
-    finalTotal.textContent = lastTotal;
-    return;
+if (finalTotal) {
+  const lastTotal = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
+  finalTotal.textContent = lastTotal;
+
+  const finalUsuario = document.querySelector<HTMLElement>("#finalUsuario");
+
+  if (finalUsuario) {
+    finalUsuario.textContent =
+      localStorage.getItem("ktaro-last-usuario") ?? "No especificado";
   }
+  const finalCorreo = document.querySelector<HTMLElement>("#finalCorreo");
+
+if (finalCorreo) {
+  finalCorreo.textContent =
+    localStorage.getItem("ktaro-last-correo") ?? "No especificado";
+}
+
+  return;
+}
 
   if (!pagoItemsList) return;
 
@@ -62,22 +76,71 @@ function renderResumenPago(): void {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  const numeroTarjeta = document.querySelector<HTMLInputElement>("#numeroTarjeta");
+
+  numeroTarjeta?.addEventListener("input", () => {
+    numeroTarjeta.value = numeroTarjeta.value.replace(/\D/g, "").slice(0, 16);
+  });
+  const cvvTarjeta = document.querySelector<HTMLInputElement>("#cvvTarjeta");
+
+cvvTarjeta?.addEventListener("input", () => {
+  cvvTarjeta.value = cvvTarjeta.value.replace(/\D/g, "").slice(0, 4);
+});const fechaVencimiento = document.querySelector<HTMLInputElement>("#fechaVencimiento");
+
+fechaVencimiento?.addEventListener("input", () => {
+  const numeros = fechaVencimiento.value.replace(/\D/g, "").slice(0, 4);
+
+  fechaVencimiento.value =
+    numeros.length > 2
+      ? `${numeros.slice(0, 2)}/${numeros.slice(2)}`
+      : numeros;
+});
+
   renderResumenPago();
 
   const btnContinuarPago = document.querySelector<HTMLButtonElement>("#btnContinuarPago");
   btnContinuarPago?.addEventListener("click", (e) => {
     e.preventDefault();
 
-    const formPago = document.querySelector<HTMLFormElement>("#formPago");
-    if (formPago && !formPago.checkValidity()) {
-      formPago.reportValidity();
-      return;
-    }
+          const fechaInput = document.querySelector<HTMLInputElement>("#fechaVencimiento");
 
+      if (fechaInput) {
+        const [mes, anio] = fechaInput.value.split("/").map(Number);
+
+        const hoy = new Date();
+        const anioActual = hoy.getFullYear() % 100;
+        const mesActual = hoy.getMonth() + 1;
+
+        if (anio < anioActual || (anio === anioActual && mes < mesActual)) {
+          Swal.fire({
+            icon: "error",
+            title: "Fecha vencida",
+            text: "La fecha de vencimiento debe ser posterior al mes actual."
+          });
+          return;
+        }
+      }
     // Guardar el total pagado para mostrarlo en la vista de exito
     const cart = readCart();
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     localStorage.setItem(LAST_TOTAL_KEY, `s/ ${totalPrice.toFixed(2)}`);
+    const nombreTitular = document.querySelector<HTMLInputElement>(
+  '#formPago input[placeholder="Nombre del titular"]'
+);
+
+localStorage.setItem(
+  "ktaro-last-usuario",
+  nombreTitular?.value.trim() || "No especificado"
+);
+const correoComprador = document.querySelector<HTMLInputElement>(
+  "#correoComprador"
+);
+
+localStorage.setItem(
+  "ktaro-last-correo",
+  correoComprador?.value.trim() || "No especificado"
+);
 
     // Vaciar productos
     localStorage.removeItem(CART_STORAGE_KEY);

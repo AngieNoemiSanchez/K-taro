@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctanos | K-TARO</title>
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/contacto.css}">
+    <script th:src="@{/js/contacto.js}" defer></script>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+    <div class="contacto-ruta">
+        <a th:href="@{/}">Inicio</a> / Contacto
+    </div>
+
+    <main class="contacto-pagina">
+        <section class="contacto-panel">
+            <h1>CONTÁCTANOS</h1>
+
+            <div class="contacto-columnas">
+                <div class="contacto-informacion">
+                    <div class="contacto-dato">
+                        <span class="dato-icono" aria-hidden="true">📍</span>
+                        <div>
+                            <h2>DIRECCIÓN</h2>
+                            <p>Av. Retablo 1072<br>Comas</p>
+                        </div>
+                    </div>
+
+                    <div class="contacto-dato">
+                        <span class="dato-icono" aria-hidden="true">☎</span>
+                        <div>
+                            <h2>TELÉFONO</h2>
+                            <a href="tel:933471719">933 471 719</a>
+                        </div>
+                    </div>
+
+                    <div class="contacto-dato">
+                        <span class="dato-icono" aria-hidden="true">✉</span>
+                        <div>
+                            <h2>EMAIL</h2>
+                            <a href="mailto:KTARO@gmail.com">KTARO@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="formContacto" class="contacto-formulario">
+                    <div class="contacto-campos">
+                        <input type="text" id="contactoNombre"
+                               placeholder="Nombre" aria-label="Nombre"
+                               autocomplete="name" required>
+
+                        <input type="email" id="contactoEmail"
+                               placeholder="Email" aria-label="Email"
+                               autocomplete="email" required>
+
+                        <input type="tel" id="contactoTelefono"
+                               placeholder="Teléfono" aria-label="Teléfono"
+                               autocomplete="tel">
+
+                        <select id="contactoAsunto" aria-label="Asunto" required>
+                            <option value="">Asunto</option>
+                            <option value="Consulta">Consulta</option>
+                            <option value="Pedido">Pedido</option>
+                            <option value="Reclamo">Reclamo</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <textarea id="contactoMensaje"
+                              placeholder="Escribe tu mensaje..."
+                              aria-label="Mensaje"
+                              rows="6" required></textarea>
+
+                    <label class="contacto-terminos">
+                        <input type="checkbox" id="contactoAcepta" required>
+                        <span>Acepto los términos y condiciones</span>
+                    </label>
+
+                    <button type="submit" class="contacto-enviar">
+                        Enviar mensaje
+                    </button>
+
+                    <p id="contactoEstado" role="status"></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+   <div th:replace="~{fragments/footer :: siteFooter}"></div>
+<script th:src="@{/js/ts/inicio.js}" defer></script>
+</body>
+
+</html>

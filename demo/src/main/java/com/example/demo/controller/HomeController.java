@@ -39,4 +39,20 @@ public class HomeController {
     public String compraExitosa() {
         return "pedidos/compra-exitosa";
     }
+        // Vista Mi perfil
+    @GetMapping("/perfil")
+    public String perfil() {
+        return "usuario/perfil";
+    }
+
+    // Vista Contáctanos
+    @GetMapping("/contacto")
+    public String contacto() {
+        return "usuario/contacto";
+    }
+    // Vista de Promociones
+@GetMapping("/promociones")
+public String promociones() {
+    return "promociones/promociones";
+}
 }

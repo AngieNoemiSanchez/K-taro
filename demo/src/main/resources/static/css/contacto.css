@@ -1,0 +1,166 @@
+
+body {
+    background: #f8efef;
+}
+
+.contacto-ruta {
+    margin-top: 0;
+    background: #dfe3f5;
+    padding: 17px max(6%, calc((100% - 1100px) / 2));
+    font-size: 13px;
+    color: #222;
+}
+
+.contacto-ruta a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.contacto-pagina {
+    max-width: 1100px;
+    margin: 38px auto 110px;
+    padding: 0 20px;
+}
+
+.contacto-panel {
+    background: #d2c5e5;
+    border-radius: 15px;
+    padding: 35px 40px 40px;
+}
+
+.contacto-panel h1 {
+    color: #3929b5;
+    font-size: 32px;
+    margin: 0 0 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #aaa0ef;
+}
+
+.contacto-columnas {
+    display: grid;
+    grid-template-columns: 38% minmax(0, 1fr);
+    gap: 35px;
+}
+
+.contacto-informacion {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    padding: 18px 0;
+}
+
+.contacto-dato {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    color: #3929b5;
+}
+
+.dato-icono {
+    font-size: 38px;
+    width: 50px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.contacto-dato h2 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: #3929b5;
+}
+
+.contacto-dato p,
+.contacto-dato a {
+    margin: 0;
+    color: #5141bc;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.contacto-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.contacto-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.contacto-formulario input:not([type="checkbox"]),
+.contacto-formulario select,
+.contacto-formulario textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #aaa0ef;
+    border-radius: 5px;
+    background: #eceafa;
+    font: inherit;
+    color: #3929b5;
+}
+
+.contacto-formulario textarea {
+    resize: vertical;
+    min-height: 165px;
+}
+
+.contacto-formulario input::placeholder,
+.contacto-formulario textarea::placeholder {
+    color: #9995a7;
+}
+
+.contacto-terminos {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: #7565c4;
+}
+
+.contacto-terminos input {
+    accent-color: #3929b5;
+}
+
+.contacto-enviar {
+    align-self: flex-start;
+    background: #3929b5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.contacto-enviar:hover {
+    background: #5141d0;
+}
+
+#contactoEstado {
+    margin: 0;
+    font-size: 13px;
+    color: #3929b5;
+}
+
+@media (max-width: 700px) {
+    .contacto-columnas {
+        grid-template-columns: 1fr;
+    }
+
+    .contacto-panel {
+        padding: 25px 20px;
+    }
+
+    .contacto-panel h1 {
+        font-size: 27px;
+    }
+
+    .contacto-campos {
+        grid-template-columns: 1fr;
+    }
+}

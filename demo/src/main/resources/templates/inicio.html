@@ -53,7 +53,7 @@
       <div class="promo-inner">
         <div class="section-heading">
           <h2 id="promoTitle">Promociones</h2>
-          <a class="see-more" href="#promociones" aria-label="Ver más promociones">Ver más <span aria-hidden="true">⟶</span></a>
+          <a class="see-more" th:href="@{/promociones}" aria-label="Ver más promociones">Ver más <span aria-hidden="true">⟶</span></a>
         </div>
         <div class="product-grid">
           <article class="product-card promo-card" th:each="product : ${promotionalProducts}">

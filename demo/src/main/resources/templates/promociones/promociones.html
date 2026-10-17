@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>K-TARO | Promociones</title>
+
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <link rel="stylesheet" th:href="@{/css/promociones.css}">
+</head>
+
+<body>
+
+  <!-- Encabezado global -->
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+  <!-- Ruta de navegación -->
+  <div class="promo-breadcrumb">
+    <div class="promo-breadcrumb-content">
+      Inicio / Promociones
+    </div>
+  </div>
+
+  <main class="promociones-container">
+
+    <h1 class="promociones-title">PROMOCIONES</h1>
+
+    <!-- PROMOCIÓN 1: K-DRAMA MARATHON -->
+    <section class="promo-banner">
+
+      <div class="promo-banner-content">
+
+        <h2>Combo K-Drama<br>Marathon</h2>
+
+        <p>
+          Disfruta tus series favoritas con nuestro combo especial.
+          Incluye 1 ramen, 1 bebida coreana y 1 snack asiático.
+        </p>
+
+        <div class="promo-banner-price">
+          S/ 35.00
+        </div>
+
+        <button
+          type="button"
+          class="promo-add-btn promo-banner-btn add-to-cart"
+          data-product-id="combo-kdrama-marathon"
+          data-product-name="Combo K-Drama Marathon"
+          data-product-price="35"
+          data-category="Promociones">
+          Agregar al carrito
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- PROMOCIÓN 2: GOJAR NIGHT -->
+    <section class="promo-combo">
+
+      <div class="promo-combo-content">
+
+        <h2>Gojar Night</h2>
+
+        <ul>
+          <li>2x1 en Soju (sabores: original, uva, fresa, durazno)</li>
+          <li>2 snacks (salado, dulce o picante)</li>
+          <li>1 bebida para mezclar (Milkis o soda)</li>
+        </ul>
+
+        <div class="promo-banner-price">
+          S/ 50.00
+        </div>
+
+        <button
+          type="button"
+          class="promo-add-btn promo-banner-btn add-to-cart"
+          data-product-id="combo-gojar-night"
+          data-product-name="Combo Gojar Night"
+          data-product-price="50"
+          data-category="Promociones">
+          Agregar al carrito
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Pie de página global -->
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+  <!-- JavaScript del carrito -->
+  <script th:src="@{/js/ts/cart.js}"></script>
+
+</body>
+</html>

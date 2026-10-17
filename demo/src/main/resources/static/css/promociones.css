@@ -1,0 +1,310 @@
+
+/* Página de promociones K-TARO */
+
+body {
+  margin: 0;
+  background-color: #faf3f3;
+}
+
+.promo-breadcrumb {
+  background-color: #e0e2fb;
+  padding: 12px 0;
+}
+
+.promo-breadcrumb-content {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.promociones-container {
+  max-width: 1100px;
+  margin: 25px auto 45px;
+  padding: 0 20px;
+}
+
+.promociones-title {
+  color: #3929b5;
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 20px;
+}
+
+/* Banner K-Drama */
+.promo-banner {
+  min-height: 300px;
+  background-image: url("/images/promo1.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.promo-banner-content {
+  padding: 28px 45px;
+  color: white;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+.promo-banner h2,
+.promo-combo h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.promo-banner p {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Promoción Gojar Night */
+.promo-combo {
+  min-height: 310px;
+  margin-top: 35px;
+  background-image: url("/images/promo2.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.promo-combo-content {
+  padding: 30px 45px;
+  position: relative;
+  z-index: 1;
+  color: #3929b5;
+}
+
+.promo-combo h2 {
+  color: white;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.promo-combo ul {
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: 18px;
+  margin-bottom: 22px;
+}
+
+.promo-price {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  color: #6250bd;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.promo-add-btn {
+  background: transparent;
+  color: #3929b5;
+  border: 2px solid #3929b5;
+  border-radius: 9px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.promo-add-btn:hover {
+  background-color: #3929b5;
+  color: white;
+}
+
+/* Adaptación a móviles */
+@media (max-width: 650px) {
+  .promociones-title {
+    font-size: 28px;
+  }
+
+  .promo-banner,
+  .promo-combo {
+    min-height: 270px;
+  }
+
+  .promo-banner-content,
+  .promo-combo-content {
+    padding: 25px 20px;
+  }
+
+  .promo-banner p {
+    font-size: 15px;
+  }
+
+  .promo-combo ul {
+    font-size: 13px;
+  }
+
+  .promo-price {
+    font-size: 25px;
+    top: 12px;
+    right: 15px;
+  }
+
+  .promo-combo h2 {
+    padding-right: 75px;
+  }
+}
+/* Precio del combo K-Drama */
+.promo-banner-price {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  margin-top: 15px;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Botón del combo K-Drama */
+.promo-banner-btn {
+  color: white;
+  border: 2px solid white;
+  background-color: rgba(57, 41, 181, 0.55);
+}
+
+.promo-banner-btn:hover {
+  background-color: #3929b5;
+  color: white;
+}
+
+/* Ajustar la descripción */
+.promo-banner-content p {
+  max-width: 390px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+/* Igualar el tamaño de ambos banners */
+.promo-banner,
+.promo-combo {
+  min-height: 350px;
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+}
+
+/* Igualar la posición del contenido */
+.promo-banner-content,
+.promo-combo-content {
+  padding: 30px 45px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Igualar los títulos */
+.promo-banner h2,
+.promo-combo h2 {
+  font-size: 42px;
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+/* Igualar el tamaño de las descripciones */
+.promo-banner-content p,
+.promo-combo-content ul {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 430px;
+}
+
+/* Igualar los precios */
+.promo-banner-price,
+.promo-price {
+  position: static;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 15px 0;
+}
+
+/* Igualar los botones */
+.promo-banner-btn,
+.promo-combo .promo-add-btn {
+  padding: 10px 28px;
+  font-size: 14px;
+  border-radius: 9px;
+  min-width: 175px;
+}
+/* Corregir la posición del precio de Gojar Night */
+.promo-combo .promo-price {
+  position: absolute;
+  top: auto;
+  right: auto;
+  left: 45px;
+  bottom: 65px;
+  width: auto;
+  white-space: nowrap;
+  font-size: 28px;
+  color: white;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Dejar espacio para el precio y el botón */
+.promo-combo-content {
+  padding-bottom: 100px;
+}
+/* Diseño uniforme para ambas promociones */
+.promo-banner,
+.promo-combo {
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+}
+
+/* Contenido alineado */
+.promo-banner-content,
+.promo-combo-content {
+  padding: 30px 45px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Títulos iguales */
+.promo-banner h2,
+.promo-combo h2 {
+  font-size: 42px;
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+/* Precios iguales */
+.promo-banner-price {
+  position: static;
+  display: block;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 15px 0 12px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Botones iguales */
+.promo-banner .promo-add-btn,
+.promo-combo .promo-add-btn {
+  min-width: 175px;
+  padding: 10px 28px;
+  font-size: 14px;
+  border: 2px solid white;
+  border-radius: 9px;
+  color: white;
+  background: rgba(57, 41, 181, 0.55);
+}
+
+.promo-banner .promo-add-btn:hover,
+.promo-combo .promo-add-btn:hover {
+  background: #3929b5;
+}
