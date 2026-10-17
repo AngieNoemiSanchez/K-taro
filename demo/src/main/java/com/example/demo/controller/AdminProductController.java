@@ -23,8 +23,8 @@ import com.example.demo.service.ProductAdminService;
 @RequestMapping("/admin/productos")
 public class AdminProductController {
 
-    private static final String CREATE_VIEW = "/crearProducto";
-    private static final String EDIT_VIEW = "/editarProducto";
+    private static final String CREATE_VIEW = "productos/crearProducto";
+    private static final String EDIT_VIEW = "productos/editarProducto";
 
     private final ProductAdminService productAdmin;
 
