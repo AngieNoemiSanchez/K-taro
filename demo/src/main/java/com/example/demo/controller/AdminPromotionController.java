@@ -22,7 +22,7 @@ import com.example.demo.service.PromotionService;
 @RequestMapping("/admin/promociones")
 public class AdminPromotionController {
 
-    private static final String CREATE_VIEW = "/crearPromocion";
+    private static final String CREATE_VIEW = "productos/crearPromocion";
 
     private final PromotionService promotions;
     private final ProductAdminService productAdmin;
