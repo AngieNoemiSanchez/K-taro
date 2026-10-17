@@ -48,7 +48,7 @@ public class ProductCatalogService {
 					"/images/Rectangle 9.png",
 					"peperos-original", "honey-butter-chip", "shrimp-crackers"),
 			product("bibigo-stir-fried-ramyun", "Bibigo Stir-Fried Ramyun Smoky K-Chicken 122gr",
-					PENDING_DESCRIPTION, "ramen", "6.00", null, null, 
+					PENDING_DESCRIPTION, "ramen", "6.00", null, null,
 					"/images/bibigo.png", "shin-ramyun-toomba", "shin-ramyun-non-fried"),
 			product("shin-cup-ramyun-superstar", "Shin Cup Ramyun Superstar", PENDING_DESCRIPTION, "ramen",
 					"8.00", null, null, "/images/Rectangle 16.png",
@@ -68,6 +68,10 @@ public class ProductCatalogService {
 
 	private final Map<String, Product> productsById = products.stream()
 			.collect(Collectors.toUnmodifiableMap(Product::id, Function.identity()));
+
+	public List<Product> findAll() {
+		return products;
+	}
 
 	public List<Product> getFeaturedProducts() {
 		return findProducts("jinro-lemon-soju", "kukhwapan", "bibigo-stir-fried-ramyun",
@@ -99,7 +103,7 @@ public class ProductCatalogService {
 	}
 
 	private static Product product(String id, String name, String description, String category, String price,
-			String originalPrice, Integer discountPercent, String image, String... relatedProductIds) {
+								   String originalPrice, Integer discountPercent, String image, String... relatedProductIds) {
 		return new Product(id, name, description, category, amount(price),
 				originalPrice == null ? null : amount(originalPrice), discountPercent, image,
 				List.of(relatedProductIds));

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc -p tsconfig.json --noEmit && esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts",
-    "watch": "esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts --watch"
+    "build": "tsc -p tsconfig.json --noEmit && esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts frontend/ts/admin-producto.ts frontend/ts/admin-promocion.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts",
+    "watch": "esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts frontend/ts/admin-producto.ts frontend/ts/admin-promocion.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts --watch"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
