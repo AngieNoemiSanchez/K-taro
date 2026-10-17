@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-TARO | Compra Exitosa</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <style>
+    body {
+      background-color: #faf6f5;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    .breadcrumb-bar {
+      background-color: #e0e2fb;
+      padding: 12px 0;
+      width: 100%;
+    }
+
+    .breadcrumb-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .exito-container {
+      max-width: 800px;
+      margin: 30px auto 50px;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .exito-title {
+      color: #3929b5;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .exito-subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    /* Tarjeta de Confirmación de Pago */
+    .exito-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .exito-header {
+      background: #3929b5;
+      color: white;
+      padding: 16px 24px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .exito-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px dashed #e0e0e0;
+      font-size: 15px;
+    }
+
+    .exito-row:last-child {
+      border-bottom: none;
+    }
+
+    .exito-row span {
+      color: #333;
+      font-weight: bold;
+    }
+
+    .exito-row strong {
+      color: #3929b5;
+      font-weight: bold;
+    }
+
+    /* Línea Temporal de Pedido (Pasos 1 - 2 - 3 - 4) */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin: 40px 0 50px;
+      position: relative;
+      padding: 0 20px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 60px;
+      right: 60px;
+      height: 3px;
+      background: #e0e0e0;
+      z-index: 1;
+    }
+
+    .timeline-progress {
+      position: absolute;
+      top: 20px;
+      left: 60px;
+      width: 33%;
+      height: 3px;
+      background: #3929b5;
+      z-index: 1;
+    }
+
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+      width: 120px;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #3929b5;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .step-circle.inactive {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .step-label {
+      font-size: 13px;
+      color: #3929b5;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .step-label.inactive {
+      color: #888;
+      font-weight: normal;
+    }
+
+    .btn-volver {
+      display: inline-block;
+      background: #3929b5;
+      color: white;
+      padding: 14px 36px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Global -->
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+  <!-- Barra Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb-content">Inicio/Carrito</div>
+  </div>
+
+  <main class="exito-container">
+    <h1 class="exito-title">COMPRA EXITOSA</h1>
+    <p class="exito-subtitle">Tu pedido se ha realizado con éxito</p>
+
+    <!-- Tarjeta de Confirmación -->
+    <div class="exito-card">
+      <div class="exito-header">Confirmación pago</div>
+      <div class="exito-row">
+        <span>Usuario</span>
+        <strong>Juan Ronaldino Quispe Flowers</strong>
+      </div>
+      <div class="exito-row">
+        <span>Correo electrónico</span>
+        <strong>RonaldinhoQF@gmail.com</strong>
+      </div>
+      <div class="exito-row">
+        <span>Método de pago</span>
+        <strong>VISA ****3451</strong>
+      </div>
+      <div class="exito-row">
+        <span>Total pagado</span>
+        <strong id="finalTotal">s/ 0.00</strong>
+      </div>
+      <div class="exito-row">
+        <span>Estado pedido</span>
+        <strong style="color: #2e7d32;">Aceptado</strong>
+      </div>
+    </div>
+
+    <!-- Progreso de Pedido -->
+    <div class="timeline">
+      <div class="timeline-progress"></div>
+
+      <div class="timeline-step">
+        <div class="step-circle">1</div>
+        <div class="step-label">Pedido<br>Registrado</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle">2</div>
+        <div class="step-label">Pedido<br>Aceptado</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle inactive">3</div>
+        <div class="step-label inactive">Pedido<br>en preparación</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-circle inactive">4</div>
+        <div class="step-label inactive">Pedido<br>finalizado</div>
+      </div>
+    </div>
+
+    <div>
+      <a th:href="@{/}" class="btn-volver">Volver al Inicio</a>
+    </div>
+  </main>
+
+  <!-- Footer Global -->
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+  <script th:src="@{/js/ts/pago.js}"></script>
+</body>
+</html>

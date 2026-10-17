@@ -1,0 +1,14 @@
+{
+  "name": "k-taro-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit && esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts",
+    "watch": "esbuild frontend/ts/inicio.ts frontend/ts/snacks.ts frontend/ts/detalle.ts frontend/ts/cart.ts frontend/ts/pago.ts --bundle --format=iife --target=es2020 --outdir=src/main/resources/static/js/ts --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "sweetalert2": "^11.26.25",
+    "typescript": "^5.8.3"
+  }
+}

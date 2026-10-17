@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-TARO | Pago</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <style>
+    body {
+      background-color: #faf6f5;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    .breadcrumb-bar {
+      background-color: #e0e2fb;
+      padding: 12px 0;
+      width: 100%;
+    }
+
+    .breadcrumb-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .pago-container {
+      max-width: 1100px;
+      margin: 30px auto 50px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 30px;
+    }
+
+    .pago-title {
+      color: #3929b5;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 25px;
+      grid-column: 1 / -1;
+    }
+
+    /* Tarjetas de formulario estilo Maqueta */
+    .box-pago {
+      background: #e8eafc;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .box-pago h3 {
+      color: #3929b5;
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .tarjeta-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 8px;
+      border: 1.5px solid #a1a6f0;
+      margin-bottom: 12px;
+      font-weight: bold;
+      color: #3929b5;
+      cursor: pointer;
+    }
+
+    .tarjeta-option input[type="radio"] {
+      margin-right: 12px;
+      accent-color: #3929b5;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #888;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #a1a6f0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 14px;
+      color: #3929b5;
+      outline: none;
+    }
+
+    .checkbox-container {
+      font-size: 13px;
+      color: #777;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .checkbox-container input[type="radio"],
+    .checkbox-container input[type="checkbox"] {
+      accent-color: #3929b5;
+    }
+
+    /* TARJETA VIOLETA DERECHA EXACTA */
+    .resumen-purple {
+      background: #3929b5;
+      color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      align-self: start;
+    }
+
+    .resumen-body {
+      padding: 25px;
+    }
+
+    .resumen-purple h3 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .resumen-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .resumen-item span:first-child {
+      max-width: 220px;
+    }
+
+    .resumen-divider {
+      border-top: 1px dashed rgba(255, 255, 255, 0.3);
+      margin: 20px 0 15px;
+    }
+
+    .resumen-subtotal-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .resumen-total-banner {
+      background: #4a39ca;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn-primary {
+      background: #3929b5;
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #3929b5;
+      border: 2px solid #3929b5;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb-content">Inicio/Carrito/Pago</div>
+  </div>
+
+  <main class="pago-container">
+    <h1 class="pago-title">PAGO</h1>
+
+    <div>
+      <div class="box-pago">
+        <h3>Método de pago</h3>
+        <label class="tarjeta-option">
+          <div>
+            <input type="radio" name="metodoTarjeta" checked>
+            <span>VISA</span>
+          </div>
+          <span style="color: #3929b5;">****3451</span>
+        </label>
+        <label class="tarjeta-option">
+          <div>
+            <input type="radio" name="metodoTarjeta">
+            <span>Nueva tarjeta</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="box-pago">
+        <h3>Registro de nueva tarjeta</h3>
+        <form id="formPago">
+          <div class="form-group">
+            <label>Nombre del titular</label>
+            <input type="text" value="Juan Ronaldinho Quispe Flowers" required>
+          </div>
+          <div class="form-group">
+            <label>Número de tarjeta</label>
+            <input type="text" value="1111 1111 1111 1111" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label>Fech. Ven</label>
+              <input type="text" value="10/27" required>
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" value="124" required>
+            </div>
+          </div>
+          <label class="checkbox-container">
+            <input type="radio" checked name="guardar"> Guardar tarjeta entre tarjetas registradas
+          </label>
+        </form>
+      </div>
+
+      <div class="btn-container">
+        <button id="btnContinuarPago" class="btn-primary" type="button">Continuar compra</button>
+        <a th:href="@{/carrito}" class="btn-secondary">Volver</a>
+      </div>
+    </div>
+
+    <!-- TARJETA VIOLETA -->
+    <div class="resumen-purple">
+      <div class="resumen-body">
+        <h3>Resumen de Pago</h3>
+        <div id="pagoItemsList">
+          <!-- Carga dinámicamente -->
+        </div>
+
+        <div class="resumen-divider"></div>
+
+        <div class="resumen-subtotal-row">
+          <span>Subtotal</span>
+          <span id="pagoSubtotal">s/ 0.00</span>
+        </div>
+        <div class="resumen-subtotal-row">
+          <span>IGV</span>
+          <span id="pagoIgv">s/ 0.00</span>
+        </div>
+      </div>
+
+      <div class="resumen-total-banner">
+        <span>TOTAL</span>
+        <span id="pagoTotal">s/ 0.00</span>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+  <script th:src="@{/js/ts/pago.js}"></script>
+</body>
+</html>

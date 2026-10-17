@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-TARO | Mi Carrito</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <style>
+    body {
+      background-color: #faf6f5;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    
+    /* Barra superior breadcrumb de lado a lado */
+    .breadcrumb-bar {
+      background-color: #e0e2fb;
+      padding: 12px 0;
+      width: 100%;
+    }
+    .breadcrumb-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .cart-page-container {
+      max-width: 1100px;
+      margin: 30px auto 50px;
+      padding: 0 20px;
+    }
+
+    .cart-title {
+      color: #3929b5;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 25px;
+    }
+
+    /* Tarjeta contenedora con borde suave */
+    .cart-card {
+      background-color: #e8eafc;
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
+    /* Cabecera superior */
+    .cart-card-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 24px;
+      font-weight: bold;
+      color: #3929b5;
+      font-size: 16px;
+    }
+
+    .cart-table-wrapper {
+      background-color: #ffffff;
+      padding: 10px 24px;
+    }
+
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .cart-table td {
+      padding: 16px 0;
+      border-bottom: 1.5px solid #a1a6f0;
+      vertical-align: middle;
+    }
+
+    .cart-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cart-item-title {
+      color: #3929b5;
+      font-weight: bold;
+      font-size: 16px;
+      display: block;
+    }
+
+    .cart-item-category {
+      color: #777;
+      font-size: 13px;
+      margin-top: 3px;
+      display: block;
+    }
+
+    /* Selector + cantidad - */
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qty-btn {
+      background: transparent;
+      border: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+
+    .qty-number {
+      font-weight: bold;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .cart-item-price {
+      color: #3929b5;
+      font-weight: bold;
+      font-size: 16px;
+      text-align: right;
+    }
+
+    .cart-delete-btn {
+      color: #3929b5;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    /* Resumen Subtotal e IGV */
+    .subtotal-section {
+      background-color: #ffffff;
+      padding: 15px 24px;
+      text-align: right;
+      font-size: 15px;
+      color: #3929b5;
+      font-weight: bold;
+    }
+
+    .subtotal-row {
+      margin: 6px 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 40px;
+    }
+
+    /* Pie morado claro de tarjeta */
+    .cart-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background-color: #e8eafc;
+      font-weight: bold;
+      color: #3929b5;
+    }
+
+    .add-more-link {
+      color: #3929b5;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .total-amount {
+      font-size: 18px;
+    }
+
+    /* Botones principales de acción */
+    .btn-actions {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .btn-submit {
+      background-color: #3929b5;
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-cancel {
+      background-color: transparent;
+      color: #3929b5;
+      border: 2px solid #3929b5;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header de la aplicación -->
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+  <!-- Barra breadcrumb -->
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb-content">Inicio/Carrito</div>
+  </div>
+
+  <main class="cart-page-container">
+    <h1 class="cart-title">MI CARRITO</h1>
+
+    <div class="cart-card">
+      <div class="cart-card-header">
+        <span>Artículos</span>
+        <span id="itemsCountLabel">0 productos</span>
+      </div>
+
+      <div class="cart-table-wrapper">
+        <table class="cart-table">
+          <tbody id="cartTableBody">
+            <!-- Renderizado dinámico desde TS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subtotal-section">
+        <div class="subtotal-row">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">s/ 0.00</span>
+        </div>
+        <div class="subtotal-row">
+          <span>IGV</span>
+          <span id="cartIgv">s/ 0.00</span>
+        </div>
+      </div>
+
+      <div class="cart-card-footer">
+        <a th:href="@{/}" class="add-more-link">+ Agregar más productos</a>
+        <div class="total-amount">
+          <span>TOTAL</span>
+          <span id="cartTotalFull" style="margin-left: 30px;">s/ 0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-actions">
+      <button id="btnContinuarCompra" class="btn-submit" type="button">Continuar compra</button>
+      <a th:href="@{/}" class="btn-cancel">Cancelar compra</a>
+    </div>
+  </main>
+
+  <!-- Footer global de la aplicación -->
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+  <script th:src="@{/js/ts/cart.js}"></script>
+</body>
+</html>

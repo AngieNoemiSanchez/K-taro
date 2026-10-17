@@ -1,0 +1,83 @@
+<header class="site-header" th:fragment="siteHeader">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="K-TARO, inicio">
+      <img src="/images/logo.png" alt="Logo K-TARO">
+      <span>K-TARO</span>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" type="button"
+      aria-label="Abrir menú" aria-expanded="false"
+      aria-controls="primaryNav">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+
+    <nav class="primary-nav" id="primaryNav"
+      aria-label="Navegación principal">
+      <a class="nav-link active" href="/">Inicio</a>
+      <a class="nav-link" href="/productos/snacks">Productos</a>
+      <a class="nav-link" href="/#promociones">Promociones</a>
+      <a class="nav-link" href="/#contacto">Contacto</a>
+    </nav>
+
+    <div class="header-actions">
+
+      <!-- ACCESO AL LOGIN -->
+      <a class="icon-link" href="/login"
+         aria-label="Iniciar sesión" title="Iniciar sesión">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.5"/>
+          <path d="M5 20c.6-3.3 3.2-5 7-5s6.4 1.7 7 5"/>
+        </svg>
+      </a>
+
+      <!-- CARRITO -->
+      <button class="icon-link cart-toggle" id="cartToggle"
+        type="button" aria-label="Abrir carrito"
+        aria-expanded="false" aria-controls="cartPanel">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>
+          <circle cx="10" cy="20" r="1"/>
+          <circle cx="18" cy="20" r="1"/>
+        </svg>
+        <span class="cart-count" id="cartCount"
+          aria-live="polite">0</span>
+      </button>
+    </div>
+  </div>
+
+  <aside class="cart-panel" id="cartPanel"
+    aria-label="Carrito temporal" hidden>
+
+    <div class="cart-panel-heading">
+      <h2>Tu carrito</h2>
+      <button class="cart-close" id="cartClose"
+        type="button" aria-label="Cerrar carrito">
+        &times;
+      </button>
+    </div>
+
+    <p class="cart-empty" id="cartEmpty">
+      Aún no agregas productos.
+    </p>
+
+    <ul class="cart-items" id="cartItems"></ul>
+
+    <div class="cart-panel-footer">
+      <strong>
+        Total <span id="cartTotal">S/ 0.00</span>
+      </strong>
+
+      <button class="text-button" id="clearCart"
+        type="button">
+        Vaciar carrito
+      </button>
+
+      <p>
+        Carrito temporal: tus productos se guardan
+        en este navegador.
+      </p>
+    </div>
+  </aside>
+</header>

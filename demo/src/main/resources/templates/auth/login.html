@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | K-TARO</title>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <main class="login-container">
+    <form class="login-card" id="loginForm">
+      <h1>K-TARO</h1>
+      <h2>Iniciar sesión</h2>
+      <p>¡Bienvenido de nuevo!</p>
+
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo"
+             placeholder="correo@ejemplo.com" required>
+
+      <label for="clave">Contraseña</label>
+      <input type="password" id="clave"
+             placeholder="Ingresa tu contraseña" required>
+
+      <button type="submit">Ingresar</button>
+
+      <p class="mensaje" id="mensaje" role="status"></p>
+      <a href="/">← Volver a la tienda</a>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("loginForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+        document.getElementById("mensaje").textContent =
+          "Inicio de sesión de demostración. Autenticación pendiente.";
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "rootDir": "frontend/ts",
+    "outDir": "src/main/resources/static/js/ts",
+    "strict": true,
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "frontend/ts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/main/resources/static/js"
+  ]
+}

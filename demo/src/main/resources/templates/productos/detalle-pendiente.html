@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3929B5">
+  <title th:text="${product.name() + ' | K-TARO'}">Producto | K-TARO</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+  <main class="detail-pending">
+    <h1 th:text="${product.name()}">Honey Butter Chip</h1>
+    <p>La página de detalle estará disponible próximamente.</p>
+    <a class="button button-primary" th:href="@{/productos/snacks}">Volver a Snacks</a>
+  </main>
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+</body>
+</html>

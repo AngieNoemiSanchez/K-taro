@@ -1,0 +1,51 @@
+HELP.md
+target/
+build/
+node_modules/
+/src/main/resources/static/js/ts/
+*.class
+*.log
+*.tsbuildinfo
+*.tmp
+*.temp
+.env
+.env.*
+!.env.example
+application-local.properties
+application-*.local.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Operating system ###
+.DS_Store
+Thumbs.db
+desktop.ini

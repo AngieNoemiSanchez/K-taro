@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3929B5">
+  <title th:text="${product.name() + ' | K-TARO'}">Producto | K-TARO</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <link rel="stylesheet" th:href="@{/css/snacks.css}">
+  <link rel="stylesheet" th:href="@{/css/detalle.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+
+  <nav class="catalog-breadcrumb" aria-label="Migas de pan">
+    <div class="catalog-container">
+      <a th:href="@{/}">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a th:href="@{/productos/{category}(category=${product.category()})}">Productos</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page" th:text="${product.name()}">Producto</span>
+    </div>
+  </nav>
+
+  <main class="detail-main">
+    <article class="detail-product">
+      <div class="detail-product-image">
+        <img th:if="${product.image() != null}" th:src="${product.image()}"
+          th:alt="${product.name()}" fetchpriority="high">
+        <div class="detail-image-placeholder" th:if="${product.image() == null}"
+          role="img" th:aria-label="|Imagen pendiente: ${product.name()}|">
+          <span aria-hidden="true">✳</span>
+          <span>Imagen pendiente</span>
+        </div>
+      </div>
+
+      <div class="detail-product-info">
+        <h1 th:text="${product.name()}">Nombre del producto</h1>
+        <p class="detail-description" th:text="${product.description()}">Descripción pendiente</p>
+        <span class="detail-discount" th:if="${product.discountPercent() != null}"
+          th:text="'-' + ${product.discountPercent()} + '%'">-20%</span>
+        <p class="detail-price">
+          <strong>S/ <span th:text="${product.price().toPlainString()}">0.00</span></strong>
+          <del th:if="${product.originalPrice() != null}">
+            S/ <span th:text="${product.originalPrice().toPlainString()}">0.00</span>
+          </del>
+        </p>
+
+        <div class="detail-actions">
+          <div class="quantity-picker" aria-label="Cantidad del producto">
+            <button id="quantityDecrease" type="button" aria-label="Disminuir cantidad">-</button>
+            <input id="detailQuantity" type="number" min="1" step="1" value="1"
+              inputmode="numeric" aria-label="Cantidad">
+            <button id="quantityIncrease" type="button" aria-label="Aumentar cantidad">+</button>
+          </div>
+          <button class="button button-cart add-to-cart detail-add-button" type="button"
+            th:attr="data-product-id=${product.id()},data-product-name=${product.name()},data-product-price=${product.price()},data-quantity='1'">
+            Agregar al carrito
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>
+              <circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <section class="detail-benefits" aria-label="Beneficios de compra">
+    <div class="detail-benefits-inner">
+      <div class="detail-benefit">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M12 19c3-7 19-8 24-1l4 1v15h-5l-3 5h-5l-2-5H15l-2 4H8l-1-8c-4-2-4-8 0-10l5-1z"/>
+          <path d="M18 12l-2-4m17 5 2-4M18 25h.1m12 0h.1"/>
+        </svg>
+        <span>Acumula puntos por<br>cada compra</span>
+      </div>
+      <div class="detail-benefit">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M7 20h34l-3-10H10L7 20zm2 0v7h30v-7M9 27v12h30V27M16 20v4m8-4v4m8-4v4"/>
+          <path d="M18 39v-7h12v7"/>
+        </svg>
+        <span>Haz tu compra y recoge<br>en la tienda</span>
+      </div>
+      <div class="detail-benefit">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M4 27h22l8-8h6l5 8v7h-5m-18 0H15"/>
+          <circle cx="10" cy="34" r="5"/><circle cx="35" cy="34" r="5"/>
+          <path d="M3 18h15l5 5M28 15h11l4 7"/>
+        </svg>
+        <span>Delivery gratis a partir<br>de S/. 50</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="related-section" aria-labelledby="relatedTitle">
+    <div class="related-inner">
+      <h2 id="relatedTitle">Productos Relacionados</h2>
+      <div class="related-grid">
+        <article class="related-card" th:each="related : ${relatedProducts}">
+          <a class="related-product-link"
+            th:href="@{/productos/detalle/{id}(id=${related.id()})}"
+            th:aria-label="|Ver detalle de ${related.name()}|">
+            <div class="related-image">
+              <img th:if="${related.image() != null}" th:src="${related.image()}"
+                th:alt="${related.name()}" loading="lazy">
+              <div class="related-image-placeholder" th:if="${related.image() == null}"
+                role="img" th:aria-label="|Imagen pendiente: ${related.name()}|">
+                <span aria-hidden="true">✳</span><span>Imagen pendiente</span>
+              </div>
+            </div>
+            <h3 th:text="${related.name()}">Producto relacionado</h3>
+          </a>
+          <p class="related-price">S/ <span th:text="${related.price().toPlainString()}">0.00</span></p>
+          <button class="button button-cart add-to-cart" type="button"
+            th:attr="data-product-id=${related.id()},data-product-name=${related.name()},data-product-price=${related.price()}">
+            Agregar al carrito
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>
+              <circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
+            </svg>
+          </button>
+        </article>
+      </div>
+      <a class="button button-primary related-more"
+        th:href="@{/productos/{category}(category=${product.category()})}">Ver más productos</a>
+    </div>
+  </section>
+
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+  <script th:src="@{/js/ts/detalle.js}" defer></script>
+</body>
+</html>

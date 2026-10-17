@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3929B5">
+  <title>Producto no encontrado | K-TARO</title>
+  <link rel="stylesheet" th:href="@{/css/inicio.css}">
+  <link rel="stylesheet" th:href="@{/css/detalle.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
+  <main class="detail-not-found">
+    <h1>Producto no encontrado</h1>
+    <p th:text="|No encontramos el producto '${productId}'.|">No encontramos ese producto.</p>
+    <a class="button button-primary" th:href="@{/productos/snacks}">Ver productos</a>
+  </main>
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+</body>
+</html>
