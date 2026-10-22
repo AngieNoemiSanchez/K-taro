@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public String redirectToLogin() {
         return "redirect:/admin/login";
     }
@@ -27,7 +27,8 @@ public class AdminController {
             @RequestParam("password") String password,
             RedirectAttributes redirectAttributes) {
 
-        boolean isValidUser = "admin".equalsIgnoreCase(username.trim()) || "admin@ktaro.com".equalsIgnoreCase(username.trim());
+        boolean isValidUser = "admin".equalsIgnoreCase(username.trim())
+                || "admin@ktaro.com".equalsIgnoreCase(username.trim());
         boolean isValidPassword = "admin123".equals(password);
 
         if (isValidUser && isValidPassword) {
@@ -42,5 +43,10 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String showDashboard() {
         return "admin/dashboard";
+    }
+
+    @GetMapping("/catalogo")
+    public String catalogo() {
+        return "admin/catalogo"; // Buscará templates/admin/catalogo.html
     }
 }

@@ -1,0 +1,108 @@
+.catalogo-container {
+    max-width: 1160px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Títulos */
+.main-title {
+    color: #3929b5;
+    font-weight: 900;
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    color: #a49ce3;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 25px;
+}
+
+.table-section {
+    margin-bottom: 50px;
+}
+
+/* Tabla Personalizada */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.custom-table thead tr {
+    border-bottom: 3px solid #3929b5;
+}
+
+.custom-table th {
+    color: #3929b5;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 12px;
+    text-align: left;
+}
+
+.custom-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #333333;
+    vertical-align: middle;
+}
+
+/* Fila resaltada (Azul/Morado institucional) */
+.custom-table tr.row-highlight {
+    background-color: #3929b5;
+    color: #ffffff;
+}
+
+.custom-table tr.row-highlight td {
+    color: #ffffff !important;
+}
+
+/* Badges de Estado */
+.badge-status {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+}
+
+.bg-activo {
+    background-color: #12c148; /* Verde */
+}
+
+.bg-descontinuado {
+    background-color: #ff3b30; /* Rojo */
+}
+
+.bg-inactivo {
+    background-color: #ff3b30; /* Rojo */
+}
+
+/* Botones y Enlaces */
+.btn-editar {
+    color: #666666;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-editar:hover {
+    text-decoration: underline;
+}
+
+.btn-add-item {
+    display: inline-block;
+    color: #3929b5;
+    font-weight: 800;
+    font-size: 15px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.btn-add-item:hover {
+    text-decoration: underline;
+}
