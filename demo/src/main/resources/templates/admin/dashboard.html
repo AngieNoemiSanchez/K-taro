@@ -1,0 +1,156 @@
+<!doctype html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - K-TARO Admin</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos compartidos del Header y Footer -->
+    <link rel="stylesheet" th:href="@{/css/admin-fragments.css}">
+
+    <!-- Estilos de la vista del Dashboard -->
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+    <!-- LIBRERÍA OBLIGATORIA DE CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+  <body>
+    <!-- Header / Navbar Superior -->
+    <!-- Header compartido de administración -->
+    <div th:replace="~{fragments/admin-header :: adminHeader}"></div>
+
+    <!-- Contenido Principal -->
+    <main class="dashboard-container">
+      <div class="title-section">
+        <div>
+          <h1>METRICAS CLAVES</h1>
+          <p class="subtitle">
+            Estado de las principales metricas claves de esta semana
+          </p>
+        </div>
+        <div class="filter-dropdown">
+          <select id="reportFilter">
+            <option value="ventas">Reporte de ventas</option>
+            <option value="pedidos">Reporte de pedidos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tarjeta del Gráfico -->
+      <section class="chart-card">
+        <h2>REPORTE DE VENTAS</h2>
+        <div class="chart-container">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Acordeón / Desplegable de Tabla -->
+      <section class="accordion-section">
+        <button class="accordion-btn" onclick="toggleTable()">
+          <span>+ Expandir tabla de reporte de ventas</span>
+          <span class="arrow">&#9660;</span>
+        </button>
+        <div class="accordion-content" id="tableContent">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Ventas Realizadas</th>
+                <th>Monto Total (S/)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Lunes</td>
+                <td>25</td>
+                <td>S/ 1,250.00</td>
+              </tr>
+              <tr>
+                <td>Martes</td>
+                <td>18</td>
+                <td>S/ 890.00</td>
+              </tr>
+              <tr>
+                <td>Miércoles</td>
+                <td>12</td>
+                <td>S/ 540.00</td>
+              </tr>
+              <tr>
+                <td>Jueves</td>
+                <td>22</td>
+                <td>S/ 1,100.00</td>
+              </tr>
+              <tr>
+                <td>Viernes</td>
+                <td>15</td>
+                <td>S/ 720.00</td>
+              </tr>
+              <tr>
+                <td>Sábado</td>
+                <td>22</td>
+                <td>S/ 1,080.00</td>
+              </tr>
+              <tr>
+                <td>Domingo</td>
+                <td>28</td>
+                <td>S/ 1,400.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Reutilización del Footer compartido del equipo mediante Thymeleaf -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- Script de Chart.js con datos corregidos y función del acordeón -->
+    <script>
+      const ctx = document.getElementById("salesChart").getContext("2d");
+      const salesChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Lunes",
+            "Martes",
+            "Miercoles",
+            "Jueves",
+            "Viernes",
+            "Sabado",
+            "Domingo",
+          ],
+          datasets: [
+            {
+              label: "Ventas",
+              // Datos sincronizados exactamente con la tabla:
+              data: [25, 18, 12, 22, 15, 22, 28],
+              backgroundColor: "#3b2cb4",
+              borderRadius: 4,
+              barThickness: 35,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            y: { display: false, beginAtZero: true },
+            x: {
+              grid: { display: false },
+              ticks: { color: "#3b2cb4", font: { weight: "bold" } },
+            },
+          },
+        },
+      });
+
+      function toggleTable() {
+        const content = document.getElementById("tableContent");
+        content.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>
