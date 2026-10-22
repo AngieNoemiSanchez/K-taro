@@ -1,0 +1,73 @@
+
+:root {
+--bs-primary: #3929b5;
+--bs-primary-rgb: 57, 41, 181;
+--kt-soft: #9a90dd;
+--kt-field: #dcd8f3;
+}
+
+.text-soft {
+color: var(--kt-soft);
+}
+
+.btn-primary {
+ --bs-btn-bg: #3929b5;
+ --bs-btn-border-color: #3929b5;
+ --bs-btn-hover-bg: #2b1f8f;
+ --bs-btn-hover-border-color: #2b1f8f;
+ --bs-btn-active-bg: #241a7a;
+ --bs-btn-active-border-color: #241a7a;
+ }
+
+.btn-outline-primary {
+--bs-btn-color: #3929b5;
+--bs-btn-border-color: #3929b5;
+--bs-btn-hover-bg: #3929b5;
+--bs-btn-hover-border-color: #3929b5;
+--bs-btn-active-bg: #3929b5;
+}
+
+.form-control, .form-select {
+ border: 0;
+ border-radius: 12px;
+ background-color: var(--kt-field);
+ color: #6351e7;
+ font-weight: 600;
+ padding: .7rem 1rem;
+ }
+
+.form-control:focus, .form-select:focus {
+background-color: var(--kt-field);
+color: #3929b5;
+box-shadow: 0 0 0 .2rem rgb(57 41 181 / 25%);
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+box-shadow: 0 0 0 .15rem rgb(220 53 69 / 55%);
+}
+
+.table-ktaro {
+--bs-table-hover-bg: #3929b5;
+--bs-table-hover-color: #fff;
+--bs-table-bg: transparent;
+font-weight: 700;
+color: #3c3c4e;
+}
+
+.table-ktaro thead th {
+color: #3929b5;
+text-transform: uppercase;
+border-bottom: 3px solid #3929b5;
+}
+
+.table-ktaro tbody td {
+border-bottom-color: transparent;
+}
+
+.table-ktaro tbody tr:hover a {
+color: #fff;
+}
+
+.table-ktaro tbody tr:last-child td {
+border-bottom: 3px solid #3929b5;
+}

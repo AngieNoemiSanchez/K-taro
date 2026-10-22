@@ -1,13 +1,13 @@
-<header class="border-bottom bg-white" th:fragment="adminHeader">
-    <nav class="container d-flex align-items-center justify-content-between py-2">
-        <a href="/admin/dashboard" aria-label="K-TARO administración">
-            <img src="/images/logo.png" alt="Logo K-TARO" height="48">
+<header class="bg-white shadow-sm" th:fragment="adminHeader(active)">
+    <nav class="container d-flex flex-wrap align-items-center justify-content-between py-2 gap-3">
+        <a href="/admin/catalogo" aria-label="K-TARO administración">
+            <img src="/images/LOGOKTARO.png" alt="Logo K-TARO" height="64">
         </a>
-        <div class="d-flex gap-4 fw-bold">
-            <a class="text-decoration-none" style="color: #3929b5;" href="/admin/dashboard">DASHBOARD</a>
-            <a class="text-decoration-none" style="color: #3929b5;" href="/admin/catalogo">CATALOGO</a>
-            <a class="text-decoration-none" style="color: #3929b5;" href="/admin/pedidos">PEDIDOS</a>
-            <a class="text-decoration-none" style="color: #3929b5;" href="/admin/perfil">PERFIL</a>
+        <div class="d-flex flex-wrap gap-4 gap-md-5 fw-bold">
+            <a class="text-primary text-decoration-none pb-1" th:classappend="${active == 'dashboard'} ? 'border-bottom border-3 border-primary'" href="/admin/dashboard">DASHBOARD</a>
+            <a class="text-primary text-decoration-none pb-1" th:classappend="${active == 'catalogo'} ? 'border-bottom border-3 border-primary'" href="/admin/catalogo">CATALOGO</a>
+            <a class="text-primary text-decoration-none pb-1" th:classappend="${active == 'pedidos'} ? 'border-bottom border-3 border-primary'" href="/admin/pedidos">PEDIDOS</a>
+            <a class="text-primary text-decoration-none pb-1" th:classappend="${active == 'perfil'} ? 'border-bottom border-3 border-primary'" href="/admin/perfil">PERFIL</a>
         </div>
     </nav>
 </header>
