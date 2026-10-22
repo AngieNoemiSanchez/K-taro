@@ -1,0 +1,206 @@
+/* --- 1. ADMIN HEADER --- */
+header,
+.border-bottom {
+  border-bottom: 2px solid #e2e2e2 !important;
+  background-color: #ffffff !important;
+}
+
+header nav,
+.container.d-flex {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 12px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+header img {
+  height: 50px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+header nav div,
+.d-flex.gap-4 {
+  display: flex !important;
+  gap: 28px !important;
+  align-items: center !important;
+}
+
+header nav a {
+  text-decoration: none !important;
+  color: #3929b5 !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.5px !important;
+  transition: color 0.2s ease;
+}
+
+header nav a:hover {
+  color: #2e209e !important;
+}
+
+header nav a.active {
+  border-bottom: 3px solid #3929b5 !important;
+  padding-bottom: 3px !important;
+}
+
+/* --- 2. FOOTER COMPARTIDO --- */
+.site-footer,
+footer {
+  color: #ffffff !important;
+  background-color: #3929b5 !important;
+  width: 100% !important;
+  margin-top: 50px !important;
+  box-sizing: border-box !important;
+}
+
+.footer-inner {
+  width: min(1160px, calc(100% - 96px)) !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1.15fr 1fr !important;
+  align-items: center !important;
+  gap: 55px !important;
+  margin: 0 auto !important;
+  padding: 47px 0 39px !important;
+  box-sizing: border-box !important;
+}
+
+.footer-inner h2 {
+  margin: 0 0 15px !important;
+  font:
+    600 17px Arial,
+    sans-serif !important;
+  color: #ffffff !important;
+}
+
+.footer-contact {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+}
+
+.footer-contact a,
+.footer-contact p {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  text-decoration: none !important;
+}
+
+.footer-label {
+  margin-top: 6px !important;
+  color: #e0dafa !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.footer-map img,
+.footer-map iframe {
+  width: 100% !important;
+  height: 165px !important;
+  max-height: 165px !important;
+  border: 3px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: 8px !important;
+  object-fit: cover !important;
+}
+
+.footer-community {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+}
+
+.footer-social {
+  flex: 0 0 auto !important;
+}
+
+.social-links {
+  display: flex !important;
+  gap: 9px !important;
+}
+
+.social-links a {
+  width: 31px !important;
+  height: 31px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.social-links svg,
+.social-links svg path,
+.social-links img {
+  fill: #e0d5eb !important;
+  stroke: #e0d5eb !important;
+  color: #e0d5eb !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.social-handle {
+  display: inline-block !important;
+  margin-top: 10px !important;
+  color: #e0d5eb !important;
+  font-size: 13px !important;
+}
+
+.footer-mascot {
+  width: min(155px, 52%) !important;
+  max-height: 180px !important;
+  object-fit: contain !important;
+}
+
+.footer-bottom {
+  padding: 15px 24px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18) !important;
+  text-align: center !important;
+}
+
+.footer-bottom p {
+  margin: 0 !important;
+  color: #e6e1ff !important;
+  font-size: 13px !important;
+}
+
+/* Forzar color blanco con contraste alto */
+.social-links svg,
+.social-links a svg {
+  color: #ffffff !important;
+}
+
+/* Para Facebook y TikTok (Iconos rellenos) */
+.social-links a:nth-child(1) svg,
+.social-links a:nth-child(3) svg {
+  fill: #ffffff !important;
+  stroke: none !important;
+}
+
+/* Para Instagram (Icono lineal/stroke) */
+.social-links a:nth-child(2) svg {
+  fill: none !important; /* Evita que se vuelva un cuadrado sólido */
+  stroke: #ffffff !important; /* Pinta solo las líneas contorneadas */
+  stroke-width: 1.8 !important;
+}
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 900px) {
+  .footer-inner {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .footer-inner {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    padding: 38px 0 32px !important;
+  }
+}
