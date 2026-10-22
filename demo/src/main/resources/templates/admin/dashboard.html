@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - K-TARO Admin</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin-fragments.css}">
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+    <!-- Librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <div th:replace="~{fragments/admin-header :: adminHeader('dashboard')}"></div>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="title-section">
+            <div>
+                <h1>MÉTRICAS CLAVES</h1>
+                <p class="subtitle">Estado de las principales métricas claves de esta semana</p>
+            </div>
+            <div class="filter-dropdown">
+                <select id="reportFilter">
+                    <option value="ventas">Reporte de ventas</option>
+                    <option value="pedidos">Reporte de pedidos</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tarjeta del Gráfico -->
+        <section class="chart-card">
+            <h2 id="chartTitle">REPORTE DE VENTAS</h2>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Acordeón / Desplegable de Tabla -->
+        <section class="accordion-section">
+            <button class="accordion-btn" id="btnToggleTable">
+                <span id="accordionBtnText">+ Expandir tabla de reporte de ventas</span>
+                <span class="arrow">&#9660;</span>
+            </button>
+            <div class="accordion-content" id="tableContent">
+                <table class="report-table">
+                    <thead>
+                        <tr id="tableHeaderRow">
+                            <th>Día</th>
+                            <th>Ventas Realizadas</th>
+                            <th>Monto Total (S/)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Se llena dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+<footer>
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </footer>
+
+    <!-- Script de métricas (Ventas y Pedidos) integrado directamente -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const dataVentas = {
+                title: "REPORTE DE VENTAS",
+                btnText: "tabla de reporte de ventas",
+                headers: ["Día", "Ventas Realizadas", "Monto Total (S/)"],
+                values: [25, 18, 12, 22, 15, 22, 28],
+                tableRows: [
+                    ["Lunes", "25", "S/ 1,250.00"],
+                    ["Martes", "18", "S/ 890.00"],
+                    ["Miércoles", "12", "S/ 540.00"],
+                    ["Jueves", "22", "S/ 1,100.00"],
+                    ["Viernes", "15", "S/ 720.00"],
+                    ["Sábado", "22", "S/ 1,080.00"],
+                    ["Domingo", "28", "S/ 1,400.00"]
+                ]
+            };
+
+            const dataPedidos = {
+                title: "REPORTE DE PEDIDOS",
+                btnText: "tabla de reporte de pedidos",
+                headers: ["Día", "Pedidos Recibidos", "Pedidos Completados"],
+                values: [10, 14, 8, 16, 20, 25, 30],
+                tableRows: [
+                    ["Lunes", "10", "9"],
+                    ["Martes", "14", "12"],
+                    ["Miércoles", "8", "8"],
+                    ["Jueves", "16", "15"],
+                    ["Viernes", "20", "18"],
+                    ["Sábado", "25", "22"],
+                    ["Domingo", "30", "27"]
+                ]
+            };
+
+            const labels = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+            const ctx = document.getElementById("salesChart").getContext("2d");
+            const chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Métrica",
+                        data: dataVentas.values,
+                        backgroundColor: "#3b2cb4",
+                        borderRadius: 4,
+                        barThickness: 35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false, beginAtZero: true },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: "#3b2cb4", font: { weight: "bold" } }
+                        }
+                    }
+                }
+            });
+
+            function cargarMetrica(data) {
+                document.getElementById("chartTitle").innerText = data.title;
+                document.getElementById("accordionBtnText").innerText = `+ Expandir ${data.btnText}`;
+
+                const headerRow = document.getElementById("tableHeaderRow");
+                headerRow.innerHTML = data.headers.map(h => `<th>${h}</th>`).join("");
+
+                const tableBody = document.getElementById("tableBody");
+                tableBody.innerHTML = data.tableRows.map(row => `
+                    <tr>
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                    </tr>
+                `).join("");
+
+                chart.data.datasets[0].data = data.values;
+                chart.update();
+            }
+
+            const reportFilter = document.getElementById("reportFilter");
+            reportFilter.addEventListener("change", (e) => {
+                if (e.target.value === "pedidos") {
+                    cargarMetrica(dataPedidos);
+                } else {
+                    cargarMetrica(dataVentas);
+                }
+            });
+
+            const btnToggleTable = document.getElementById("btnToggleTable");
+            const tableContent = document.getElementById("tableContent");
+            btnToggleTable.addEventListener("click", () => {
+                tableContent.classList.toggle("open");
+            });
+
+            cargarMetrica(dataVentas);
+        });
+    </script>
+</body>
+</html>

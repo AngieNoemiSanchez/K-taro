@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Administrador K-TARO</title>
+    <link rel="stylesheet" th:href="@{/css/admin-login.css}">
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-container">
+            <img th:src="@{/images/LOGOKTARO.png}" alt="K-TARO Logo">
+        </div>
+
+        <!-- Alerta en caso de credenciales incorrectas -->
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/admin/login}" method="post">
+            <div class="form-group">
+                <label for="username">Usuario / Correo</label>
+                <!-- Acepta cualquier texto sin exigir el '@' -->
+                <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Ingresar</button>
+        </form>
+    </div>
+
+</body>
+</html>
