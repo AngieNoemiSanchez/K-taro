@@ -1,0 +1,149 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administración del Catálogo - K-TARO</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Estilos compartidos de Header y Footer -->
+    <link rel="stylesheet" th:href="@{/css/admin-fragments.css}" />
+
+    <!-- Estilos específicos de esta vista -->
+    <link rel="stylesheet" th:href="@{/css/admin-catalogo.css}" />
+  </head>
+  <body>
+    <!-- Header reutilizable -->
+    <div th:replace="~{fragments/admin-header :: adminHeader}"></div>
+
+    <main class="catalogo-container">
+      <!-- Encabezado de la vista -->
+      <h1 class="main-title">ADMINISTRACIÓN DEL CATALOGO</h1>
+
+      <!-- SECCIÓN 1: PRODUCTOS -->
+      <section class="table-section">
+        <h2 class="section-subtitle">Gestione sus productos</h2>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NOMBRE DEL PRODUCTO</th>
+                <th>TIPO</th>
+                <th>STOCK</th>
+                <th>PRECIO</th>
+                <th>ESTADO</th>
+                <th>OPCIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                <td class="fw-bold">P01</td>
+                <td class="fw-bold">Peperos Original</td>
+                <td>Snack</td>
+                <td class="fw-bold">30</td>
+                <td class="fw-bold">s/ 6.50</td>
+                <td><span class="badge-status bg-activo">Activo</span></td>
+                <td>
+                  <a th:href="@{/admin/productos/1/editar}" class="btn-editar"
+                    >Editar</a
+                  >
+                </td>
+              </tr>
+
+              <tr class="row-highlight">
+                <td class="fw-bold">P02</td>
+                <td class="fw-bold">Soju</td>
+                <td>Snack</td>
+                <td class="fw-bold">15</td>
+                <td class="fw-bold">s/ 11.00</td>
+                <td><span class="badge-status bg-activo">Activo</span></td>
+                <td>
+                  <a
+                    th:href="@{/admin/productos/2/editar}"
+                    class="btn-editar text-white"
+                    >Editar</a
+                  >
+                </td>
+              </tr>
+
+              <tr>
+                <td class="fw-bold">P01</td>
+                <td class="fw-bold">Shin Ramyun</td>
+                <td>Ramen</td>
+                <td class="fw-bold">0</td>
+                <td class="fw-bold">s/ 9.50</td>
+                <td>
+                  <span class="badge-status bg-descontinuado"
+                    >Descontinuado</span
+                  >
+                </td>
+                <td>
+                  <a th:href="@{/admin/productos/3/editar}" class="btn-editar"
+                    >Editar</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <a th:href="@{/admin/productos/nuevo}" class="btn-add-item"
+          >+ Agregar nuevo producto</a
+        >
+      </section>
+
+      <!-- SECCIÓN 2: PROMOCIONES -->
+      <section class="table-section">
+        <h2 class="section-subtitle">Gestione sus promociones</h2>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NOMBRE DEL PRODUCTO</th>
+                <th>PRECIO</th>
+                <th>ESTADO</th>
+                <th>OPCIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold">P01</td>
+                <td class="fw-bold">K-Drama Marathon Box</td>
+                <td class="fw-bold">s/ 20.00</td>
+                <td><span class="badge-status bg-activo">Activo</span></td>
+                <td><a href="#" class="btn-editar">Editar</a></td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="fw-bold">P02</td>
+                <td class="fw-bold">Soju Night</td>
+                <td class="fw-bold">s/ 50.00</td>
+                <td><span class="badge-status bg-activo">Activo</span></td>
+                <td><a href="#" class="btn-editar text-white">Editar</a></td>
+              </tr>
+              <tr>
+                <td class="fw-bold">P01</td>
+                <td class="fw-bold">K-POP Lovers</td>
+                <td class="fw-bold">s/ 25.50</td>
+                <td><span class="badge-status bg-inactivo">Inactivo</span></td>
+                <td><a href="#" class="btn-editar">Editar</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <a th:href="@{/admin/promociones/nueva}" class="btn-add-item"
+          >+ Agregar nueva promoción</a
+        >
+      </section>
+    </main>
+
+    <!-- Footer reutilizable -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
