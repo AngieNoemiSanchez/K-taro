@@ -59,6 +59,13 @@ public class ProductAdminService {
         return Optional.of(updated);
     }
 
+    /** Suma {@code amount} unidades al stock actual del producto. */
+    public Optional<AdminProduct> addStock(String id, int amount) {
+        return Optional.ofNullable(products.computeIfPresent(id, (key, c) -> new AdminProduct(
+                c.id(), c.name(), c.description(), c.category(), c.price(), c.stock() + amount, c.active(),
+                c.image())));
+    }
+
     private static AdminProduct toProduct(String id, ProductForm form, String image) {
         return new AdminProduct(id, form.getName().trim(), form.getDescription().trim(), form.getCategory(),
                 form.getPrice(), form.getStock(), form.isActive(), image);

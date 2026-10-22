@@ -23,8 +23,8 @@ import com.example.demo.service.ProductAdminService;
 @RequestMapping("/admin/productos")
 public class AdminProductController {
 
-    private static final String CREATE_VIEW = "productos/crearProducto";
-    private static final String EDIT_VIEW = "productos/editarProducto";
+    private static final String CREATE_VIEW = "productos/Crearproducto";
+    private static final String EDIT_VIEW = "productos/Editarproducto";
 
     private final ProductAdminService productAdmin;
 
@@ -33,6 +33,11 @@ public class AdminProductController {
     }
 
 
+
+    @GetMapping
+    public String list() {
+        return "redirect:/admin/catalogo?tipo=productos";
+    }
 
     @GetMapping("/nuevo")
     public String showCreateForm(Model model) {

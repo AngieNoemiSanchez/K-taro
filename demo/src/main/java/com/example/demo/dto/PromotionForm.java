@@ -34,6 +34,8 @@ public class PromotionForm {
     @Digits(integer = 6, fraction = 2, message = "Usa como máximo 2 decimales")
     private BigDecimal price;
 
+    private boolean active = true;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -45,6 +47,9 @@ public class PromotionForm {
 
     public List<String> getProductIds() { return productIds; }
     public void setProductIds(List<String> productIds) { this.productIds = productIds; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
