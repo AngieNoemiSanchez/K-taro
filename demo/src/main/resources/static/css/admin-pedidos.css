@@ -1,0 +1,226 @@
+/* Importar la fuente Poppins desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+/* Reset global y tipografía unificada */
+* {
+    font-family: 'Poppins', sans-serif !important;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #ffffff;
+    color: #1a1a1a;
+}
+
+/* Contenedor Principal Centrado */
+.orders-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 60px;
+}
+
+/* Encabezado con Filtro alineado a la derecha */
+.orders-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.orders-title-group .main-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #3929b5;
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+}
+
+.orders-title-group .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #8A8BB3;
+    margin: 0;
+}
+
+/* Select de Filtro */
+.filter-select {
+    padding: 8px 35px 8px 18px;
+    border: 1.5px solid #a49ee3;
+    border-radius: 8px;
+    color: #3929b5;
+    font-weight: 700;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+/* Tabla de Pedidos */
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.orders-table th {
+    color: #3929b5;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 14px 12px;
+    text-align: left;
+}
+
+.orders-table thead tr {
+    border-top: 3px solid #3929b5;
+    border-bottom: 3px solid #3929b5;
+}
+
+.orders-table tbody tr:last-child {
+    border-bottom: 3px solid #3929b5;
+}
+
+.orders-table td {
+    padding: 16px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+/* Fila Destacada en Morado */
+.orders-table tbody tr.row-purple {
+    background-color: #3929b5;
+    color: #ffffff;
+}
+
+.orders-table tbody tr.row-purple td,
+.orders-table tbody tr.row-purple a {
+    color: #ffffff !important;
+}
+
+/* Badges de Estado */
+.badge-status {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+}
+
+.badge-accepted { background-color: #FFC107; }
+.badge-ready { background-color: #2ECC71; }
+.badge-in-progress { background-color: #FF4747; }
+
+/* Botón Editar */
+.btn-edit-order {
+    color: #8A8BB3;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.btn-edit-order:hover {
+    color: #3929b5;
+}
+
+/* --- MODAL DE EDICIÓN --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 9999;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-box {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.modal-box h3 {
+    color: #3929b5;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.modal-subtitle {
+    color: #8A8BB3;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.modal-form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #3929b5;
+}
+
+.modal-select {
+    padding: 10px;
+    border: 1.5px solid #a49ee3;
+    border-radius: 8px;
+    outline: none;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-cancel {
+    background-color: #f1f1f1;
+    color: #666;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-save {
+    background-color: #3929b5;
+    color: #ffffff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background-color: #2e2098;
+}

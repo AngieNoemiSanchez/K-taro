@@ -1,0 +1,200 @@
+/* Importar la fuente Poppins desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+/* Reset global y tipografía unificada */
+* {
+    font-family: 'Poppins', sans-serif !important;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #ffffff;
+    color: #1a1a1a;
+}
+
+/* Contenedor Principal Centrado */
+.profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 40px;
+}
+
+.main-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #3929b5;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+}
+
+/* Layout de 2 columnas */
+.profile-layout {
+    display: flex;
+    gap: 35px;
+    align-items: stretch;
+}
+
+/* Tarjeta Izquierda (Información Principal) */
+.card-left {
+    flex: 1;
+    border: 1.5px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 30px 25px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    background-color: #dbe2f9;
+    color: #3929b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0 auto 15px auto;
+}
+
+.user-name {
+    color: #3929b5;
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    margin: 0;
+}
+
+.user-role {
+    color: #8A8BB3;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    margin: 4px 0 25px 0;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dotted #cccccc;
+    font-size: 14px;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    color: #3929b5;
+    font-weight: 700;
+}
+
+.info-row .value {
+    color: #3929b5;
+    font-weight: 800;
+}
+
+/* Columna Derecha */
+.column-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Bloque Horario de Trabajo */
+.schedule-card {
+    background-color: #4a3bc6;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 18px 22px;
+}
+
+.schedule-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.schedule-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Bloque Configurar Perfil */
+.config-card {
+    border: 1.5px solid #dcdcdc;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    flex-grow: 1;
+}
+
+.config-header {
+    background-color: #8b83dd;
+    color: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.edit-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.config-body {
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dotted #cccccc;
+    font-size: 13px;
+}
+
+.config-row:last-child {
+    border-bottom: none;
+}
+
+.cfg-label {
+    color: #666666;
+    font-weight: 600;
+}
+
+.cfg-value {
+    color: #333333;
+    font-weight: 700;
+}
