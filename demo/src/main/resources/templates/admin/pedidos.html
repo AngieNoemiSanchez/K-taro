@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Pedidos | K-TARO Admin</title>
+
+    <link rel="stylesheet" th:href="@{/css/admin-fragments.css}">
+    <link rel="stylesheet" th:href="@{/css/admin-pedidos.css}">
+</head>
+<body>
+
+    <header>
+        <div th:replace="~{fragments/admin-header :: adminHeader('pedidos')}"></div>
+    </header>
+
+    <main class="orders-container">
+        <div class="orders-header-row">
+            <div class="orders-title-group">
+                <h1 class="main-title">ADMINISTRACIÓN DE PEDIDOS</h1>
+                <h2 class="section-title">Gestione los pedidos registrados</h2>
+            </div>
+            
+            <div class="filter-dropdown">
+                <select id="filtroEstado" class="filter-select">
+                    <option value="todos">Todos</option>
+                    <option value="Aceptado">Aceptado</option>
+                    <option value="Listo">Listo</option>
+                    <option value="En curso">En curso</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE PEDIDO</th>
+                    <th>FECHA</th>
+                    <th>ESTADO</th>
+                    <th>OPCIÓN</th>
+                </tr>
+            </thead>
+            <tbody id="tablaPedidosBody">
+                <tr data-estado="Aceptado">
+                    <td>P1</td>
+                    <td class="order-name">Pedido_2026-10-01_JuanPerez</td>
+                    <td>01/10/2026</td>
+                    <td><span class="badge-status badge-accepted">Aceptado</span></td>
+                    <td><a href="#" class="btn-edit-order">Editar</a></td>
+                </tr>
+                <tr class="row-purple" data-estado="Listo">
+                    <td>P2</td>
+                    <td class="order-name">Pedido_2027-01-01_MariaVilca</td>
+                    <td>01/01/2027</td>
+                    <td><span class="badge-status badge-ready">Listo</span></td>
+                    <td><a href="#" class="btn-edit-order">Editar</a></td>
+                </tr>
+                <tr data-estado="En curso">
+                    <td>P1</td>
+                    <td class="order-name">Pedido_2026-10-01_LunaPuma</td>
+                    <td>01/10/2026</td>
+                    <td><span class="badge-status badge-in-progress">En curso</span></td>
+                    <td><a href="#" class="btn-edit-order">Editar</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <!-- VENTANA MODAL PARA EDITAR ESTADO -->
+    <div id="modalEditar" class="modal-overlay">
+        <div class="modal-box">
+            <h3>Cambiar Estado del Pedido</h3>
+            <p id="modalPedidoNombre" class="modal-subtitle">Pedido_2026-10-01_JuanPerez</p>
+
+            <div class="modal-form-group">
+                <label for="nuevoEstado">Nuevo Estado:</label>
+                <select id="nuevoEstado" class="modal-select">
+                    <option value="Aceptado">Aceptado</option>
+                    <option value="Listo">Listo</option>
+                    <option value="En curso">En curso</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="btnCancelarModal" class="btn-cancel">Cancelar</button>
+                <button type="button" id="btnGuardarModal" class="btn-save">Guardar Cambio</button>
+            </div>
+        </div>
+    </div>
+
+<footer>
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </footer>
+
+    <!-- JS aislado para filtrado, modal y persistencia -->
+    <script th:src="@{/js/admin-pedidos.js}"></script>
+
+</body>
+</html>
+
+</body>
+</html>
+
+</body>
+</html>
