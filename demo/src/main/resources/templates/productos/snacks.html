@@ -8,74 +8,76 @@
   <title th:text="${categoryLabel + ' | K-TARO'}">Snacks | K-TARO</title>
   <link rel="stylesheet" th:href="@{/css/inicio.css}">
   <link rel="stylesheet" th:href="@{/css/snacks.css}">
+  <link rel="stylesheet" th:href="@{/css/catalog-extra.css}">
 </head>
 <body>
-  <div th:replace="~{fragments/header :: siteHeader}"></div>
+<div th:replace="~{fragments/header :: siteHeader}"></div>
 
-  <nav class="catalog-breadcrumb" aria-label="Migas de pan">
-    <div class="catalog-container">
-      <a th:href="@{/}">Inicio</a>
-      <span aria-hidden="true">/</span>
-      <a th:href="@{/productos/snacks}">Productos</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page" th:text="${categoryLabel}">Snacks</span>
-    </div>
+<nav class="catalog-breadcrumb" aria-label="Migas de pan">
+  <div class="catalog-container">
+    <a th:href="@{/}">Inicio</a>
+    <span aria-hidden="true">/</span>
+    <a th:href="@{/productos/snacks}">Productos</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page" th:text="${categoryLabel}">Snacks</span>
+  </div>
+</nav>
+
+<main class="snacks-main" id="productos">
+  <form class="catalog-search" id="snackSearch" role="search">
+    <label class="visually-hidden" for="snackQuery">Buscar productos</label>
+    <input id="snackQuery" name="q" type="search" placeholder="Buscar producto..." autocomplete="off">
+    <button class="button button-primary" type="submit">Buscar</button>
+  </form>
+
+  <nav class="category-tabs" aria-label="Categorías de productos">
+    <a class="category-tab" th:classappend="${activeCategory == 'snacks' ? 'is-active' : ''}"
+       th:href="@{/productos/snacks}" th:attr="aria-current=${activeCategory == 'snacks' ? 'page' : null}">Snacks</a>
+    <a class="category-tab" th:classappend="${activeCategory == 'ramen' ? 'is-active' : ''}"
+       th:href="@{/productos/ramen}" th:attr="aria-current=${activeCategory == 'ramen' ? 'page' : null}">Ramen</a>
+    <a class="category-tab" th:classappend="${activeCategory == 'bebidas' ? 'is-active' : ''}"
+       th:href="@{/productos/bebidas}" th:attr="aria-current=${activeCategory == 'bebidas' ? 'page' : null}">Bebidas</a>
+    <a class="category-tab" th:classappend="${activeCategory == 'otros' ? 'is-active' : ''}"
+       th:href="@{/productos/otros}" th:attr="aria-current=${activeCategory == 'otros' ? 'page' : null}">Otros</a>
   </nav>
 
-  <main class="snacks-main" id="productos">
-    <form class="catalog-search" id="snackSearch" role="search">
-      <label class="visually-hidden" for="snackQuery">Buscar productos</label>
-      <input id="snackQuery" name="q" type="search" placeholder="Buscar producto..." autocomplete="off">
-      <button class="button button-primary" type="submit">Buscar</button>
-    </form>
-
-    <nav class="category-tabs" aria-label="Categorías de productos">
-      <a class="category-tab" th:classappend="${activeCategory == 'snacks' ? 'is-active' : ''}"
-        th:href="@{/productos/snacks}" th:attr="aria-current=${activeCategory == 'snacks' ? 'page' : null}">Snacks</a>
-      <a class="category-tab" th:classappend="${activeCategory == 'ramen' ? 'is-active' : ''}"
-        th:href="@{/productos/ramen}" th:attr="aria-current=${activeCategory == 'ramen' ? 'page' : null}">Ramen</a>
-      <a class="category-tab" th:classappend="${activeCategory == 'bebidas' ? 'is-active' : ''}"
-        th:href="@{/productos/bebidas}" th:attr="aria-current=${activeCategory == 'bebidas' ? 'page' : null}">Bebidas</a>
-      <a class="category-tab" th:classappend="${activeCategory == 'otros' ? 'is-active' : ''}"
-        th:href="@{/productos/otros}" th:attr="aria-current=${activeCategory == 'otros' ? 'page' : null}">Otros</a>
-    </nav>
-
-    <section class="snack-catalog" th:attr="aria-label=|Catálogo de ${categoryLabel}|">
-      <div class="snack-grid" id="snackGrid">
-        <article class="snack-card" th:each="product : ${snacks}"
-          th:attr="data-product-name=${product.name()}">
+  <section class="snack-catalog" th:attr="aria-label=|Catálogo de ${categoryLabel}|">
+    <div class="snack-grid" id="snackGrid">
+      <article class="snack-card" th:each="product : ${snacks}"
+               th:attr="data-product-name=${product.name()}">
           <span class="snack-discount" th:if="${product.discountPercent() != null}"
-            th:text="'-' + ${product.discountPercent()} + '%'">-20%</span>
+                th:text="'-' + ${product.discountPercent()} + '%'">-20%</span>
+        <span class="soldout-badge" th:unless="${product.inStock()}">Agotado</span>
 
-          <a class="snack-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
-            th:aria-label="|Ver detalle de ${product.name()}|">
-            <div class="snack-image">
-              <img th:if="${product.image() != null}" th:src="${product.image()}"
-                th:alt="${product.name()}" loading="lazy">
-              <div class="snack-image-placeholder" th:if="${product.image() == null}"
-                role="img" th:aria-label="|Imagen pendiente: ${product.name()}|">
-                <span aria-hidden="true">✳</span><span>Imagen pendiente</span>
-              </div>
+        <a class="snack-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
+           th:aria-label="|Ver detalle de ${product.name()}|">
+          <div class="snack-image">
+            <img th:if="${product.image() != null}" th:src="${product.image()}"
+                 th:alt="${product.name()}" loading="lazy">
+            <div class="snack-image-placeholder" th:if="${product.image() == null}"
+                 role="img" th:aria-label="|Imagen pendiente: ${product.name()}|">
+              <span aria-hidden="true">✳</span><span>Imagen pendiente</span>
             </div>
-            <h2 th:text="${product.name()}">Nombre del producto</h2>
-          </a>
+          </div>
+          <h2 th:text="${product.name()}">Nombre del producto</h2>
+        </a>
 
-          <p class="snack-price">S/ <span th:text="${product.price().toPlainString()}">0.00</span></p>
-          <button class="button button-cart add-to-cart" type="button"
-            th:attr="data-product-id=${product.id()},data-product-name=${product.name()},data-product-price=${product.price()}">
-            Agregar al carrito
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>
-              <circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
-            </svg>
-          </button>
-        </article>
-      </div>
-      <p class="snack-empty" id="snackEmpty" role="status" hidden>No se encontraron productos.</p>
-    </section>
-  </main>
+        <p class="snack-price">S/ <span th:text="${product.price().toPlainString()}">0.00</span></p>
+        <button class="button button-cart add-to-cart" type="button" th:disabled="${!product.inStock()}"
+                th:attr="data-product-id=${product.id()},data-product-name=${product.name()},data-product-price=${product.price()},data-product-stock=${product.stock()}">
+          <span th:text="${product.inStock()} ? 'Agregar al carrito' : 'Agotado'">Agregar al carrito</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>
+            <circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>
+          </svg>
+        </button>
+      </article>
+    </div>
+    <p class="snack-empty" id="snackEmpty" role="status" th:hidden="${!#lists.isEmpty(snacks)}">No se encontraron productos.</p>
+  </section>
+</main>
 
-  <div th:replace="~{fragments/footer :: siteFooter}"></div>
-  <script th:src="@{/js/ts/snacks.js}" defer></script>
+<div th:replace="~{fragments/footer :: siteFooter}"></div>
+<script th:src="@{/js/ts/snacks.js}" defer></script>
 </body>
 </html>

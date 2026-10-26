@@ -6,6 +6,7 @@ interface CartItem {
   price: number;
   quantity: number;
   category?: string;
+  stock?: number;
 }
 
 const CART_STORAGE_KEY = "ktaro-cart";
@@ -51,6 +52,29 @@ function formatPrice(value: number): string {
   return `S/ ${value.toFixed(2)}`;
 }
 
+/** Unidades realmente disponibles según el servidor (0 si está inactivo, agotado o fuera de horario). */
+async function fetchAvailableUnits(productId: string): Promise<number> {
+  const response = await fetch(`/api/stock?ids=${encodeURIComponent(productId)}`);
+  if (!response.ok) throw new Error("No se pudo consultar el stock.");
+  const data = (await response.json()) as Record<string, number>;
+  return data[productId] ?? 0;
+}
+
+/** Devuelve true si se puede tener {@code wanted} unidades en el carrito; si no, avisa al cliente. */
+async function ensureStock(productId: string, name: string, wanted: number): Promise<boolean> {
+  const available = await fetchAvailableUnits(productId);
+  if (wanted <= available) return true;
+  await Swal.fire({
+    icon: "warning",
+    title: available === 0 ? "Producto no disponible" : "Stock insuficiente",
+    text: available === 0
+      ? `${name} está agotado o ya no está disponible.`
+      : `Solo quedan ${available} unidades de ${name}.`,
+    confirmButtonColor: CART_PURPLE,
+  });
+  return false;
+}
+
 export function initializeCart(): void {
   if (isCartInitialized) return;
   isCartInitialized = true;
@@ -84,14 +108,26 @@ export function initializeCart(): void {
     window.location.href = "/pago";
   });
 
-  function updateCartQuantity(productId: string, change: number): void {
+  async function updateCartQuantity(productId: string, change: number): Promise<void> {
     try {
       const cart = readCart();
       const item = cart.find((product) => product.id === productId);
 
       if (!item) return;
 
+      if (change > 0 && !(await ensureStock(productId, item.name, item.quantity + change))) return;
+
       item.quantity += change;
+
+            if (change > 0 && item.stock !== undefined && item.quantity > item.stock) {
+              item.quantity = item.stock;
+              void Swal.fire({
+                icon: "warning",
+                title: "Stock máximo alcanzado",
+                text: `Solo hay ${item.stock} unidades disponibles de ${item.name}.`,
+                confirmButtonColor: CART_PURPLE,
+              });
+            }
 
       if (item.quantity <= 0) {
         const index = cart.findIndex((product) => product.id === productId);
@@ -230,21 +266,39 @@ export function initializeCart(): void {
 
   document.querySelectorAll<HTMLButtonElement>(".add-to-cart").forEach((button) => {
     button.addEventListener("click", async () => {
-      const { productId, productName, productPrice } = button.dataset;
-      const price = Number(productPrice);
-      const quantity = Number(button.dataset.quantity ?? "1");
-      if (!productId || !productName || !Number.isFinite(price) || price < 0
-        || !Number.isInteger(quantity) || quantity < 1) {
-        console.error("No se pudo agregar el producto: sus datos son inválidos.");
-        await Swal.fire({ icon: "error", title: "No se pudo agregar", text: "Revisa los datos del producto e inténtalo nuevamente." });
-        return;
-      }
+           const { productId, productName, productPrice, productStock } = button.dataset;
+           const price = Number(productPrice);
+           const quantity = Number(button.dataset.quantity ?? "1");
+           const stock = productStock === undefined || productStock === "" ? undefined : Number(productStock);
+           if (!productId || !productName || !Number.isFinite(price) || price < 0
+             || !Number.isInteger(quantity) || quantity < 1
+             || (stock !== undefined && !Number.isFinite(stock))) {
+             console.error("No se pudo agregar el producto: sus datos son inválidos.");
+             await Swal.fire({ icon: "error", title: "No se pudo agregar", text: "Revisa los datos del producto e inténtalo nuevamente." });
+             return;
+           }
 
-      try {
-        const cart = readCart();
-        const existingItem = cart.find((item) => item.id === productId);
-        if (existingItem) existingItem.quantity += quantity;
-        else cart.push({ id: productId, name: productName, price, quantity });
+           try {
+             const cart = readCart();
+             const existingItem = cart.find((item) => item.id === productId);
+             const alreadyInCart = existingItem?.quantity ?? 0;
+             if (stock !== undefined && alreadyInCart + quantity > stock) {
+               await Swal.fire({
+                 icon: "warning",
+                 title: "Stock insuficiente",
+                 text: stock === 0
+                   ? `${productName} está agotado.`
+                   : `Solo hay ${stock} unidades disponibles y ya tienes ${alreadyInCart} en el carrito.`,
+                 confirmButtonColor: CART_PURPLE,
+               });
+               return;
+             }
+             if (existingItem) {
+               existingItem.quantity += quantity;
+               existingItem.stock = stock;
+             } else {
+               cart.push({ id: productId, name: productName, price, quantity, stock });
+             }
 
         saveCart(cart);
         renderCart();

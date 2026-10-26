@@ -12,5 +12,11 @@ public record Product(
 		BigDecimal originalPrice,
 		Integer discountPercent,
 		String image,
+		Integer stock,
 		List<String> relatedProductIds) {
+
+
+	public boolean inStock() {
+		return stock != null && stock > 0;
+	}
 }

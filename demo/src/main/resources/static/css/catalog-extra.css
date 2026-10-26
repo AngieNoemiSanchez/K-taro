@@ -1,0 +1,96 @@
+/* ===== Stock / agotado ===== */
+.product-card,
+.snack-card,
+.related-card {
+  position: relative;
+}
+
+.soldout-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: #d93025;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.button-cart:disabled,
+.button-cart[disabled] {
+  background: #c9c9d6;
+  border-color: #c9c9d6;
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.detail-stock {
+  font-weight: 700;
+  margin: 8px 0;
+}
+.detail-stock.is-out { color: #d93025; }
+.detail-stock.is-low { color: #b26a00; }
+
+.quantity-picker button:disabled,
+.quantity-picker input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Promociones dinámicas ===== */
+/* Oscurece un poco el fondo para que el texto blanco se lea sobre cualquier imagen */
+.promo-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+}
+
+/* Sin imagen: degradado morado de la marca */
+.promo-banner.promo-banner--noimg {
+  background-image: linear-gradient(135deg, #3929b5, #7d6ee8);
+}
+
+.promo-duration {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.promo-includes {
+  margin: 0 0 6px;
+  padding-left: 18px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.promo-banner-price del {
+  margin-right: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.promo-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+
+.promo-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #6b6b80;
+  font-weight: 700;
+}
