@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.ProductForm;
 import com.example.demo.model.AdminProduct;
+import com.example.demo.service.ImageStorageService;
 import com.example.demo.service.ProductAdminService;
 
 @Controller
@@ -27,12 +28,12 @@ public class AdminProductController {
     private static final String EDIT_VIEW = "productos/Editarproducto";
 
     private final ProductAdminService productAdmin;
+    private final ImageStorageService images;
 
-    public AdminProductController(ProductAdminService productAdmin) {
+    public AdminProductController(ProductAdminService productAdmin, ImageStorageService images) {
         this.productAdmin = productAdmin;
+        this.images = images;
     }
-
-
 
     @GetMapping
     public String list() {
@@ -48,6 +49,7 @@ public class AdminProductController {
     @PostMapping
     public String create(@Valid @ModelAttribute("productForm") ProductForm form, BindingResult result,
                          RedirectAttributes redirect) {
+        validateImage(form, result);
         if (result.hasErrors()) {
             return CREATE_VIEW;
         }
@@ -55,8 +57,6 @@ public class AdminProductController {
         redirect.addFlashAttribute("mensaje", "Producto registrado correctamente.");
         return "redirect:/admin/productos/" + created.id() + "/editar";
     }
-
-
 
     @GetMapping("/{id}/editar")
     public String showEditForm(@PathVariable String id, Model model, HttpServletResponse response) {
@@ -66,22 +66,30 @@ public class AdminProductController {
         }
         model.addAttribute("productForm", toForm(product.get()));
         model.addAttribute("productId", id);
+        model.addAttribute("currentImage", product.get().image());
         return EDIT_VIEW;
     }
 
     @PostMapping("/{id}")
     public String update(@PathVariable String id, @Valid @ModelAttribute("productForm") ProductForm form,
                          BindingResult result, Model model, HttpServletResponse response, RedirectAttributes redirect) {
-        if (productAdmin.findById(id).isEmpty()) {
+        Optional<AdminProduct> current = productAdmin.findById(id);
+        if (current.isEmpty()) {
             return notFound(id, model, response);
         }
+        validateImage(form, result);
         if (result.hasErrors()) {
             model.addAttribute("productId", id);
+            model.addAttribute("currentImage", current.get().image());
             return EDIT_VIEW;
         }
         productAdmin.update(id, form);
         redirect.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/admin/productos/" + id + "/editar";
+    }
+
+    private void validateImage(ProductForm form, BindingResult result) {
+        images.validate(form.getImage()).ifPresent(message -> result.rejectValue("image", "image.invalid", message));
     }
 
     private static String notFound(String id, Model model, HttpServletResponse response) {

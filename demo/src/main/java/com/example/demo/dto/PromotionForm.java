@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -36,6 +38,8 @@ public class PromotionForm {
 
     private boolean active = true;
 
+    private MultipartFile image;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -53,4 +57,7 @@ public class PromotionForm {
 
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
+
+    public MultipartFile getImage() { return image; }
+    public void setImage(MultipartFile image) { this.image = image; }
 }

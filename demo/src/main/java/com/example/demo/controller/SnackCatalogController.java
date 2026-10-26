@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.model.Product;
-import com.example.demo.service.ProductCatalogService;
+import com.example.demo.service.CustomerCatalogService;
 
 @Controller
 public class SnackCatalogController {
 
-	private final ProductCatalogService productCatalog;
+	private final CustomerCatalogService productCatalog;
 
-	public SnackCatalogController(ProductCatalogService productCatalog) {
+	public SnackCatalogController(CustomerCatalogService productCatalog) {
 		this.productCatalog = productCatalog;
 	}
 
@@ -30,13 +30,13 @@ public class SnackCatalogController {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		model.addAttribute("activeCategory", selectedCategory.slug);
 		model.addAttribute("categoryLabel", selectedCategory.label);
-		model.addAttribute("snacks", productCatalog.getSnackProducts());
+		model.addAttribute("snacks", productCatalog.findByCategory(selectedCategory.slug));
 		return "productos/snacks";
 	}
 
 	@GetMapping("/productos/detalle/{id}")
 	public String detail(@PathVariable String id, Model model, HttpServletResponse response) {
-		Optional<Product> selectedProduct = productCatalog.findById(id);
+		Optional<Product> selectedProduct = productCatalog.findVisibleById(id);
 		if (selectedProduct.isEmpty()) {
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 			model.addAttribute("productId", id);

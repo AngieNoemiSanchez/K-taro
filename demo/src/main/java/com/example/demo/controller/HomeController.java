@@ -4,15 +4,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.demo.service.ProductCatalogService;
+import com.example.demo.service.CustomerCatalogService;
+import com.example.demo.service.PromotionService;
 
 @Controller
 public class HomeController {
 
-    private final ProductCatalogService productCatalog;
+    private final CustomerCatalogService productCatalog;
+    private final PromotionService promotionService;
 
-    public HomeController(ProductCatalogService productCatalog) {
+    public HomeController(CustomerCatalogService productCatalog, PromotionService promotionService) {
         this.productCatalog = productCatalog;
+        this.promotionService = promotionService;
     }
 
     @GetMapping("/")
@@ -39,7 +42,8 @@ public class HomeController {
     public String compraExitosa() {
         return "pedidos/compra-exitosa";
     }
-        // Vista Mi perfil
+
+    // Vista Mi perfil
     @GetMapping("/perfil")
     public String perfil() {
         return "usuario/perfil";
@@ -50,9 +54,11 @@ public class HomeController {
     public String contacto() {
         return "usuario/contacto";
     }
-    // Vista de Promociones
-@GetMapping("/promociones")
-public String promociones() {
-    return "promociones/promociones";
-}
+
+    // Vista de Promociones (las que se crean en el admin)
+    @GetMapping("/promociones")
+    public String promociones(Model model) {
+        model.addAttribute("promotions", promotionService.findVisibleCards());
+        return "promociones/promociones";
+    }
 }
