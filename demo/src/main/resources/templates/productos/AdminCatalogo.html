@@ -22,6 +22,7 @@
             <option value="productos" th:selected="${tipo == 'productos'}">productos</option>
             <option value="promociones" th:selected="${tipo == 'promociones'}">promociones</option>
         </select>
+        <a class="btn btn-outline-primary fw-bold ms-auto" th:href="@{/admin/catalogo/exportar}">Exportar a Excel</a>
     </div>
 
     <div class="alert alert-success" role="status" th:if="${mensaje}" th:text="${mensaje}"></div>
