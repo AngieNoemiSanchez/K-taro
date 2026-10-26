@@ -28,7 +28,7 @@ function renderResumenPago(): void {
   const pagoTotal = document.querySelector<HTMLElement>("#pagoTotal");
   const finalTotal = document.querySelector<HTMLElement>("#finalTotal");
 
-  // Si estamos en la pantalla de COMPRA EXITOSA, muestra el total guardado
+
 if (finalTotal) {
   const lastTotal = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
   finalTotal.textContent = lastTotal;
@@ -100,7 +100,7 @@ fechaVencimiento?.addEventListener("input", () => {
   renderResumenPago();
 
   const btnContinuarPago = document.querySelector<HTMLButtonElement>("#btnContinuarPago");
-  btnContinuarPago?.addEventListener("click", (e) => {
+  btnContinuarPago?.addEventListener("click", async (e) => {
     e.preventDefault();
 
           const fechaInput = document.querySelector<HTMLInputElement>("#fechaVencimiento");
@@ -121,8 +121,33 @@ fechaVencimiento?.addEventListener("input", () => {
           return;
         }
       }
-    // Guardar el total pagado para mostrarlo en la vista de exito
+
     const cart = readCart();
+    if (cart.length === 0) {
+      await Swal.fire({ icon: "warning", title: "Carrito vacío", text: "Agrega productos antes de pagar." });
+      return;
+    }
+    try {
+      const response = await fetch("/api/pedidos/confirmar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cart.map((item) => ({ id: item.id, quantity: item.quantity }))),
+      });
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as { mensaje?: string };
+        await Swal.fire({
+          icon: "error",
+          title: "No se pudo completar la compra",
+          text: body.mensaje ?? "Revisa tu carrito e inténtalo nuevamente.",
+        });
+        return;
+      }
+    } catch {
+      await Swal.fire({ icon: "error", title: "Sin conexión", text: "No se pudo confirmar la compra. Inténtalo nuevamente." });
+      return;
+    }
+
+
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     localStorage.setItem(LAST_TOTAL_KEY, `s/ ${totalPrice.toFixed(2)}`);
     const nombreTitular = document.querySelector<HTMLInputElement>(
@@ -142,7 +167,7 @@ localStorage.setItem(
   correoComprador?.value.trim() || "No especificado"
 );
 
-    // Vaciar productos
+
     localStorage.removeItem(CART_STORAGE_KEY);
     window.location.href = "/compra-exitosa";
   });

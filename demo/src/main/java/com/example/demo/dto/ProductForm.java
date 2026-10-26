@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
@@ -36,6 +38,9 @@ public class ProductForm {
 
     private boolean active = true;
 
+
+    private MultipartFile image;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -53,4 +58,7 @@ public class ProductForm {
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+
+    public MultipartFile getImage() { return image; }
+    public void setImage(MultipartFile image) { this.image = image; }
 }

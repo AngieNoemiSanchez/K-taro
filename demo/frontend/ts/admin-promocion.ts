@@ -1,4 +1,5 @@
 import { initializeCart } from "./cart";
+import { initImagePreview } from "./image-preview";
 
 const productSelect = document.querySelector<HTMLSelectElement>("#promoProductSelect");
 const addButton = document.querySelector<HTMLButtonElement>("#addPromoProduct");
@@ -77,4 +78,5 @@ form?.addEventListener("submit", (event) => {
 productSelect?.addEventListener("change", () => productSelect.classList.remove("is-invalid"));
 
 updateRegularTotal();
+initImagePreview();
 initializeCart();

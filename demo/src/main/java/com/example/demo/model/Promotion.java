@@ -10,5 +10,6 @@ public record Promotion(
         String description,
         List<String> productIds,
         BigDecimal price,
-        boolean active) {
+        boolean active,
+        String image) {
 }

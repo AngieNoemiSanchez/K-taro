@@ -4,7 +4,7 @@
 
 <!-- Formulario de producto: usado por crearProducto y editarProducto -->
 <form th:fragment="productForm(action, submitLabel, stockLabel, placeholder)" id="productForm"
-      th:action="${action}" th:object="${productForm}" method="post" novalidate>
+      th:action="${action}" th:object="${productForm}" method="post" enctype="multipart/form-data" novalidate>
     <div class="row g-3">
         <div class="col-md-6">
             <label for="name" class="form-label fw-bold">Nombre del producto</label>
@@ -31,6 +31,18 @@
             <textarea id="description" th:field="*{description}" class="form-control" rows="4" maxlength="500"
                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
             <div class="invalid-feedback" th:errors="*{description}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="image" class="form-label fw-bold">Imagen del producto</label>
+            <input type="file" id="image" name="image" class="form-control"
+                   accept="image/png,image/jpeg,image/webp,image/gif"
+                   th:classappend="${#fields.hasErrors('image')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{image}"></div>
+            <div class="text-danger small mt-1" id="imageClientError" hidden></div>
+            <div class="form-text">PNG, JPG, WEBP o GIF. Máximo 5 MB. Si no eliges una, se conserva la actual.</div>
+            <img id="imagePreview" class="img-thumbnail mt-3" alt="Vista previa de la imagen"
+                 style="max-height: 180px;" th:src="${currentImage}" th:hidden="${currentImage == null}">
         </div>
 
         <div class="col-md-4">
@@ -64,7 +76,7 @@
 
 <!-- Formulario de promoción: usado por crearPromocion y editarPromocion -->
 <form th:fragment="promotionForm(action, submitLabel)" id="promotionForm"
-      th:action="${action}" th:object="${promotionForm}" method="post" novalidate>
+      th:action="${action}" th:object="${promotionForm}" method="post" enctype="multipart/form-data" novalidate>
     <div class="row g-3">
         <div class="col-md-6">
             <label for="name" class="form-label fw-bold">Nombre de la promoción</label>
@@ -90,6 +102,18 @@
             <textarea id="description" th:field="*{description}" class="form-control" rows="3" maxlength="500"
                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
             <div class="invalid-feedback" th:errors="*{description}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="image" class="form-label fw-bold">Imagen de fondo de la promoción</label>
+            <input type="file" id="image" name="image" class="form-control"
+                   accept="image/png,image/jpeg,image/webp,image/gif"
+                   th:classappend="${#fields.hasErrors('image')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{image}"></div>
+            <div class="text-danger small mt-1" id="imageClientError" hidden></div>
+            <div class="form-text">Se usa como fondo del banner en la página de Promociones. Recomendado: horizontal, mínimo 1100×350 px. PNG, JPG, WEBP o GIF, máximo 5 MB.</div>
+            <img id="imagePreview" class="img-thumbnail mt-3" alt="Vista previa del fondo"
+                 style="max-height: 180px;" th:src="${currentImage}" th:hidden="${currentImage == null}">
         </div>
 
         <div class="col-12">

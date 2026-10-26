@@ -1,4 +1,5 @@
 import { initializeCart } from "./cart";
+import { initImagePreview } from "./image-preview";
 
 const form = document.querySelector<HTMLFormElement>("#productForm");
 const priceInput = document.querySelector<HTMLInputElement>("#price");
@@ -18,7 +19,6 @@ function isValidStock(): boolean {
   return stockInput?.value !== "" && Number.isInteger(stock) && stock >= 0;
 }
 
-// Marca los campos numéricos al instante (el servidor vuelve a validar siempre).
 priceInput?.addEventListener("input", () => setInvalid(priceInput, !isValidPrice()));
 stockInput?.addEventListener("input", () => setInvalid(stockInput, !isValidStock()));
 
@@ -33,4 +33,5 @@ form?.addEventListener("submit", (event) => {
   }
 });
 
+initImagePreview();
 initializeCart();

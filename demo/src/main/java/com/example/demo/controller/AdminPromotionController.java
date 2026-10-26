@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.dto.PromotionForm;
 import com.example.demo.model.AdminProduct;
 import com.example.demo.model.Promotion;
+import com.example.demo.service.ImageStorageService;
 import com.example.demo.service.ProductAdminService;
 import com.example.demo.service.PromotionService;
 
@@ -32,10 +33,13 @@ public class AdminPromotionController {
 
     private final PromotionService promotions;
     private final ProductAdminService productAdmin;
+    private final ImageStorageService images;
 
-    public AdminPromotionController(PromotionService promotions, ProductAdminService productAdmin) {
+    public AdminPromotionController(PromotionService promotions, ProductAdminService productAdmin,
+                                    ImageStorageService images) {
         this.promotions = promotions;
         this.productAdmin = productAdmin;
+        this.images = images;
     }
 
     @GetMapping
@@ -52,6 +56,7 @@ public class AdminPromotionController {
     public String create(@Valid @ModelAttribute("promotionForm") PromotionForm form, BindingResult result,
                          Model model, RedirectAttributes redirect) {
         validateContent(form, result);
+        validateImage(form, result);
         if (result.hasErrors()) {
             return prepareView(model, form);
         }
@@ -67,6 +72,7 @@ public class AdminPromotionController {
             return notFound(id, model, response);
         }
         model.addAttribute("promotionId", id);
+        model.addAttribute("currentImage", promotion.get().image());
         return prepareView(model, toForm(promotion.get()), EDIT_VIEW);
     }
 
@@ -74,17 +80,24 @@ public class AdminPromotionController {
     public String update(@PathVariable String id, @Valid @ModelAttribute("promotionForm") PromotionForm form,
                          BindingResult result, Model model, HttpServletResponse response,
                          RedirectAttributes redirect) {
-        if (promotions.findById(id).isEmpty()) {
+        Optional<Promotion> current = promotions.findById(id);
+        if (current.isEmpty()) {
             return notFound(id, model, response);
         }
         validateContent(form, result);
+        validateImage(form, result);
         if (result.hasErrors()) {
             model.addAttribute("promotionId", id);
+            model.addAttribute("currentImage", current.get().image());
             return prepareView(model, form, EDIT_VIEW);
         }
         promotions.update(id, form);
         redirect.addFlashAttribute("mensaje", "Promoción actualizada correctamente.");
         return "redirect:/admin/promociones/" + id + "/editar";
+    }
+
+    private void validateImage(PromotionForm form, BindingResult result) {
+        images.validate(form.getImage()).ifPresent(message -> result.rejectValue("image", "image.invalid", message));
     }
 
     private void validateContent(PromotionForm form, BindingResult result) {

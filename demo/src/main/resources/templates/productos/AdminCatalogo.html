@@ -22,6 +22,7 @@
             <option value="productos" th:selected="${tipo == 'productos'}">productos</option>
             <option value="promociones" th:selected="${tipo == 'promociones'}">promociones</option>
         </select>
+        <a class="btn btn-outline-primary fw-bold ms-auto" th:href="@{/admin/catalogo/exportar}">Exportar a Excel</a>
     </div>
 
     <div class="alert alert-success" role="status" th:if="${mensaje}" th:text="${mensaje}"></div>
@@ -33,13 +34,18 @@
             <table class="table table-hover table-ktaro align-middle mb-0">
                 <thead>
                 <tr>
-                    <th>ID</th><th>Nombre del producto</th><th>Tipo</th>
+                    <th>ID</th><th>Imagen</th><th>Nombre del producto</th><th>Tipo</th>
                     <th class="text-center">Stock</th><th>Precio</th><th class="text-center">Estado</th><th class="text-center">Opción</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="p, st : ${products}">
                     <td th:text="'P' + ${#numbers.formatInteger(st.count, 2)}">P01</td>
+                    <td>
+                        <img th:if="${p.image() != null}" th:src="${p.image()}" th:alt="${p.name()}"
+                             width="48" height="48" style="object-fit: cover; border-radius: 8px;">
+                        <span th:unless="${p.image() != null}" class="text-muted small">Sin imagen</span>
+                    </td>
                     <td th:text="${p.name()}">Nombre</td>
                     <td class="text-capitalize" th:text="${p.category()}">Snack</td>
                     <td>
@@ -75,16 +81,21 @@
             <table class="table table-hover table-ktaro align-middle mb-0">
                 <thead>
                 <tr>
-                    <th>ID</th><th>Nombre de la promoción</th><th>Productos</th>
+                    <th>ID</th><th>Imagen</th><th>Nombre de la promoción</th><th>Productos</th>
                     <th>Precio</th><th class="text-center">Estado</th><th class="text-center">Opción</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(promotions)}">
-                    <td colspan="6" class="text-center text-soft py-4">Aún no hay promociones registradas.</td>
+                    <td colspan="7" class="text-center text-soft py-4">Aún no hay promociones registradas.</td>
                 </tr>
                 <tr th:each="promo, st : ${promotions}">
                     <td th:text="'PR' + ${#numbers.formatInteger(st.count, 2)}">PR01</td>
+                    <td>
+                        <img th:if="${promo.image() != null}" th:src="${promo.image()}" th:alt="${promo.name()}"
+                             width="80" height="48" style="object-fit: cover; border-radius: 8px;">
+                        <span th:unless="${promo.image() != null}" class="text-muted small">Sin imagen</span>
+                    </td>
                     <td th:text="${promo.name()}">Nombre</td>
                     <td>
             <span class="badge text-bg-primary me-1" th:each="pid : ${promo.productIds()}"
