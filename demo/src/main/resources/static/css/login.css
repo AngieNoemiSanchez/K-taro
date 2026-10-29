@@ -224,3 +224,10 @@ body.login-body {
     /* Mantiene los bordes suavemente redondeados y color idéntico al login */
     background-color: #E2DAF7;
 }
+
+.field-error {
+    color: #D93025;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    text-align: left;
+}
