@@ -1,11 +1,11 @@
 package com.example.demo.service.Cliente.impl;
 
-import com.example.demo.Entity.ClienteEntity;
+import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.dto.PerfilForm;
 import com.example.demo.dto.RegistroForm;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.ClienteMapper;
-import com.example.demo.model.Cliente;
+import com.example.demo.model.cliente.Cliente;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.Cliente.ClienteService;
 import org.springframework.security.crypto.password.PasswordEncoder;

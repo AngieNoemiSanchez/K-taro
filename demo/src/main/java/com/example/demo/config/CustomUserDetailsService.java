@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.Entity.ClienteEntity;
+import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.repository.ClienteRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

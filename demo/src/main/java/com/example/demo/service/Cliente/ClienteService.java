@@ -2,7 +2,7 @@ package com.example.demo.service.Cliente;
 
 import com.example.demo.dto.PerfilForm;
 import com.example.demo.dto.RegistroForm;
-import com.example.demo.model.Cliente;
+import com.example.demo.model.cliente.Cliente;
 
 import java.util.Optional;
 

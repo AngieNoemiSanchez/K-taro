@@ -2,7 +2,7 @@ package com.example.demo.controller.cliente;
 
 import com.example.demo.dto.PerfilForm;
 import com.example.demo.exception.BusinessException;
-import com.example.demo.Entity.ClienteEntity;
+import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.repository.ClienteRepository; // <-- Importamos el Repositorio
 import com.example.demo.service.Cliente.ClienteService;
