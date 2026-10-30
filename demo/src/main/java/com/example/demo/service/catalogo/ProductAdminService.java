@@ -1,8 +1,6 @@
-package com.example.demo.service;
+package com.example.demo.service.catalogo;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.ProductForm;
 import com.example.demo.model.AdminProduct;
 
 
@@ -22,20 +19,16 @@ public class ProductAdminService {
     private static final String PENDING = "Descripción pendiente";
 
     private final Map<String, AdminProduct> products = new LinkedHashMap<>();
-    private final ImageStorageService images;
 
-    public ProductAdminService(ImageStorageService images) {
-        this.images = images;
+    public ProductAdminService() {
         seed();
     }
-
 
     public synchronized List<AdminProduct> findAll() {
         return products.values().stream()
                 .sorted(Comparator.comparing(AdminProduct::name, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
-
 
     public synchronized List<AdminProduct> findAllByCreation() {
         return List.copyOf(products.values());
@@ -44,54 +37,6 @@ public class ProductAdminService {
     public synchronized Optional<AdminProduct> findById(String id) {
         return Optional.ofNullable(products.get(id));
     }
-
-    public synchronized AdminProduct create(ProductForm form) {
-        String baseId = slugify(form.getName());
-        String id = baseId;
-        int suffix = 2;
-        while (products.containsKey(id)) {
-            id = baseId + "-" + suffix++;
-        }
-        AdminProduct created = new AdminProduct(id, form.getName().trim(), form.getDescription().trim(),
-                form.getCategory(), form.getPrice(), null, null, form.getStock(), form.isActive(),
-                images.store(form.getImage()).orElse(null), List.of());
-        products.put(id, created);
-        return created;
-    }
-
-    public synchronized Optional<AdminProduct> update(String id, ProductForm form) {
-        AdminProduct current = products.get(id);
-        if (current == null) {
-            return Optional.empty();
-        }
-
-        String image = current.image();
-        Optional<String> newImage = images.store(form.getImage());
-        if (newImage.isPresent()) {
-            images.delete(current.image());
-            image = newImage.get();
-        }
-
-
-        BigDecimal originalPrice = current.originalPrice();
-        Integer discount = current.discountPercent();
-        if (originalPrice != null && form.getPrice().compareTo(current.price()) != 0) {
-            int percent = discountPercent(originalPrice, form.getPrice());
-            if (form.getPrice().compareTo(originalPrice) < 0 && percent >= 1) {
-                discount = percent;
-            } else {
-                originalPrice = null;
-                discount = null;
-            }
-        }
-
-        AdminProduct updated = new AdminProduct(id, form.getName().trim(), form.getDescription().trim(),
-                form.getCategory(), form.getPrice(), originalPrice, discount, form.getStock(), form.isActive(),
-                image, current.relatedProductIds());
-        products.put(id, updated);
-        return Optional.of(updated);
-    }
-
 
     public synchronized Optional<AdminProduct> addStock(String id, int amount) {
         AdminProduct c = products.get(id);
@@ -104,21 +49,6 @@ public class ProductAdminService {
         products.put(id, updated);
         return Optional.of(updated);
     }
-
-    private static int discountPercent(BigDecimal original, BigDecimal price) {
-        return original.subtract(price).multiply(BigDecimal.valueOf(100))
-                .divide(original, 0, RoundingMode.HALF_UP).intValue();
-    }
-
-    private static String slugify(String text) {
-        String slug = Normalizer.normalize(text, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "")
-                .toLowerCase()
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("(^-|-$)", "");
-        return slug.isEmpty() ? "producto" : slug;
-    }
-
 
     private void seed() {
         seed("peperos-original", "Peperos Original", PENDING, "snacks", "6.50", null, null,

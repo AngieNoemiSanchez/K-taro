@@ -1,6 +1,6 @@
 package com.example.demo.controller.cliente;
 
-import com.example.demo.dto.RegistroForm;
+import com.example.demo.dto.cliente.RegistroForm;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.service.Cliente.ClienteService;
 import jakarta.validation.Valid;

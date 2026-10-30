@@ -1,5 +1,5 @@
 package com.example.demo.controller;
-
+import com.example.demo.service.catalogo.ProductAdminService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.dto.PromotionForm;
+import com.example.demo.dto.admin.PromotionForm;
 import com.example.demo.model.AdminProduct;
 import com.example.demo.model.Promotion;
 import com.example.demo.service.ImageStorageService;
-import com.example.demo.service.ProductAdminService;
 import com.example.demo.service.PromotionService;
 
 @Controller

@@ -1,8 +1,8 @@
 package com.example.demo.mapper;
 
 import com.example.demo.Entity.cliente.ClienteEntity;
-import com.example.demo.dto.PerfilForm;
-import com.example.demo.dto.RegistroForm;
+import com.example.demo.dto.cliente.PerfilForm;
+import com.example.demo.dto.cliente.RegistroForm;
 import com.example.demo.model.cliente.Cliente;
 import org.springframework.stereotype.Component;
 

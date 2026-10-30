@@ -1,4 +1,5 @@
 package com.example.demo.controller;
+import com.example.demo.service.catalogo.ProductAdminService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.service.ExcelExportService;
-import com.example.demo.service.ProductAdminService;
 import com.example.demo.service.PromotionService;
 
 @Controller

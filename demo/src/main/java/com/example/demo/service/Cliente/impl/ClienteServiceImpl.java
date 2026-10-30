@@ -1,8 +1,8 @@
 package com.example.demo.service.Cliente.impl;
 
 import com.example.demo.Entity.cliente.ClienteEntity;
-import com.example.demo.dto.PerfilForm;
-import com.example.demo.dto.RegistroForm;
+import com.example.demo.dto.cliente.PerfilForm;
+import com.example.demo.dto.cliente.RegistroForm;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.cliente.Cliente;

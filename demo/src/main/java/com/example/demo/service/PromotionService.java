@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.service.catalogo.ProductAdminService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.PromotionCard;
-import com.example.demo.dto.PromotionForm;
+import com.example.demo.dto.admin.PromotionForm;
 import com.example.demo.model.AdminProduct;
 import com.example.demo.model.Promotion;
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.AdminProduct;
 import com.example.demo.model.Product;
+import com.example.demo.service.catalogo.ProductAdminService;
 
 /**
  * Vista de cliente del catálogo. Lee de {@link ProductAdminService} y solo

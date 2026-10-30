@@ -8,11 +8,11 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <title>Catálogo | K-TARO</title>
 </head>
-<body class="bg-white">
+<body class="bg-white d-flex flex-column min-vh-100">
 
 <header th:replace="~{fragments/admin-header :: adminHeader('catalogo')}"></header>
 
-<main class="container py-5">
+<main class="container py-5 flex-grow-1">
 
     <h1 class="fw-bolder text-primary mb-2">ADMINISTRACIÓN DEL CATALOGO</h1>
 
@@ -28,7 +28,7 @@
     <div class="alert alert-success" role="status" th:if="${mensaje}" th:text="${mensaje}"></div>
     <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
 
-    <!-- ===== PRODUCTOS ===== -->
+    <!-- ===== PRODUCTOS (desde BD) ===== -->
     <section th:if="${tipo == 'productos'}">
         <div class="table-responsive">
             <table class="table table-hover table-ktaro align-middle mb-0">
@@ -39,34 +39,38 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${#lists.isEmpty(products)}">
+                    <td colspan="8" class="text-center text-soft py-4">Aún no hay productos registrados.</td>
+                </tr>
                 <tr th:each="p, st : ${products}">
                     <td th:text="'P' + ${#numbers.formatInteger(st.count, 2)}">P01</td>
                     <td>
-                        <img th:if="${p.image() != null}" th:src="${p.image()}" th:alt="${p.name()}"
+                        <img th:if="${p.imagen != null}" th:src="${p.imagen}" th:alt="${p.nombre}"
                              width="48" height="48" style="object-fit: cover; border-radius: 8px;">
-                        <span th:unless="${p.image() != null}" class="text-muted small">Sin imagen</span>
+                        <span th:unless="${p.imagen != null}" class="text-muted small">Sin imagen</span>
                     </td>
-                    <td th:text="${p.name()}">Nombre</td>
-                    <td class="text-capitalize" th:text="${p.category()}">Snack</td>
+                    <td th:text="${p.nombre}">Nombre</td>
+                    <td th:text="${p.tipoProducto.etiqueta}">Snack</td>
                     <td>
                         <div class="d-flex align-items-center justify-content-center gap-3">
-                            <span class="fs-5" th:text="${p.stock()}">30</span>
+                            <span class="fs-5" th:text="${p.stock}">30</span>
                             <form class="input-group input-group-sm" style="width: 130px;"
-                                  th:action="@{/admin/productos/{id}/stock(id=${p.id()})}" method="post">
+                                  th:action="@{/admin/productos/{id}/stock(id=${p.idProducto})}" method="post">
                                 <input type="number" name="cantidad" value="1" min="1" step="1" class="form-control text-center px-1 py-1"
-                                       th:attr="aria-label='Cantidad a agregar al stock de ' + ${p.name()}">
+                                       th:attr="aria-label='Cantidad a agregar al stock de ' + ${p.nombre}">
                                 <button type="submit" class="btn btn-primary fw-bold" title="Aumentar stock">+ Stock</button>
                             </form>
-                            <span class="badge rounded-pill text-bg-warning" th:if="${p.stock() <= 10}">Bajo</span>
+                            <span class="badge rounded-pill text-bg-warning" th:if="${p.stock <= 10}">Bajo</span>
                         </div>
                     </td>
-                    <td th:text="'s/ ' + ${#numbers.formatDecimal(p.price(), 1, 2)}">s/ 0.00</td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(p.precio, 1, 2)}">S/ 0.00</td>
                     <td class="text-center">
-                        <span class="badge rounded-pill text-bg-success px-3" th:if="${p.active()}">Activo</span>
-                        <span class="badge rounded-pill text-bg-danger px-3" th:unless="${p.active()}">Inactivo</span>
+                        <span class="badge rounded-pill text-bg-success px-3" th:if="${p.estado.name() == 'ACTIVO'}">Activo</span>
+                        <span class="badge rounded-pill text-bg-danger px-3" th:unless="${p.estado.name() == 'ACTIVO'}">Inactivo</span>
                     </td>
                     <td class="text-center">
-                        <a class="text-decoration-none text-secondary" th:href="@{/admin/productos/{id}/editar(id=${p.id()})}">Editar</a>
+                        <a class="text-decoration-none text-secondary"
+                           th:href="@{/admin/productos/{id}/editar(id=${p.idProducto})}">Editar</a>
                     </td>
                 </tr>
                 </tbody>
@@ -98,10 +102,10 @@
                     </td>
                     <td th:text="${promo.name()}">Nombre</td>
                     <td>
-            <span class="badge text-bg-primary me-1" th:each="pid : ${promo.productIds()}"
-                  th:text="${productNames.getOrDefault(pid, pid)}">Producto</span>
+                        <span class="badge text-bg-primary me-1" th:each="pid : ${promo.productIds()}"
+                              th:text="${productNames.getOrDefault(pid, pid)}">Producto</span>
                     </td>
-                    <td th:text="'s/ ' + ${#numbers.formatDecimal(promo.price(), 1, 2)}">s/ 0.00</td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(promo.price(), 1, 2)}">S/ 0.00</td>
                     <td class="text-center">
                         <span class="badge rounded-pill text-bg-success px-3" th:if="${promo.active()}">Activo</span>
                         <span class="badge rounded-pill text-bg-danger px-3" th:unless="${promo.active()}">Inactivo</span>

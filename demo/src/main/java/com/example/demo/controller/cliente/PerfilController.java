@@ -1,6 +1,6 @@
 package com.example.demo.controller.cliente;
 
-import com.example.demo.dto.PerfilForm;
+import com.example.demo.dto.cliente.PerfilForm;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.mapper.ClienteMapper;

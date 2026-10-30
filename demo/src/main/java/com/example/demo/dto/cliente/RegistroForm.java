@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.cliente;
 
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
