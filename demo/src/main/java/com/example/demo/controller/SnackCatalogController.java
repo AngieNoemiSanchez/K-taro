@@ -31,7 +31,7 @@ public class SnackCatalogController {
 		model.addAttribute("activeCategory", selectedCategory.slug);
 		model.addAttribute("categoryLabel", selectedCategory.label);
 		model.addAttribute("snacks", productCatalog.findByCategory(selectedCategory.slug));
-		return "productos/snacks";
+		return "catalogo/snacks";
 	}
 
 	@GetMapping("/productos/detalle/{id}")
@@ -40,13 +40,13 @@ public class SnackCatalogController {
 		if (selectedProduct.isEmpty()) {
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 			model.addAttribute("productId", id);
-			return "productos/no-encontrado";
+			return "catalogo/no-encontrado";
 		}
 
 		Product product = selectedProduct.get();
 		model.addAttribute("product", product);
 		model.addAttribute("relatedProducts", productCatalog.findRelatedProducts(product));
-		return "productos/detalle";
+		return "catalogo/detalle";
 	}
 
 	private enum CatalogCategory {

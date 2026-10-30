@@ -28,8 +28,9 @@ import java.util.Optional;
 @RequestMapping("/admin/productos")
 public class AdminProductoController {
 
-    private static final String CREATE_VIEW = "productos/Crearproducto";
-    private static final String EDIT_VIEW = "productos/Editarproducto";
+    private static final String CREATE_VIEW = "catalogo/Crearproducto";
+    private static final String EDIT_VIEW = "catalogo/Editarproducto";
+    private static final String NOT_FOUND_VIEW = "catalogo/no-encontrado";
 
     private final ProductoService productoService;
     private final ProductoMapper mapper;
@@ -140,6 +141,6 @@ public class AdminProductoController {
     private static String noEncontrado(Long id, Model model, HttpServletResponse response) {
         response.setStatus(HttpStatus.NOT_FOUND.value());
         model.addAttribute("productId", id);
-        return "productos/no-encontrado";
+        return NOT_FOUND_VIEW;
     }
 }
