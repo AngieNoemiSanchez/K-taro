@@ -5,15 +5,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.service.CustomerCatalogService;
-import com.example.demo.service.PromotionService;
+import com.example.demo.service.catalogo.PromocionService;
 
 @Controller
 public class HomeController {
 
     private final CustomerCatalogService productCatalog;
-    private final PromotionService promotionService;
+    private final PromocionService promotionService;
 
-    public HomeController(CustomerCatalogService productCatalog, PromotionService promotionService) {
+    public HomeController(CustomerCatalogService productCatalog, PromocionService promotionService) {
         this.productCatalog = productCatalog;
         this.promotionService = promotionService;
     }
@@ -58,7 +58,7 @@ public class HomeController {
     // Vista de Promociones (las que se crean en el admin)
     @GetMapping("/promociones")
     public String promociones(Model model) {
-        model.addAttribute("promotions", promotionService.findVisibleCards());
+        model.addAttribute("promotions", promotionService.listarTarjetasVisibles());
         return "promociones/promociones";
     }
 }

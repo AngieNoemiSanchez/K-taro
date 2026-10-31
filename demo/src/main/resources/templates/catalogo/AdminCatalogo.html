@@ -42,8 +42,9 @@
                 <tr th:if="${#lists.isEmpty(products)}">
                     <td colspan="8" class="text-center text-soft py-4">Aún no hay productos registrados.</td>
                 </tr>
-                <tr th:each="p, st : ${products}">
-                    <td th:text="'P' + ${#numbers.formatInteger(st.count, 2)}">P01</td>
+                <tr th:each="p : ${products}">
+                    <!-- CAMBIO: ahora muestra el id real de la BD (id_producto) en vez del contador de fila -->
+                    <td th:text="'P' + ${#numbers.formatInteger(p.idProducto, 2)}">P01</td>
                     <td>
                         <img th:if="${p.imagen != null}" th:src="${p.imagen}" th:alt="${p.nombre}"
                              width="48" height="48" style="object-fit: cover; border-radius: 8px;">
@@ -93,25 +94,25 @@
                 <tr th:if="${#lists.isEmpty(promotions)}">
                     <td colspan="7" class="text-center text-soft py-4">Aún no hay promociones registradas.</td>
                 </tr>
-                <tr th:each="promo, st : ${promotions}">
-                    <td th:text="'PR' + ${#numbers.formatInteger(st.count, 2)}">PR01</td>
+                <tr th:each="promo : ${promotions}">
+                    <td th:text="'PR' + ${#numbers.formatInteger(promo.idPromocion, 2)}">PR01</td>
                     <td>
-                        <img th:if="${promo.image() != null}" th:src="${promo.image()}" th:alt="${promo.name()}"
+                        <img th:if="${promo.imagen != null}" th:src="${promo.imagen}" th:alt="${promo.nombre}"
                              width="80" height="48" style="object-fit: cover; border-radius: 8px;">
-                        <span th:unless="${promo.image() != null}" class="text-muted small">Sin imagen</span>
+                        <span th:unless="${promo.imagen != null}" class="text-muted small">Sin imagen</span>
                     </td>
-                    <td th:text="${promo.name()}">Nombre</td>
+                    <td th:text="${promo.nombre}">Nombre</td>
                     <td>
-                        <span class="badge text-bg-primary me-1" th:each="pid : ${promo.productIds()}"
-                              th:text="${productNames.getOrDefault(pid, pid)}">Producto</span>
+                        <span class="badge text-bg-primary me-1" th:each="pid : ${promo.productsIds}"
+                              th:text="${productNames.get(pid)}">Producto</span>
                     </td>
-                    <td th:text="'S/ ' + ${#numbers.formatDecimal(promo.price(), 1, 2)}">S/ 0.00</td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(promo.precio, 1, 2)}">S/ 0.00</td>
                     <td class="text-center">
-                        <span class="badge rounded-pill text-bg-success px-3" th:if="${promo.active()}">Activo</span>
-                        <span class="badge rounded-pill text-bg-danger px-3" th:unless="${promo.active()}">Inactivo</span>
+                        <span class="badge rounded-pill text-bg-success px-3" th:if="${promo.estado.name() == 'ACTIVO'}">Activo</span>
+                        <span class="badge rounded-pill text-bg-danger px-3" th:unless="${promo.estado.name() == 'ACTIVO'}">Inactivo</span>
                     </td>
                     <td class="text-center">
-                        <a class="text-decoration-none text-secondary" th:href="@{/admin/promociones/{id}/editar(id=${promo.id()})}">Editar</a>
+                        <a class="text-decoration-none text-secondary" th:href="@{/admin/promociones/{id}/editar(id=${promo.idPromocion})}">Editar</a>
                     </td>
                 </tr>
                 </tbody>

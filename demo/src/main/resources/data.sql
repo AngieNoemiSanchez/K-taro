@@ -1,4 +1,4 @@
-CREATE KtaroDB
+-- CREATE KtaroDB
 
 INSERT INTO horario_admin (dias, hora_inicio, hora_fin) VALUES
 ('LUN-VIE', '08:00', '16:00'),   -- turno mañana
@@ -43,4 +43,23 @@ INSERT INTO producto (nombre, descripcion, precio, stock, tipo_producto, estado,
 ('Shin Ramyun Spicy Chicken 120gr','Descripción pendiente',11.20,30,'RAMEN','ACTIVO','/images/shin.png'),
 ('Malang Soft Candy Milk 79gr','Descripción pendiente',8.71,30,'OTROS','ACTIVO','/images/Rectangle 15.png');
 
+INSERT INTO promocion (nombre, descripcion, precio, tiempo, estado, imagen) VALUES
+('Combo K-Drama Marathon',
+ 'Disfruta tus series favoritas con nuestro combo especial. Incluye 1 ramen, 1 bebida coreana y 1 snack asiático.',
+ 35.00, 'siempre', 'ACTIVO', '/images/promo1.png'),
+('Gojar Night',
+ '2x1 en Soju (sabores: original, uva, fresa, durazno), 2 snacks (salado, dulce o picante) y 1 bebida para mezclar (Milkis o soda).',
+ 50.00, 'siempre', 'ACTIVO', '/images/promo2.png');
+
+INSERT INTO promocion_producto (id_promocion, id_producto)
+SELECT pr.id_promocion, p.id_producto
+FROM promocion pr
+JOIN producto p ON p.nombre IN ('Shin Cup Ramyun Superstar','Jinro Lemon Soju 13% 360ml','Korean Cracker 192gr.')
+WHERE pr.nombre = 'Combo K-Drama Marathon';
+
+INSERT INTO promocion_producto (id_promocion, id_producto)
+SELECT pr.id_promocion, p.id_producto
+FROM promocion pr
+JOIN producto p ON p.nombre IN ('Jinro Lemon Soju 13% 360ml','Korean Cracker 192gr.','Malang Soft Candy Milk 79gr','Peperos Original')
+WHERE pr.nombre = 'Gojar Night';
 

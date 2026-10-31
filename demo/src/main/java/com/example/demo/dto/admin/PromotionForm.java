@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.model.catalogo.Estado;
+import com.example.demo.model.catalogo.Tiempo;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -18,46 +20,81 @@ public class PromotionForm {
 
     @NotBlank(message = "Ingresa el nombre de la promoción")
     @Size(max = 100, message = "Máximo 100 caracteres")
-    private String name;
+    private String nombre;
 
-    @NotBlank(message = "Selecciona la duración")
-    @Pattern(regexp = "siempre|domingos|miercoles", message = "Duración no válida")
-    private String duration;
+    @NotNull(message = "Selecciona el tiempo de duración")
+    private Tiempo tiempo = Tiempo.siempre;
 
     @NotBlank(message = "Ingresa la descripción")
     @Size(max = 500, message = "Máximo 500 caracteres")
-    private String description;
+    private String descripcion;
 
     @NotEmpty(message = "Agrega al menos un producto a la promoción")
-    private List<String> productIds = new ArrayList<>();
+    private List<Long> productIds = new ArrayList<>();
 
     @NotNull(message = "Ingresa el precio de la promoción")
     @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0")
     @Digits(integer = 6, fraction = 2, message = "Usa como máximo 2 decimales")
-    private BigDecimal price;
+    private BigDecimal precio;
 
-    private boolean active = true;
+    @NotNull(message = "Selecciona el estado")
+    private Estado estado = Estado.ACTIVO;
 
     private MultipartFile image;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getDuration() { return duration; }
-    public void setDuration(String duration) { this.duration = duration; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public Tiempo getTiempo() {
+        return tiempo;
+    }
 
-    public List<String> getProductIds() { return productIds; }
-    public void setProductIds(List<String> productIds) { this.productIds = productIds; }
+    public void setTiempo(Tiempo tiempo) {
+        this.tiempo = tiempo;
+    }
 
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-    public MultipartFile getImage() { return image; }
-    public void setImage(MultipartFile image) { this.image = image; }
+    public List<Long> getProductIds() {
+        return productIds;
+    }
+
+    public void setProductIds(List<Long> productIds) {
+        this.productIds = productIds;
+    }
+
+        public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
 }

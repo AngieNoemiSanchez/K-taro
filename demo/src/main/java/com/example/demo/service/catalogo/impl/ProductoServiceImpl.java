@@ -29,11 +29,12 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public List<Producto> listar() {
-        return repo.findAllByOrderByNombreAsc().stream().map(mapper::toModel).toList();
+        return repo.findAllByOrderByIdAsc().stream().map(mapper::toModel).toList();
     }
 
     @Override
     public Optional<Producto> buscarPorId(Long id) {
+
         return repo.findById(id).map(mapper::toModel);
     }
 

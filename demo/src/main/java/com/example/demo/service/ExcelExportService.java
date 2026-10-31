@@ -19,15 +19,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.AdminProduct;
-import com.example.demo.model.Promotion;
-
+import com.example.demo.model.catalogo.Estado;
+import com.example.demo.model.catalogo.Promocion;
 
 @Service
 public class ExcelExportService {
 
-    public byte[] exportCatalog(List<AdminProduct> products, List<Promotion> promotions) throws IOException {
+    public byte[] exportCatalog(List<AdminProduct> products, List<Promocion> promotions) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-
 
             XSSFFont whiteBold = workbook.createFont();
             whiteBold.setBold(true);
@@ -37,54 +36,66 @@ public class ExcelExportService {
             header.setFillForegroundColor(new XSSFColor(new byte[] { 57, 41, (byte) 181 }, null));
             header.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-
             CellStyle money = workbook.createCellStyle();
             money.setDataFormat(workbook.createDataFormat().getFormat("\"S/ \"#,##0.00"));
-
 
             Sheet sheet = workbook.createSheet("Productos");
             writeHeader(sheet, header, "ID", "Nombre", "Tipo", "Precio", "Stock", "Estado");
             int rowIndex = 1;
             for (AdminProduct p : products) {
                 Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(p.id());
+                row.createCell(0).setCellValue(formatId("P", p.id()));
                 row.createCell(1).setCellValue(p.name());
-                row.createCell(2).setCellValue(p.category());
+                row.createCell(2).setCellValue(capitalize(p.category()));
                 var price = row.createCell(3);
                 price.setCellValue(p.price().doubleValue());
                 price.setCellStyle(money);
                 row.createCell(4).setCellValue(p.stock().doubleValue());
                 row.createCell(5).setCellValue(p.active() ? "Activo" : "Inactivo");
             }
-            setWidths(sheet, 8000, 11000, 4000, 4000, 3000, 4000);
+            setWidths(sheet, 4000, 11000, 4000, 4000, 3000, 4000);
             sheet.createFreezePane(0, 1);
             sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 5));
 
-            // ---------- Hoja de promociones
             Map<String, String> names = products.stream()
                     .collect(Collectors.toMap(AdminProduct::id, AdminProduct::name, (a, b) -> a));
             Sheet promoSheet = workbook.createSheet("Promociones");
             writeHeader(promoSheet, header, "ID", "Nombre", "Duración", "Productos", "Precio", "Estado");
             rowIndex = 1;
-            for (Promotion promo : promotions) {
+            for (Promocion promo : promotions) {
                 Row row = promoSheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(promo.id());
-                row.createCell(1).setCellValue(promo.name());
-                row.createCell(2).setCellValue(promo.duration());
-                row.createCell(3).setCellValue(promo.productIds().stream()
-                        .map(id -> names.getOrDefault(id, id))
+                row.createCell(0).setCellValue(formatId("PR", String.valueOf(promo.getIdPromocion())));
+                row.createCell(1).setCellValue(promo.getNombre());
+                row.createCell(2).setCellValue(promo.getTiempo().getEtiqueta());
+                row.createCell(3).setCellValue(promo.getProductsIds().stream()
+                        .map(id -> names.getOrDefault(String.valueOf(id), String.valueOf(id)))
                         .collect(Collectors.joining(", ")));
                 var price = row.createCell(4);
-                price.setCellValue(promo.price().doubleValue());
+                price.setCellValue(promo.getPrecio().doubleValue());
                 price.setCellStyle(money);
-                row.createCell(5).setCellValue(promo.active() ? "Activo" : "Inactivo");
+                row.createCell(5).setCellValue(promo.getEstado() == Estado.ACTIVO ? "Activo" : "Inactivo");
             }
-            setWidths(promoSheet, 4000, 8000, 4000, 16000, 4000, 4000);
+            setWidths(promoSheet, 4000, 8000, 5000, 16000, 4000, 4000);
             promoSheet.createFreezePane(0, 1);
 
             workbook.write(out);
             return out.toByteArray();
         }
+    }
+
+    private static String formatId(String prefix, String id) {
+        try {
+            return prefix + String.format("%02d", Long.parseLong(id));
+        } catch (NumberFormatException e) {
+            return prefix + id;
+        }
+    }
+
+    private static String capitalize(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
     }
 
     private static void writeHeader(Sheet sheet, CellStyle style, String... titles) {

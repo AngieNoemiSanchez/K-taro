@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.admin;
 import com.example.demo.service.catalogo.ProductAdminService;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.service.ExcelExportService;
-import com.example.demo.service.PromotionService;
+import com.example.demo.service.catalogo.PromocionService;
 
 @Controller
 public class AdminExportController {
@@ -22,10 +22,10 @@ public class AdminExportController {
 
     private final ExcelExportService excel;
     private final ProductAdminService productAdmin;
-    private final PromotionService promotions;
+    private final PromocionService promotions;
 
     public AdminExportController(ExcelExportService excel, ProductAdminService productAdmin,
-                                 PromotionService promotions) {
+                                 PromocionService promotions) {
         this.excel = excel;
         this.productAdmin = productAdmin;
         this.promotions = promotions;
@@ -33,7 +33,7 @@ public class AdminExportController {
 
     @GetMapping("/admin/catalogo/exportar")
     public ResponseEntity<byte[]> export() throws IOException {
-        byte[] file = excel.exportCatalog(productAdmin.findAll(), promotions.findAll());
+        byte[] file = excel.exportCatalog(productAdmin.findAllByCreation(), promotions.listar());
         String filename = "catalogo-ktaro-" + LocalDate.now() + ".xlsx";
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
