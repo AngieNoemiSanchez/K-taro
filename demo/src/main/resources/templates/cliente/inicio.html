@@ -29,20 +29,20 @@
       <article class="product-card" th:each="product : ${featuredProducts}">
         <span class="soldout-badge" th:unless="${product.inStock()}">Agotado</span>
         <div class="product-image">
-          <a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
-             th:aria-label="|Ver detalle de ${product.name()}|">
-            <img th:if="${product.image() != null}" th:src="${product.image()}" th:alt="${product.name()}" loading="lazy">
-            <div class="image-placeholder" th:if="${product.image() == null}" role="img" th:aria-label="|Imagen pendiente: ${product.name()}|">
+          <a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.idProducto})}"
+             th:aria-label="|Ver detalle de ${product.nombre}|">
+            <img th:if="${product.imagen != null}" th:src="${product.imagen}" th:alt="${product.nombre}" loading="lazy">
+            <div class="image-placeholder" th:if="${product.imagen == null}" role="img" th:aria-label="|Imagen pendiente: ${product.nombre}|">
               <span class="placeholder-icon" aria-hidden="true">✳</span><span>Imagen pendiente</span>
             </div>
           </a>
         </div>
         <div class="product-info">
-          <h3><a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
-                 th:text="${product.name()}">Producto</a></h3>
-          <p class="product-price">S/ <span th:text="${product.price().toPlainString()}">0.00</span></p>
+          <h3><a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.idProducto})}"
+                 th:text="${product.nombre}">Producto</a></h3>
+          <p class="product-price">S/ <span th:text="${product.precio.toPlainString()}">0.00</span></p>
           <button class="button button-cart add-to-cart" type="button" th:disabled="${!product.inStock()}"
-                  th:attr="data-product-id=${product.id()},data-product-name=${product.name()},data-product-price=${product.price()},data-product-stock=${product.stock()}">
+                  th:attr="data-product-id=${product.idProducto},data-product-name=${product.nombre},data-product-price=${product.precio},data-product-stock=${product.stock}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
             <span th:text="${product.inStock()} ? 'Agregar al carrito' : 'Agotado'">Agregar al carrito</span>
           </button>
@@ -52,36 +52,35 @@
   </section>
 
   <section class="promo-section" id="promociones" aria-labelledby="promoTitle"
-           th:if="${!#lists.isEmpty(promotionalProducts)}">
+           th:if="${!#lists.isEmpty(promotions)}">
     <div class="promo-inner">
       <div class="section-heading">
         <h2 id="promoTitle">Promociones</h2>
         <a class="see-more" th:href="@{/promociones}" aria-label="Ver más promociones">Ver más <span aria-hidden="true">⟶</span></a>
       </div>
       <div class="product-grid">
-        <article class="product-card promo-card" th:each="product : ${promotionalProducts}">
-          <span class="discount-badge" th:text="${product.discountPercent()} + '% OFF'">30% OFF</span>
-          <span class="soldout-badge" th:unless="${product.inStock()}" style="top: 48px;">Agotado</span>
+        <article class="product-card promo-card" th:each="promo : ${promotions}">
+          <span class="soldout-badge" th:unless="${promo.inStock()}">Agotado</span>
           <div class="product-image">
-            <a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
-               th:aria-label="|Ver detalle de ${product.name()}|">
-              <img th:if="${product.image() != null}" th:src="${product.image()}" th:alt="${product.name()}" loading="lazy">
-              <div class="image-placeholder" th:if="${product.image() == null}" role="img" th:aria-label="|Imagen pendiente: ${product.name()}|">
+            <a class="product-detail-link" th:href="@{/promociones}"
+               th:aria-label="|Ver la promoción ${promo.name()}|">
+              <img th:if="${promo.image() != null}" th:src="${promo.image()}" th:alt="${promo.name()}" loading="lazy">
+              <div class="image-placeholder" th:if="${promo.image() == null}" role="img" th:aria-label="|Imagen pendiente: ${promo.name()}|">
                 <span class="placeholder-icon" aria-hidden="true">✳</span><span>Imagen pendiente</span>
               </div>
             </a>
           </div>
           <div class="product-info">
-            <h3><a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
-                   th:text="${product.name()}">Producto en promoción</a></h3>
+            <h3><a class="product-detail-link" th:href="@{/promociones}"
+                   th:text="${promo.name()}">Promoción</a></h3>
             <p class="price-line">
-              <del>S/ <span th:text="${product.originalPrice().toPlainString()}">0.00</span></del>
-              <strong>S/ <span th:text="${product.price().toPlainString()}">0.00</span></strong>
+              <del>S/ <span th:text="${promo.regularPrice().toPlainString()}">0.00</span></del>
+              <strong>S/ <span th:text="${promo.price().toPlainString()}">0.00</span></strong>
             </p>
-            <button class="button button-cart add-to-cart" type="button" th:disabled="${!product.inStock()}"
-                    th:attr="data-product-id=${product.id()},data-product-name=${product.name()},data-product-price=${product.price()},data-product-stock=${product.stock()}">
+            <button class="button button-cart add-to-cart" type="button" th:disabled="${!promo.inStock()}"
+                    th:attr="data-product-id=${promo.id()},data-product-name=${promo.name()},data-product-price=${promo.price()},data-product-stock=${promo.stock()},data-category='Promociones'">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
-              <span th:text="${product.inStock()} ? 'Agregar al carrito' : 'Agotado'">Agregar al carrito</span>
+              <span th:text="${promo.inStock()} ? 'Agregar al carrito' : 'Agotado'">Agregar al carrito</span>
             </button>
           </div>
         </article>

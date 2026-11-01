@@ -56,5 +56,9 @@ public class Producto {
     public String getImagen() {
         return imagen;
     }
+
+    public boolean inStock() {
+        return stock != null && stock > 0;
+    }
 }
 

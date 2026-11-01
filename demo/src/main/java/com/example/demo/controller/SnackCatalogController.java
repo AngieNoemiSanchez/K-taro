@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.model.Product;
+import com.example.demo.model.catalogo.Producto;
+import com.example.demo.model.catalogo.TipoProducto;
 import com.example.demo.service.CustomerCatalogService;
 
 @Controller
@@ -26,48 +25,26 @@ public class SnackCatalogController {
 
 	@GetMapping("/productos/{category}")
 	public String catalog(@PathVariable String category, Model model) {
-		CatalogCategory selectedCategory = CatalogCategory.fromSlug(category)
+		TipoProducto tipo = TipoProducto.fromSlug(category)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		model.addAttribute("activeCategory", selectedCategory.slug);
-		model.addAttribute("categoryLabel", selectedCategory.label);
-		model.addAttribute("snacks", productCatalog.findByCategory(selectedCategory.slug));
+		model.addAttribute("activeCategory", tipo.getSlug());
+		model.addAttribute("categoryLabel", tipo.getEtiqueta());
+		model.addAttribute("snacks", productCatalog.findByCategory(tipo));
 		return "catalogo/snacks";
 	}
 
 	@GetMapping("/productos/detalle/{id}")
 	public String detail(@PathVariable String id, Model model, HttpServletResponse response) {
-		Optional<Product> selectedProduct = productCatalog.findVisibleById(id);
-		if (selectedProduct.isEmpty()) {
+		Optional<Producto> selected = productCatalog.findVisibleById(id);
+		if (selected.isEmpty()) {
 			response.setStatus(HttpStatus.NOT_FOUND.value());
 			model.addAttribute("productId", id);
 			return "catalogo/no-encontrado";
 		}
 
-		Product product = selectedProduct.get();
+		Producto product = selected.get();
 		model.addAttribute("product", product);
 		model.addAttribute("relatedProducts", productCatalog.findRelatedProducts(product));
 		return "catalogo/detalle";
-	}
-
-	private enum CatalogCategory {
-		SNACKS("snacks", "Snacks"),
-		RAMEN("ramen", "Ramen"),
-		BEBIDAS("bebidas", "Bebidas"),
-		OTROS("otros", "Otros");
-
-		private final String slug;
-		private final String label;
-
-		CatalogCategory(String slug, String label) {
-			this.slug = slug;
-			this.label = label;
-		}
-
-		private static Optional<CatalogCategory> fromSlug(String slug) {
-			String normalizedSlug = slug.toLowerCase(Locale.ROOT);
-			return List.of(values()).stream()
-					.filter(category -> category.slug.equals(normalizedSlug))
-					.findFirst();
-		}
 	}
 }

@@ -1,5 +1,4 @@
 package com.example.demo.controller.admin;
-import com.example.demo.service.catalogo.ProductAdminService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.service.ExcelExportService;
+import com.example.demo.service.catalogo.ProductoService;
 import com.example.demo.service.catalogo.PromocionService;
 
 @Controller
@@ -21,19 +21,19 @@ public class AdminExportController {
             MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
     private final ExcelExportService excel;
-    private final ProductAdminService productAdmin;
+    private final ProductoService productoService;
     private final PromocionService promotions;
 
-    public AdminExportController(ExcelExportService excel, ProductAdminService productAdmin,
+    public AdminExportController(ExcelExportService excel, ProductoService productoService,
                                  PromocionService promotions) {
         this.excel = excel;
-        this.productAdmin = productAdmin;
+        this.productoService = productoService;
         this.promotions = promotions;
     }
 
     @GetMapping("/admin/catalogo/exportar")
     public ResponseEntity<byte[]> export() throws IOException {
-        byte[] file = excel.exportCatalog(productAdmin.findAllByCreation(), promotions.listar());
+        byte[] file = excel.exportCatalog(productoService.listar(), promotions.listar());
         String filename = "catalogo-ktaro-" + LocalDate.now() + ".xlsx";
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
