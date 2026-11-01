@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.demo.model.catalogo.Estado;
 import com.example.demo.model.catalogo.Tiempo;
+import com.example.demo.model.catalogo.TipoPromocion;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -41,6 +42,12 @@ public class PromotionForm {
     private Estado estado = Estado.ACTIVO;
 
     private MultipartFile image;
+
+    @NotNull(message = "Selecciona el tipo de promoción")
+    private TipoPromocion tipoPromocion = TipoPromocion.COMBO;
+
+    public TipoPromocion getTipoPromocion() { return tipoPromocion; }
+    public void setTipoPromocion(TipoPromocion tipoPromocion) { this.tipoPromocion = tipoPromocion; }
 
     public String getNombre() {
         return nombre;

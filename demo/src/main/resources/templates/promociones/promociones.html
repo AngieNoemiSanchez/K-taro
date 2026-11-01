@@ -27,52 +27,111 @@
 
   <h1 class="promociones-title">PROMOCIONES</h1>
 
-  <p class="promo-empty" th:if="${#lists.isEmpty(promotions)}">
-    Por ahora no hay promociones disponibles. ¡Vuelve pronto!
-  </p>
+  <!-- Selector: combos u ofertas -->
+  <div style="display:flex; align-items:center; gap:12px; margin: 0 0 24px;">
+    <label for="promoTipo" style="font-weight:700; color:#3929B5;">Ver:</label>
+    <select id="promoTipo" aria-label="Elegir entre combos y ofertas"
+            style="padding:8px 14px; border:2px solid #3929B5; border-radius:8px; font-weight:700; color:#3929B5; background:#fff;">
+      <option value="combos" th:selected="${tipo == 'combos'}">Combos</option>
+      <option value="ofertas" th:selected="${tipo == 'ofertas'}">Ofertas</option>
+    </select>
+  </div>
 
-  <!-- Una tarjeta por promoción activa; la imagen subida en el admin es el fondo -->
-  <section class="promo-banner" th:each="promo : ${promotions}"
-           th:classappend="${promo.image() == null} ? 'promo-banner--noimg'"
-           th:style="${promo.image() != null} ? |background-image: url('${promo.image()}')|">
+  <!-- ===== COMBOS: banners horizontales ===== -->
+  <th:block th:if="${tipo == 'combos'}">
 
-    <div class="promo-banner-content">
+    <p class="promo-empty" th:if="${#lists.isEmpty(promotions)}">
+      Por ahora no hay combos disponibles. ¡Vuelve pronto!
+    </p>
 
-      <span class="promo-duration" th:text="${promo.durationLabel()}">Siempre disponible</span>
+    <section class="promo-banner" th:each="promo : ${promotions}"
+             th:classappend="${promo.image() == null} ? 'promo-banner--noimg'"
+             th:style="${promo.image() != null} ? |background-image: url('${promo.image()}')|">
 
-      <h2 th:text="${promo.name()}">Nombre de la promoción</h2>
+      <div class="promo-banner-content">
 
-      <p th:text="${promo.description()}">Descripción de la promoción.</p>
+        <span class="promo-duration" th:text="${promo.durationLabel()}">Siempre disponible</span>
 
-      <ul class="promo-includes">
-        <li th:each="productName : ${promo.productNames()}" th:text="${productName}">Producto</li>
-      </ul>
+        <h2 th:text="${promo.name()}">Nombre del combo</h2>
 
-      <div class="promo-banner-price">
-        <del>S/ <span th:text="${promo.regularPrice().toPlainString()}">0.00</span></del>
-        S/ <span th:text="${promo.price().toPlainString()}">0.00</span>
+        <p th:text="${promo.description()}">Descripción del combo.</p>
+
+        <ul class="promo-includes">
+          <li th:each="productName : ${promo.productNames()}" th:text="${productName}">Producto</li>
+        </ul>
+
+        <div class="promo-banner-price">
+          <del>S/ <span th:text="${promo.regularPrice().toPlainString()}">0.00</span></del>
+          S/ <span th:text="${promo.price().toPlainString()}">0.00</span>
+        </div>
+
+        <button
+                type="button"
+                class="promo-add-btn promo-banner-btn add-to-cart"
+                th:disabled="${!promo.canBuy()}"
+                th:attr="data-product-id=${promo.id()},data-product-name=${promo.name()},data-product-price=${promo.price()},data-product-stock=${promo.availableUnits()},data-category='Combos'"
+                th:text="${promo.buttonLabel()}">
+          Agregar al carrito
+        </button>
+
       </div>
 
-      <button
-              type="button"
-              class="promo-add-btn promo-banner-btn add-to-cart"
-              th:disabled="${!promo.inStock()}"
-              th:attr="data-product-id=${promo.id()},data-product-name=${promo.name()},data-product-price=${promo.price()},data-product-stock=${promo.stock()},data-category='Promociones'"
-              th:text="${promo.inStock()} ? 'Agregar al carrito' : 'Agotado'">
-        Agregar al carrito
-      </button>
+    </section>
 
+  </th:block>
+
+  <!-- ===== OFERTAS: tarjetas de producto con descuento ===== -->
+  <th:block th:if="${tipo == 'ofertas'}">
+
+    <p class="promo-empty" th:if="${#lists.isEmpty(offers)}">
+      Por ahora no hay ofertas disponibles. ¡Vuelve pronto!
+    </p>
+
+    <div class="product-grid">
+      <article class="product-card promo-card" th:each="offer : ${offers}">
+        <span class="discount-badge" th:text="${offer.discountPercent()} + '% OFF'">30% OFF</span>
+        <span class="soldout-badge" th:unless="${offer.inStock()}" style="top: 48px;">Agotado</span>
+        <div class="product-image">
+          <a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${offer.productId()})}"
+             th:aria-label="|Ver detalle de ${offer.name()}|">
+            <img th:if="${offer.image() != null}" th:src="${offer.image()}" th:alt="${offer.name()}" loading="lazy">
+            <div class="image-placeholder" th:if="${offer.image() == null}" role="img" th:aria-label="|Imagen pendiente: ${offer.name()}|">
+              <span class="placeholder-icon" aria-hidden="true">✳</span><span>Imagen pendiente</span>
+            </div>
+          </a>
+        </div>
+        <div class="product-info">
+          <h3><a class="product-detail-link" th:href="@{/productos/detalle/{id}(id=${offer.productId()})}"
+                 th:text="${offer.name()}">Producto en oferta</a></h3>
+          <p class="price-line">
+            <del>S/ <span th:text="${offer.regularPrice().toPlainString()}">0.00</span></del>
+            <strong>S/ <span th:text="${offer.offerPrice().toPlainString()}">0.00</span></strong>
+          </p>
+          <button class="button button-cart add-to-cart" type="button" th:disabled="${!offer.canBuy()}"
+                  th:attr="data-product-id=${offer.id()},data-product-name=${offer.name()},data-product-price=${offer.offerPrice()},data-product-stock=${offer.availableUnits()},data-category='Ofertas'">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+            <span th:text="${offer.buttonLabel()}">Agregar al carrito</span>
+          </button>
+        </div>
+      </article>
     </div>
 
-  </section>
+  </th:block>
 
 </main>
 
 <!-- Pie de página global -->
 <div th:replace="~{fragments/footer :: siteFooter}"></div>
 
+<script>
+  document.getElementById('promoTipo').addEventListener('change', function () {
+    window.location.href = '/promociones?tipo=' + encodeURIComponent(this.value);
+  });
+</script>
+
 <!-- JavaScript del carrito -->
 <script th:src="@{/js/ts/cart.js}"></script>
 
 </body>
+
 </html>

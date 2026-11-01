@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.service.CustomerCatalogService;
 import com.example.demo.service.catalogo.PromocionService;
@@ -21,7 +22,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("featuredProducts", productCatalog.getFeaturedProducts());
-        model.addAttribute("promotions", promocionService.listarTarjetasVisibles().stream().limit(4).toList());
+        model.addAttribute("offers", promocionService.listarOfertasVisibles().stream().limit(4).toList());
         return "cliente/inicio";
     }
 
@@ -50,10 +51,15 @@ public class HomeController {
         return "usuario/contacto";
     }
 
-    // Promociones creadas en el admin
     @GetMapping("/promociones")
-    public String promociones(Model model) {
-        model.addAttribute("promotions", promocionService.listarTarjetasVisibles());
+    public String promociones(@RequestParam(defaultValue = "combos") String tipo, Model model) {
+        boolean ofertas = "ofertas".equals(tipo);
+        model.addAttribute("tipo", ofertas ? "ofertas" : "combos");
+        if (ofertas) {
+            model.addAttribute("offers", promocionService.listarOfertasVisibles());
+        } else {
+            model.addAttribute("promotions", promocionService.listarTarjetasVisibles());
+        }
         return "promociones/promociones";
     }
 }

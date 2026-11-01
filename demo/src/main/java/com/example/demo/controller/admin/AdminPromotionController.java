@@ -125,6 +125,7 @@ public class AdminPromotionController {
                 .filter(p -> p.getEstado() == Estado.ACTIVO).toList());
         model.addAttribute("selectedProducts", selectedProducts(form));
         model.addAttribute("tiempos", Tiempo.values());
+        model.addAttribute("tiposPromocion", com.example.demo.model.catalogo.TipoPromocion.values());
         model.addAttribute("estados", Estado.values());
         return view;
     }

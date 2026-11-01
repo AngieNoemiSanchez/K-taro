@@ -86,20 +86,26 @@
             <table class="table table-hover table-ktaro align-middle mb-0">
                 <thead>
                 <tr>
-                    <th>ID</th><th>Imagen</th><th>Nombre de la promoción</th><th>Productos</th>
+                    <th>ID</th><th>Tipo</th><th>Imagen</th><th>Nombre de la promoción</th><th>Productos</th>
                     <th>Precio</th><th class="text-center">Estado</th><th class="text-center">Opción</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(promotions)}">
-                    <td colspan="7" class="text-center text-soft py-4">Aún no hay promociones registradas.</td>
+                    <td colspan="8" class="text-center text-soft py-4">Aún no hay promociones registradas.</td>
                 </tr>
                 <tr th:each="promo : ${promotions}">
                     <td th:text="'PR' + ${#numbers.formatInteger(promo.idPromocion, 2)}">PR01</td>
                     <td>
+                        <span class="badge rounded-pill px-3"
+                              th:classappend="${promo.tipoPromocion.name() == 'OFERTA'} ? 'text-bg-warning' : 'text-bg-primary'"
+                              th:text="${promo.tipoPromocion.etiqueta}">Combo</span>
+                    </td>
+                    <td>
                         <img th:if="${promo.imagen != null}" th:src="${promo.imagen}" th:alt="${promo.nombre}"
                              width="80" height="48" style="object-fit: cover; border-radius: 8px;">
-                        <span th:unless="${promo.imagen != null}" class="text-muted small">Sin imagen</span>
+                        <span th:if="${promo.imagen == null}" class="text-muted small"
+                              th:text="${promo.tipoPromocion.name() == 'OFERTA'} ? 'Usa la del producto' : 'Sin imagen'">Sin imagen</span>
                     </td>
                     <td th:text="${promo.nombre}">Nombre</td>
                     <td>

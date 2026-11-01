@@ -2,6 +2,8 @@ package com.example.demo.Entity.catalogo;
 
 import com.example.demo.model.catalogo.Estado;
 import com.example.demo.model.catalogo.Tiempo;
+import com.example.demo.model.catalogo.TipoPromocion;
+import org.hibernate.annotations.ColumnDefault;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -43,6 +45,11 @@ public class PromocionEntity {
             inverseJoinColumns = @JoinColumn(name = "id_producto"))
     private Set<ProductoEntity> productos = new LinkedHashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'COMBO'")
+    @Column(name = "tipo_promocion", nullable = false, length = 20)
+    private TipoPromocion tipoPromocion = TipoPromocion.COMBO;
+
     public PromocionEntity() {}
 
     public Long getId() { return id; }
@@ -61,4 +68,6 @@ public class PromocionEntity {
     public void setImagen(String imagen) { this.imagen = imagen; }
     public Set<ProductoEntity> getProductos() { return productos; }
     public void setProductos(Set<ProductoEntity> productos) { this.productos = productos; }
+    public TipoPromocion getTipoPromocion() { return tipoPromocion; }
+    public void setTipoPromocion(TipoPromocion tipoPromocion) { this.tipoPromocion = tipoPromocion; }
 }

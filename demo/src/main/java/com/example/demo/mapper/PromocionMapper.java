@@ -11,11 +11,10 @@ import java.util.ArrayList;
 @Component
 public class PromocionMapper {
 
-    /** Llamar dentro de una transacción: lee la relación con productos. */
     public Promocion toModel(PromocionEntity e) {
         if (e == null) return null;
         return new Promocion(e.getId(), e.getNombre(), e.getDescripcion(), e.getEstado(),
-                e.getPrecio(), e.getTiempo(),
+                e.getPrecio(), e.getTiempo(), e.getTipoPromocion(),
                 e.getProductos().stream().map(ProductoEntity::getId).toList(),
                 e.getImagen());
     }
@@ -24,6 +23,7 @@ public class PromocionMapper {
         PromotionForm f = new PromotionForm();
         f.setNombre(p.getNombre());
         f.setTiempo(p.getTiempo());
+        f.setTipoPromocion(p.getTipoPromocion());
         f.setDescripcion(p.getDescripcion());
         f.setProductIds(new ArrayList<>(p.getProductsIds()));
         f.setPrecio(p.getPrecio());

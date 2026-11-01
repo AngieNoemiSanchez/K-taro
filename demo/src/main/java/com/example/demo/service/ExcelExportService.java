@@ -39,7 +39,6 @@ public class ExcelExportService {
             CellStyle money = workbook.createCellStyle();
             money.setDataFormat(workbook.createDataFormat().getFormat("\"S/ \"#,##0.00"));
 
-            // ---------- Hoja de productos (orden por ID)
             Sheet sheet = workbook.createSheet("Productos");
             writeHeader(sheet, header, "ID", "Nombre", "Tipo", "Precio", "Stock", "Estado");
             int rowIndex = 1;
@@ -58,26 +57,27 @@ public class ExcelExportService {
             sheet.createFreezePane(0, 1);
             sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 5));
 
-            // ---------- Hoja de promociones (orden por ID)
+
             Map<Long, String> names = products.stream()
                     .collect(Collectors.toMap(Producto::getIdProducto, Producto::getNombre, (a, b) -> a));
             Sheet promoSheet = workbook.createSheet("Promociones");
-            writeHeader(promoSheet, header, "ID", "Nombre", "Duración", "Productos", "Precio", "Estado");
+            writeHeader(promoSheet, header, "ID", "Tipo", "Nombre", "Duración", "Productos", "Precio", "Estado");
             rowIndex = 1;
             for (Promocion promo : promotions) {
                 Row row = promoSheet.createRow(rowIndex++);
                 row.createCell(0).setCellValue("PR" + String.format("%02d", promo.getIdPromocion()));
-                row.createCell(1).setCellValue(promo.getNombre());
-                row.createCell(2).setCellValue(promo.getTiempo().getEtiqueta());
-                row.createCell(3).setCellValue(promo.getProductsIds().stream()
+                row.createCell(1).setCellValue(promo.getTipoPromocion().getEtiqueta());
+                row.createCell(2).setCellValue(promo.getNombre());
+                row.createCell(3).setCellValue(promo.getTiempo().getEtiqueta());
+                row.createCell(4).setCellValue(promo.getProductsIds().stream()
                         .map(id -> names.getOrDefault(id, String.valueOf(id)))
                         .collect(Collectors.joining(", ")));
-                var price = row.createCell(4);
+                var price = row.createCell(5);
                 price.setCellValue(promo.getPrecio().doubleValue());
                 price.setCellStyle(money);
-                row.createCell(5).setCellValue(promo.getEstado() == Estado.ACTIVO ? "Activo" : "Inactivo");
+                row.createCell(6).setCellValue(promo.getEstado() == Estado.ACTIVO ? "Activo" : "Inactivo");
             }
-            setWidths(promoSheet, 4000, 8000, 5000, 16000, 4000, 4000);
+            setWidths(promoSheet, 4000, 4000, 8000, 5000, 16000, 4000, 4000);
             promoSheet.createFreezePane(0, 1);
 
             workbook.write(out);
