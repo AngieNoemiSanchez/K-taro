@@ -18,10 +18,6 @@ public class RegistroController {
             @RequestParam("password") String password,
             RedirectAttributes redirectAttributes) {
 
-        // AQUÍ: Guardar el usuario en tu base de datos mediante tu servicio
-        // userService.registerUser(...);
-
-        // Mensaje de éxito al redirigir al login
         redirectAttributes.addFlashAttribute("success", "¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.");
         return "redirect:/login";
     }

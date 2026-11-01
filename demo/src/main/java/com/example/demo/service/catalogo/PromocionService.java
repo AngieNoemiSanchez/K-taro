@@ -6,6 +6,7 @@ import com.example.demo.dto.admin.PromotionForm;
 import com.example.demo.model.catalogo.Promocion;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface PromocionService {
@@ -13,10 +14,7 @@ public interface PromocionService {
     Optional<Promocion> buscarPorId(Long id);
     Promocion crear(PromotionForm form);
     Promocion actualizar(Long id, PromotionForm form);
-
-    /** Combos visibles en la tienda (banners). */
     List<PromotionCard> listarTarjetasVisibles();
-
-    /** Ofertas visibles en la tienda (productos con descuento). */
     List<OfferCard> listarOfertasVisibles();
+    Map<Long, OfferCard> ofertasVigentesPorProducto();
 }

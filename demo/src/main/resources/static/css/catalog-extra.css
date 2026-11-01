@@ -94,3 +94,32 @@
   color: #6b6b80;
   font-weight: 700;
 }
+
+.detail-product-image { position: relative; }
+
+.discount-badge ~ .soldout-badge { top: 48px; }
+
+.snack-price del,
+.related-price del {
+  margin-right: 8px;
+  color: #777;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.snack-price .price-now.is-offer {
+  color: #d93025;
+  font-weight: 800;
+}
+
+.detail-offer-tag {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #f00;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  vertical-align: middle;
+}

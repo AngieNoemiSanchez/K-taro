@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "rootDir": "frontend/ts",
     "outDir": "src/main/resources/static/js/ts",
     "strict": true,

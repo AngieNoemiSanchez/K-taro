@@ -1,128 +1,220 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <body>
+<body>
 
-    <!-- Formulario de promoción: usado por crearPromocion y editarPromocion -->
-        <form th:fragment="promotionForm(action, submitLabel)" id="promotionForm"
-              th:action="${action}" th:object="${promotionForm}" method="post" enctype="multipart/form-data" novalidate>
+<form th:fragment="productForm(action, submitLabel, stockLabel, isNew)" id="productForm"
+      th:action="${action}" th:object="${productForm}" method="post"
+      enctype="multipart/form-data" novalidate>
 
-            <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
-                <p class="mb-0" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+    <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+        <p class="mb-0" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="name" class="form-label fw-bold">Nombre del producto</label>
+            <input type="text" id="name" th:field="*{name}" class="form-control" maxlength="100"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="tipoProducto" class="form-label fw-bold">Tipo de producto</label>
+            <select id="tipoProducto" th:field="*{tipoProducto}" class="form-select"
+                    th:classappend="${#fields.hasErrors('tipoProducto')} ? 'is-invalid'">
+                <option value="">Selecciona un tipo...</option>
+                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.etiqueta}">Tipo</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{tipoProducto}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="description" class="form-label fw-bold">Descripción</label>
+            <textarea id="description" th:field="*{description}" class="form-control" rows="3"
+                      maxlength="500"
+                      th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+            <div class="invalid-feedback" th:errors="*{description}"></div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="price" class="form-label fw-bold">Precio (S/)</label>
+            <input type="number" id="price" th:field="*{price}" class="form-control"
+                   min="0.01" step="0.01"
+                   th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{price}"></div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="stock" class="form-label fw-bold" th:text="${stockLabel}">Stock</label>
+            <input type="number" id="stock" th:field="*{stock}" class="form-control"
+                   min="0" step="1"
+                   th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{stock}"></div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="estado" class="form-label fw-bold">Estado</label>
+            <select id="estado" th:field="*{estado}" class="form-select"
+                    th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'">
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.etiqueta}">Estado</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{estado}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="image" class="form-label fw-bold">Imagen del producto</label>
+            <input type="file" id="image" name="image" class="form-control"
+                   accept="image/png,image/jpeg,image/webp,image/gif"
+                   th:classappend="${#fields.hasErrors('image')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{image}"></div>
+            <div class="text-danger small mt-1" id="imageClientError" hidden></div>
+            <div class="form-text">PNG, JPG, WEBP o GIF, máximo 5 MB.
+                <span th:unless="${isNew}">Si no eliges una nueva, se conserva la actual.</span>
             </div>
+            <img id="imagePreview" class="img-thumbnail mt-3" alt="Vista previa del producto"
+                 style="max-height: 180px;" th:src="${currentImage}" th:hidden="${currentImage == null}">
+        </div>
 
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="promoType" class="form-label fw-bold">Tipo de promoción</label>
-                    <select id="promoType" th:field="*{tipoPromocion}" class="form-select"
-                            th:classappend="${#fields.hasErrors('tipoPromocion')} ? 'is-invalid'">
-                        <option th:each="tp : ${tiposPromocion}" th:value="${tp}" th:text="${tp.etiqueta}">Tipo</option>
-                    </select>
-                    <div class="invalid-feedback" th:errors="*{tipoPromocion}"></div>
-                    <div class="form-text">Combo: varios productos en un paquete. Oferta: un producto con descuento.</div>
-                </div>
+        <div class="col-12 col-md-8 d-flex gap-3 pt-3">
+            <button type="submit" class="btn btn-primary fw-bold rounded-3 py-2 flex-fill"
+                    th:text="${submitLabel}">Guardar</button>
+            <a th:href="@{/admin/catalogo(tipo='productos')}"
+               class="btn btn-outline-primary fw-bold rounded-3 py-2 flex-fill">Cancelar</a>
+        </div>
+    </div>
+</form>
 
-                <div class="col-md-4">
-                    <label for="name" class="form-label fw-bold">Nombre de la promoción</label>
-                    <input type="text" id="name" th:field="*{nombre}" class="form-control" maxlength="100"
-                           th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
-                    <div class="invalid-feedback" th:errors="*{nombre}"></div>
-                </div>
+<form th:fragment="promotionForm(action, submitLabel)" id="promotionForm"
+      th:action="${action}" th:object="${promotionForm}" method="post"
+      enctype="multipart/form-data" novalidate>
 
-                <div class="col-md-4">
-                    <label for="duration" class="form-label fw-bold">Tiempo de duración</label>
-                    <select id="duration" th:field="*{tiempo}" class="form-select"
-                            th:classappend="${#fields.hasErrors('tiempo')} ? 'is-invalid'">
-                        <option th:each="t : ${tiempos}" th:value="${t}" th:text="${t.etiqueta}">Tiempo</option>
-                    </select>
-                    <div class="invalid-feedback" th:errors="*{tiempo}"></div>
-                </div>
+    <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+        <p class="mb-0" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+    </div>
 
-                <div class="col-12" id="descriptionGroup">
-                    <label for="description" class="form-label fw-bold">Descripción de la promoción</label>
-                    <textarea id="description" th:field="*{descripcion}" class="form-control" rows="3" maxlength="500"
-                              th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid'"></textarea>
-                    <div class="invalid-feedback" th:errors="*{descripcion}"></div>
-                </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="nombre" class="form-label fw-bold">Nombre de la promoción</label>
+            <input type="text" id="nombre" th:field="*{nombre}" class="form-control" maxlength="100"
+                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+        </div>
 
-                <div class="col-12" id="imageGroup">
-                    <label for="image" class="form-label fw-bold">Imagen de fondo de la promoción</label>
-                    <input type="file" id="image" name="image" class="form-control"
-                           accept="image/png,image/jpeg,image/webp,image/gif"
-                           th:classappend="${#fields.hasErrors('image')} ? 'is-invalid'">
-                    <div class="invalid-feedback" th:errors="*{image}"></div>
-                    <div class="text-danger small mt-1" id="imageClientError" hidden></div>
-                    <div class="form-text">Se usa como fondo del banner del combo. Recomendado: horizontal, mínimo 1100×350 px. PNG, JPG, WEBP o GIF, máximo 5 MB.</div>
-                    <img id="imagePreview" class="img-thumbnail mt-3" alt="Vista previa del fondo"
-                         style="max-height: 180px;" th:src="${currentImage}" th:hidden="${currentImage == null}">
-                </div>
+        <div class="col-md-3">
+            <label for="promoType" class="form-label fw-bold">Tipo</label>
+            <select id="promoType" th:field="*{tipoPromocion}" class="form-select"
+                    th:classappend="${#fields.hasErrors('tipoPromocion')} ? 'is-invalid'">
+                <option th:each="t : ${tiposPromocion}" th:value="${t}" th:text="${t.etiqueta}">Tipo</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{tipoPromocion}"></div>
+        </div>
 
-                <div class="col-12">
-                    <h2 class="h6 fw-bold text-primary mt-2 mb-3">Contenido de la promoción</h2>
-                    <div class="input-group mb-3">
-                        <select id="promoProductSelect" class="form-select" aria-label="Producto a agregar">
-                            <option value="">Selecciona un producto...</option>
-                            <option th:each="p : ${availableProducts}"
-                                    th:value="${p.idProducto}" th:text="${p.nombre}"
-                                    th:attr="data-name=${p.nombre},data-category=${p.tipoProducto.etiqueta},data-price=${p.precio}">Producto</option>
-                        </select>
-                        <button type="button" id="addPromoProduct" class="btn btn-primary fw-bold">+ Agregar producto</button>
-                    </div>
+        <div class="col-md-3">
+            <label for="tiempo" class="form-label fw-bold">Duración</label>
+            <select id="tiempo" th:field="*{tiempo}" class="form-select"
+                    th:classappend="${#fields.hasErrors('tiempo')} ? 'is-invalid'">
+                <option th:each="t : ${tiempos}" th:value="${t}" th:text="${t.etiqueta}">Tiempo</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{tiempo}"></div>
+        </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-ktaro align-middle mb-0">
-                            <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Nombre del producto</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col"><span class="visually-hidden">Quitar</span></th>
-                            </tr>
-                            </thead>
-                            <tbody id="promoProductRows">
-                            <tr th:each="p : ${selectedProducts}" th:attr="data-product-id=${p.idProducto},data-price=${p.precio}">
-                                <td th:text="'P' + ${#numbers.formatInteger(p.idProducto, 2)}">P01</td>
-                                <td th:text="${p.nombre}">Nombre</td>
-                                <td th:text="${p.tipoProducto.etiqueta}">Tipo</td>
-                                <td class="text-end">
-                                    <input type="hidden" name="productIds" th:value="${p.idProducto}">
-                                    <button type="button" class="btn btn-sm btn-link text-danger promo-remove">Quitar</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="text-danger small mb-2" id="promoProductsError"
-                         th:if="${#fields.hasErrors('productIds')}" th:errors="*{productIds}"></div>
-                    <div class="text-soft fw-bold mt-2">
-                        <span>Precio normal de los productos: <strong>S/ <span id="promoRegularTotal">0.00</span></strong></span>
-                    </div>
-                    <div class="text-soft fw-bold mt-1" id="promoDiscountRow" hidden>
-                        <span>Descuento de la oferta: <strong id="promoDiscount">0%</strong></span>
-                    </div>
-                </div>
+        <div class="col-12" id="descriptionGroup">
+            <label for="descripcion" class="form-label fw-bold">Descripción</label>
+            <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="3"
+                      maxlength="500"
+                      th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid'"></textarea>
+            <div class="invalid-feedback" th:errors="*{descripcion}"></div>
+        </div>
 
-                <div class="col-md-4">
-                    <label for="price" class="form-label fw-bold"><span id="priceLabel">Precio promoción (S/)</span></label>
-                    <input type="number" id="price" th:field="*{precio}" class="form-control" min="0.01" step="0.01"
-                           th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid'">
-                    <div class="invalid-feedback" th:errors="*{precio}"></div>
-                </div>
-
-                <div class="col-md-4">
-                    <label for="active" class="form-label fw-bold">Estado de la promoción</label>
-                    <select id="active" th:field="*{estado}" class="form-select"
-                            th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'">
-                        <option th:each="e : ${estados}" th:value="${e}" th:text="${e.etiqueta}">Estado</option>
-                    </select>
-                    <div class="invalid-feedback" th:errors="*{estado}"></div>
-                </div>
-
-                <div class="col-12 col-md-8 d-flex gap-3 pt-3">
-                    <button type="submit" class="btn btn-primary fw-bold rounded-3 py-2 flex-fill" th:text="${submitLabel}">Guardar</button>
-                    <a th:href="@{/admin/catalogo(tipo='promociones')}" class="btn btn-outline-primary fw-bold rounded-3 py-2 flex-fill">Cancelar</a>
-                </div>
+        <div class="col-12">
+            <label for="promoProductSelect" class="form-label fw-bold">Productos incluidos</label>
+            <div class="d-flex gap-2">
+                <select id="promoProductSelect" class="form-select">
+                    <option value="">Selecciona un producto...</option>
+                    <option th:each="p : ${availableProducts}"
+                            th:value="${p.idProducto}"
+                            th:text="${p.nombre}"
+                            th:attr="data-name=${p.nombre},data-category=${p.tipoProducto?.etiqueta},data-price=${p.precio},data-image=${p.imagen}">Producto</option>
+                </select>
+                <button type="button" id="addPromoProduct" class="btn btn-outline-primary fw-bold text-nowrap">
+                    + Agregar producto
+                </button>
             </div>
-        </form>
+            <div class="text-danger small mt-1" id="promoProductsError"
+                 th:if="${#fields.hasErrors('productIds')}" th:errors="*{productIds}"></div>
 
-    </body>
+            <div class="table-responsive mt-3">
+                <table class="table align-middle mb-0">
+                    <thead>
+                    <tr><th>Código</th><th>Producto</th><th>Categoría</th><th></th></tr>
+                    </thead>
+                    <tbody id="promoProductRows">
+                    <tr th:each="p : ${selectedProducts}"
+                        th:attr="data-product-id=${p.idProducto},data-price=${p.precio},data-image=${p.imagen}">
+                        <td th:text="${'P' + #numbers.formatInteger(p.idProducto, 2)}">P01</td>
+                        <td th:text="${p.nombre}">Producto</td>
+                        <td th:text="${p.tipoProducto?.etiqueta}">Categoría</td>
+                        <td>
+                            <input type="hidden" name="productIds" th:value="${p.idProducto}">
+                            <button type="button" class="btn btn-sm btn-link text-danger promo-remove">Quitar</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-2 mb-0 fw-bold">Total regular: S/ <span id="promoRegularTotal">0.00</span></p>
+        </div>
+
+        <div class="col-md-4">
+            <label for="price" class="form-label fw-bold" id="priceLabel">Precio promoción (S/)</label>
+            <input type="number" id="price" th:field="*{precio}" class="form-control"
+                   min="0.01" step="0.01"
+                   th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{precio}"></div>
+            <div class="form-text" id="promoDiscountRow" hidden>
+                Descuento: <strong id="promoDiscount">0%</strong>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="estado" class="form-label fw-bold">Estado</label>
+            <select id="estado" th:field="*{estado}" class="form-select"
+                    th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'">
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.etiqueta}">Estado</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{estado}"></div>
+        </div>
+
+        <div class="col-12" id="imageGroup">
+            <label for="image" class="form-label fw-bold">Imagen de la promoción</label>
+            <input type="file" id="image" name="image" class="form-control"
+                   accept="image/png,image/jpeg,image/webp,image/gif"
+                   th:classappend="${#fields.hasErrors('image')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:errors="*{image}"></div>
+            <div class="text-danger small mt-1" id="imageClientError" hidden></div>
+            <div class="form-text">PNG, JPG, WEBP o GIF, máximo 5 MB.</div>
+            <img id="imagePreview" class="img-thumbnail mt-3" alt="Vista previa de la promoción"
+                 style="max-height: 180px;" th:src="${currentImage}" th:hidden="${currentImage == null}">
+        </div>
+
+
+        <div class="col-12" id="offerImageGroup" hidden>
+            <label class="form-label fw-bold">Imagen de la oferta</label>
+            <div>
+                <img id="offerImagePreview" class="img-thumbnail" alt="Imagen del producto en oferta"
+                     style="max-height: 180px;" hidden>
+            </div>
+            <div class="form-text" id="offerImageNote"></div>
+        </div>
+
+        <div class="col-12 col-md-8 d-flex gap-3 pt-3">
+            <button type="submit" class="btn btn-primary fw-bold rounded-3 py-2 flex-fill"
+                    th:text="${submitLabel}">Guardar</button>
+            <a th:href="@{/admin/catalogo(tipo='promociones')}"
+               class="btn btn-outline-primary fw-bold rounded-3 py-2 flex-fill">Cancelar</a>
+        </div>
+    </div>
+</form>
+
+</body>
 </html>

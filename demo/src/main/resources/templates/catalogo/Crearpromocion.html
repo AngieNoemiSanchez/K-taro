@@ -8,7 +8,7 @@
   <link rel="stylesheet" th:href="@{/css/admin.css}">
   <title>Crear promoción | K-TARO</title>
 </head>
-<body class="bg-white">
+<body class="bg-white d-flex flex-column min-vh-100">
 
 <header th:replace="~{fragments/admin-header :: adminHeader('catalogo')}"></header>
 
@@ -24,7 +24,7 @@
   </div>
 </main>
 
-<footer><div th:replace="~{fragments/footer :: siteFooter}"></div></footer>
+<footer class="mt-auto"><div th:replace="~{fragments/footer :: siteFooter}"></div></footer>
 
 <script th:src="@{/js/ts/admin-promocion.js}" defer></script>
 </body>

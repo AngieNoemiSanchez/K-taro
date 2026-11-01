@@ -13,6 +13,7 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> 
     List<ProductoEntity> findByTipoProductoOrderByNombreAsc(TipoProducto tipo);
     List<ProductoEntity> findByTipoProductoAndEstadoOrderByIdAsc(TipoProducto tipo, Estado estado);
     List<ProductoEntity> findTop4ByEstadoOrderByIdDesc(Estado estado);
+    List<ProductoEntity> findByEstadoOrderByIdDesc(Estado estado);
     boolean existsByNombreIgnoreCase(String nombre);
     boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
 }

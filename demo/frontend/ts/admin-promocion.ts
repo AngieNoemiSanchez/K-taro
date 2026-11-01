@@ -11,10 +11,19 @@ const form = document.querySelector<HTMLFormElement>("#promotionForm");
 const typeSelect = document.querySelector<HTMLSelectElement>("#promoType");
 const descriptionGroup = document.querySelector<HTMLElement>("#descriptionGroup");
 const imageGroup = document.querySelector<HTMLElement>("#imageGroup");
+const imageInput = document.querySelector<HTMLInputElement>("#image");
 const priceLabel = document.querySelector<HTMLElement>("#priceLabel");
 const priceInput = document.querySelector<HTMLInputElement>("#price");
 const discountRow = document.querySelector<HTMLElement>("#promoDiscountRow");
 const discountText = document.querySelector<HTMLElement>("#promoDiscount");
+
+
+const offerImageGroup = document.querySelector<HTMLElement>("#offerImageGroup");
+const offerImagePreview = document.querySelector<HTMLImageElement>("#offerImagePreview");
+const offerImageNote = document.querySelector<HTMLElement>("#offerImageNote");
+
+const OFFER_NOTE_DEFAULT =
+  "Las ofertas usan automáticamente la imagen del producto elegido. Para cambiarla, edita el producto.";
 
 function isOffer(): boolean {
   return typeSelect?.value === "OFERTA";
@@ -41,16 +50,49 @@ function updateDiscount(): void {
   }
 }
 
+
+function updateOfferImage(): void {
+  if (!offerImageGroup || !offerImagePreview || !offerImageNote) return;
+
+  offerImageGroup.hidden = !isOffer();
+  if (!isOffer()) return;
+
+  const productCount = rowsBody?.rows.length ?? 0;
+  const image = rowsBody?.rows[0]?.dataset.image ?? "";
+
+  if (image) {
+    offerImagePreview.src = image;
+    offerImagePreview.hidden = false;
+    offerImageNote.textContent = OFFER_NOTE_DEFAULT;
+  } else {
+    offerImagePreview.removeAttribute("src");
+    offerImagePreview.hidden = true;
+    offerImageNote.textContent = productCount > 0
+      ? "Este producto aún no tiene imagen; en la tienda se verá como «Imagen pendiente»."
+      : "Elige el producto: la oferta usará su imagen.";
+  }
+}
+
 function updateRegularTotal(): void {
-  if (!regularTotal) return;
-  regularTotal.textContent = currentTotal().toFixed(2);
+  if (regularTotal) regularTotal.textContent = currentTotal().toFixed(2);
   updateDiscount();
+  updateOfferImage();
 }
 
 function applyMode(): void {
   const offer = isOffer();
   if (descriptionGroup) descriptionGroup.hidden = offer;
   if (imageGroup) imageGroup.hidden = offer;
+
+
+  if (imageInput) {
+    imageInput.disabled = offer;
+    if (offer) {
+      imageInput.value = "";
+      imageInput.classList.remove("is-invalid");
+    }
+  }
+
   if (priceLabel) priceLabel.textContent = offer ? "Precio de oferta (S/)" : "Precio promoción (S/)";
   if (addButton) addButton.textContent = offer ? "Elegir producto" : "+ Agregar producto";
   if (offer && rowsBody) {
@@ -67,10 +109,17 @@ function textCell(text: string): HTMLTableCellElement {
   return cell;
 }
 
-function buildRow(id: string, name: string, category: string, price: string): HTMLTableRowElement {
+function buildRow(
+  id: string,
+  name: string,
+  category: string,
+  price: string,
+  image: string,
+): HTMLTableRowElement {
   const row = document.createElement("tr");
   row.dataset.productId = id;
   row.dataset.price = price;
+  row.dataset.image = image;
 
   const hidden = document.createElement("input");
   hidden.type = "hidden";
@@ -98,7 +147,13 @@ addButton?.addEventListener("click", () => {
   if (isOffer()) rowsBody.replaceChildren();
 
   rowsBody.append(
-    buildRow(id, option.dataset.name ?? id, option.dataset.category ?? "", option.dataset.price ?? "0"),
+    buildRow(
+      id,
+      option.dataset.name ?? id,
+      option.dataset.category ?? "",
+      option.dataset.price ?? "0",
+      option.dataset.image ?? "",
+    ),
   );
   productSelect.value = "";
   productsError?.remove();

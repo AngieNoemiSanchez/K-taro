@@ -44,25 +44,30 @@
   <section class="snack-catalog" th:attr="aria-label=|Catálogo de ${categoryLabel}|">
     <div class="snack-grid" id="snackGrid">
       <article class="snack-card" th:each="product : ${snacks}"
-               th:attr="data-product-name=${product.nombre}">
+               th:attr="data-product-name=${product.nombre()}">
+  <span class="discount-badge" th:if="${product.onOffer()}"
+        th:text="${product.discountPercent()} + '% OFF'">30% OFF</span>
         <span class="soldout-badge" th:unless="${product.inStock()}">Agotado</span>
 
-        <a class="snack-detail-link" th:href="@{/productos/detalle/{id}(id=${product.idProducto})}"
-           th:aria-label="|Ver detalle de ${product.nombre}|">
+        <a class="snack-detail-link" th:href="@{/productos/detalle/{id}(id=${product.id()})}"
+           th:aria-label="|Ver detalle de ${product.nombre()}|">
           <div class="snack-image">
-            <img th:if="${product.imagen != null}" th:src="${product.imagen}"
-                 th:alt="${product.nombre}" loading="lazy">
-            <div class="snack-image-placeholder" th:if="${product.imagen == null}"
-                 role="img" th:aria-label="|Imagen pendiente: ${product.nombre}|">
+            <img th:if="${product.imagen() != null}" th:src="${product.imagen()}"
+                 th:alt="${product.nombre()}" loading="lazy">
+            <div class="snack-image-placeholder" th:if="${product.imagen() == null}"
+                 role="img" th:aria-label="|Imagen pendiente: ${product.nombre()}|">
               <span aria-hidden="true">✳</span><span>Imagen pendiente</span>
             </div>
           </div>
-          <h2 th:text="${product.nombre}">Nombre del producto</h2>
+          <h2 th:text="${product.nombre()}">Nombre del producto</h2>
         </a>
 
-        <p class="snack-price">S/ <span th:text="${product.precio.toPlainString()}">0.00</span></p>
+        <p class="snack-price">
+          <del th:if="${product.onOffer()}">S/ <span th:text="${product.regularPrice().toPlainString()}">0.00</span></del>
+          <span class="price-now" th:classappend="${product.onOffer()} ? 'is-offer'">S/ <span th:text="${product.price().toPlainString()}">0.00</span></span>
+        </p>
         <button class="button button-cart add-to-cart" type="button" th:disabled="${!product.inStock()}"
-                th:attr="data-product-id=${product.idProducto},data-product-name=${product.nombre},data-product-price=${product.precio},data-product-stock=${product.stock}">
+                th:attr="data-product-id=${product.cartId()},data-product-name=${product.nombre()},data-product-price=${product.price()},data-product-stock=${product.stock()}">
           <span th:text="${product.inStock()} ? 'Agregar al carrito' : 'Agotado'">Agregar al carrito</span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L21 8H6"/>

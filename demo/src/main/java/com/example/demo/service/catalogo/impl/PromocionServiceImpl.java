@@ -85,6 +85,9 @@ public class PromocionServiceImpl implements PromocionService {
                 images.delete(e.getImagen());
                 e.setImagen(nueva.get());
             }
+        } else if (e.getImagen() != null) {
+            images.delete(e.getImagen());
+            e.setImagen(null);
         }
         return mapper.toModel(repo.save(e));
     }
@@ -107,6 +110,17 @@ public class PromocionServiceImpl implements PromocionService {
                 .map(this::toOffer)
                 .flatMap(Optional::stream)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, OfferCard> ofertasVigentesPorProducto() {
+        return listarOfertasVisibles().stream()
+                .filter(OfferCard::availableToday)
+                .collect(Collectors.toMap(
+                        OfferCard::productId,
+                        o -> o,
+                        (a, b) -> a.offerPrice().compareTo(b.offerPrice()) <= 0 ? a : b));
     }
 
     private String imagenSegunTipo(PromotionForm form) {

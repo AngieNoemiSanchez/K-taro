@@ -3,6 +3,7 @@ package com.example.demo.controller.admin;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.model.catalogo.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.dto.admin.PromotionForm;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.PromocionMapper;
-import com.example.demo.model.catalogo.Estado;
-import com.example.demo.model.catalogo.Producto;
-import com.example.demo.model.catalogo.Promocion;
-import com.example.demo.model.catalogo.Tiempo;
 import com.example.demo.service.ImageStorageService;
 import com.example.demo.service.catalogo.ProductoService;
 import com.example.demo.service.catalogo.PromocionService;
@@ -98,7 +95,7 @@ public class AdminPromotionController {
             try {
                 promocionService.actualizar(id, form);
                 redirect.addFlashAttribute("mensaje", "Promoción actualizada correctamente.");
-                return "redirect:/admin/promociones/" + id + "/editar";
+                return "redirect:/admin/catalogo?tipo=promociones";
             } catch (BusinessException ex) {
                 result.reject("promocion.error", ex.getMessage());
             }
@@ -109,6 +106,9 @@ public class AdminPromotionController {
     }
 
     private void validateImage(PromotionForm form, BindingResult result) {
+        if (form.getTipoPromocion() != TipoPromocion.COMBO) {
+            return;
+        }
         images.validate(form.getImage())
                 .ifPresent(message -> result.rejectValue("image", "image.invalid", message));
     }

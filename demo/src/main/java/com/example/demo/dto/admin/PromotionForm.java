@@ -26,7 +26,6 @@ public class PromotionForm {
     @NotNull(message = "Selecciona el tiempo de duración")
     private Tiempo tiempo = Tiempo.siempre;
 
-    @NotBlank(message = "Ingresa la descripción")
     @Size(max = 500, message = "Máximo 500 caracteres")
     private String descripcion;
 

@@ -24,6 +24,8 @@ INSERT INTO administrador (nombre, apellido, correo, password, fecha_nacimiento,
  '1995-07-25', '912345678', '72904518',
  (SELECT id_horario FROM horario_admin WHERE dias='LUN-SAB' AND hora_inicio='09:00'));
 
+ --PRODUCTOS
+
 INSERT INTO producto (nombre, descripcion, precio, stock, tipo_producto, estado, imagen) VALUES
 ('Peperos Original','Descripción pendiente',6.50,30,'SNACK','ACTIVO','/images/peperos.png'),
 ('Honey Butter Chip','Las papitas fritas más famosas de Corea. Combinación adictiva de papas crujientes con mantequilla francesa y miel real.',12.00,30,'SNACK','ACTIVO','/images/honey butter chip.png'),
@@ -43,13 +45,15 @@ INSERT INTO producto (nombre, descripcion, precio, stock, tipo_producto, estado,
 ('Shin Ramyun Spicy Chicken 120gr','Descripción pendiente',11.20,30,'RAMEN','ACTIVO','/images/shin.png'),
 ('Malang Soft Candy Milk 79gr','Descripción pendiente',8.71,30,'OTROS','ACTIVO','/images/Rectangle 15.png');
 
-INSERT INTO promocion (nombre, descripcion, precio, tiempo, estado, imagen) VALUES
+--PROMOCIONES
+
+INSERT INTO promocion (nombre, descripcion, precio, tiempo, tipo_promocion, estado, imagen) VALUES
 ('Combo K-Drama Marathon',
  'Disfruta tus series favoritas con nuestro combo especial. Incluye 1 ramen, 1 bebida coreana y 1 snack asiático.',
- 35.00, 'siempre', 'ACTIVO', '/images/promo1.png'),
+ 35.00, 'siempre', 'COMBO', 'ACTIVO', '/images/promo1.png'),
 ('Gojar Night',
  '2x1 en Soju (sabores: original, uva, fresa, durazno), 2 snacks (salado, dulce o picante) y 1 bebida para mezclar (Milkis o soda).',
- 50.00, 'siempre', 'ACTIVO', '/images/promo2.png');
+ 50.00, 'siempre', 'COMBO', 'ACTIVO', '/images/promo2.png');
 
 INSERT INTO promocion_producto (id_promocion, id_producto)
 SELECT pr.id_promocion, p.id_producto
@@ -62,4 +66,39 @@ SELECT pr.id_promocion, p.id_producto
 FROM promocion pr
 JOIN producto p ON p.nombre IN ('Jinro Lemon Soju 13% 360ml','Korean Cracker 192gr.','Malang Soft Candy Milk 79gr','Peperos Original')
 WHERE pr.nombre = 'Gojar Night';
+
+
+-- OFERTAS
+
+
+-- 1) Precio NORMAL de los 4 productos (el que sale tachado)
+UPDATE producto SET precio = 8.60  WHERE nombre = 'Shin Ramyun Toomba 137gr';
+UPDATE producto SET precio = 15.00 WHERE nombre = 'Shin Ramyun Non-Fried 97gr';
+UPDATE producto SET precio = 16.00 WHERE nombre = 'Shin Ramyun Spicy Chicken 120gr';
+UPDATE producto SET precio = 13.00 WHERE nombre = 'Malang Soft Candy Milk 79gr';
+
+-- 2) Las 4 ofertas (precio de oferta = el que sale en negrita)
+INSERT INTO promocion (nombre, descripcion, precio, tiempo, estado, imagen, tipo_promocion) VALUES
+('Oferta Shin Ramyun Toomba',      'Oferta en Shin Ramyun Toomba 137gr',      4.30,  'siempre', 'ACTIVO', NULL, 'OFERTA'),  -- 50% OFF
+('Oferta Shin Ramyun Non-Fried',   'Oferta en Shin Ramyun Non-Fried 97gr',    10.50, 'siempre', 'ACTIVO', NULL, 'OFERTA'),  -- 30% OFF
+('Oferta Shin Ramyun Spicy Chicken','Oferta en Shin Ramyun Spicy Chicken 120gr', 11.20, 'siempre', 'ACTIVO', NULL, 'OFERTA'),  -- 30% OFF
+('Oferta Malang Soft Candy Milk',  'Oferta en Malang Soft Candy Milk 79gr',   8.71,  'siempre', 'ACTIVO', NULL, 'OFERTA');  -- 33% OFF
+
+-- 3) Vincular cada oferta con su producto
+INSERT INTO promocion_producto (id_promocion, id_producto)
+SELECT pr.id_promocion, p.id_producto
+FROM promocion pr
+JOIN producto p ON p.nombre =
+     CASE pr.nombre
+        WHEN 'Oferta Shin Ramyun Toomba'        THEN 'Shin Ramyun Toomba 137gr'
+        WHEN 'Oferta Shin Ramyun Non-Fried'     THEN 'Shin Ramyun Non-Fried 97gr'
+        WHEN 'Oferta Shin Ramyun Spicy Chicken' THEN 'Shin Ramyun Spicy Chicken 120gr'
+        WHEN 'Oferta Malang Soft Candy Milk'    THEN 'Malang Soft Candy Milk 79gr'
+     END
+WHERE pr.tipo_promocion = 'OFERTA'
+  AND pr.nombre IN ('Oferta Shin Ramyun Toomba','Oferta Shin Ramyun Non-Fried',
+                    'Oferta Shin Ramyun Spicy Chicken','Oferta Malang Soft Candy Milk');
+
+COMMIT TRANSACTION;
+GO
 

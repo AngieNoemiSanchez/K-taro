@@ -62,9 +62,9 @@ public class AdminProductoController {
         validarImagen(form, result);
         if (!result.hasErrors()) {
             try {
-                Producto creado = productoService.crear(form);
+                productoService.crear(form);
                 redirect.addFlashAttribute("mensaje", "Producto registrado correctamente.");
-                return "redirect:/admin/productos/" + creado.getIdProducto() + "/editar";
+                return "redirect:/admin/catalogo?tipo=productos";
             } catch (BusinessException ex) {
                 result.reject("producto.error", ex.getMessage());
             }
@@ -100,7 +100,7 @@ public class AdminProductoController {
             try {
                 productoService.actualizar(id, form);
                 redirect.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
-                return "redirect:/admin/productos/" + id + "/editar";
+                return "redirect:/admin/catalogo?tipo=productos";
             } catch (BusinessException ex) {
                 result.reject("producto.error", ex.getMessage());
             }
@@ -127,6 +127,8 @@ public class AdminProductoController {
         }
         return "redirect:/admin/catalogo?tipo=productos";
     }
+
+
 
     private void cargarCombos(Model model) {
         model.addAttribute("tipos", TipoProducto.values());
