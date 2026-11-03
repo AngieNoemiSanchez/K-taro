@@ -7,22 +7,44 @@ interface CartItem {
   quantity: number;
 }
 
-const CART_STORAGE_KEY = "ktaro-cart";
 const LAST_TOTAL_KEY = "ktaro-last-total";
 const LAST_METODO_KEY = "ktaro-last-metodo";
 
+let cart: CartItem[] = [];
+
 function readCart(): CartItem[] {
+  return cart;
+}
+
+function csrfHeaders(): Record<string, string> {
+  const token = document.querySelector<HTMLMetaElement>('meta[name="_csrf"]')?.content;
+  const header = document.querySelector<HTMLMetaElement>('meta[name="_csrf_header"]')?.content;
+  return token && header ? { [header]: token } : {};
+}
+
+async function loadCart(): Promise<void> {
   try {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (!storedCart) return [];
-    return JSON.parse(storedCart) as CartItem[];
+    const response = await fetch("/api/carrito", { headers: { Accept: "application/json" } });
+    if (!response.ok || response.redirected) {
+      cart = [];
+      return;
+    }
+    const data = (await response.json()) as { items: CartItem[] };
+    cart = data.items;
   } catch {
-    return [];
+    cart = [];
+  }
+}
+
+function renderCartCount(): void {
+  const cartCount = document.querySelector<HTMLElement>("#cartCount");
+  if (cartCount) {
+    cartCount.textContent = String(readCart().reduce((sum, item) => sum + item.quantity, 0));
   }
 }
 
 function renderResumenPago(): void {
-  const cart = readCart();
+  const items = readCart();
   const pagoItemsList = document.querySelector<HTMLElement>("#pagoItemsList");
   const pagoSubtotal = document.querySelector<HTMLElement>("#pagoSubtotal");
   const pagoIgv = document.querySelector<HTMLElement>("#pagoIgv");
@@ -52,14 +74,14 @@ function renderResumenPago(): void {
 
   if (!pagoItemsList) return;
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  pagoItemsList.replaceChildren(...cart.map((item) => {
+  pagoItemsList.replaceChildren(...items.map((item) => {
     const div = document.createElement("div");
     div.className = "resumen-item";
 
     const nameSpan = document.createElement("span");
-    nameSpan.textContent = item.name;
+    nameSpan.textContent = `${item.name} x${item.quantity}`;
 
     const priceSpan = document.createElement("span");
     priceSpan.textContent = `s/ ${(item.price * item.quantity).toFixed(2)}`;
@@ -76,7 +98,7 @@ function renderResumenPago(): void {
   if (pagoTotal) pagoTotal.textContent = `s/ ${totalPrice.toFixed(2)}`;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const numeroTarjeta = document.querySelector<HTMLInputElement>("#numeroTarjeta");
   numeroTarjeta?.addEventListener("input", () => {
     numeroTarjeta.value = numeroTarjeta.value.replace(/\D/g, "").slice(0, 16);
@@ -94,6 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
       numeros.length > 2 ? `${numeros.slice(0, 2)}/${numeros.slice(2)}` : numeros;
   });
 
+  document.querySelector<HTMLButtonElement>("#cartToggle")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "/carrito";
+  });
+
+  await loadCart();
+  renderCartCount();
   renderResumenPago();
 
   const btnContinuarPago = document.querySelector<HTMLButtonElement>("#btnContinuarPago");
@@ -119,8 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const cart = readCart();
-    if (cart.length === 0) {
+    await loadCart();
+    const items = readCart();
+    if (items.length === 0) {
       await Swal.fire({ icon: "warning", title: "Carrito vacío", text: "Agrega productos antes de pagar." });
       return;
     }
@@ -139,17 +169,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="_csrf"]')?.content;
-    const csrfHeader = document.querySelector<HTMLMetaElement>('meta[name="_csrf_header"]')?.content;
-    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+    const headers: Record<string, string> = { "Content-Type": "application/json", ...csrfHeaders() };
 
     try {
       const response = await fetch("/api/pedidos/confirmar", {
         method: "POST",
         headers,
         body: JSON.stringify({
-          items: cart.map((item) => ({ id: item.id, quantity: item.quantity })),
+          items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
           tarjeta: { numeroTarjeta: numero, cvv, titular, vencimiento },
         }),
       });
@@ -176,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     localStorage.setItem(LAST_TOTAL_KEY, `s/ ${totalPrice.toFixed(2)}`);
 
     const nombreCliente = document.querySelector<HTMLMetaElement>('meta[name="nombre-cliente"]')?.content;
@@ -185,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const correoCliente = document.querySelector<HTMLMetaElement>('meta[name="correo-cliente"]')?.content;
     localStorage.setItem("ktaro-last-correo", correoCliente?.trim() || "No especificado");
 
-    localStorage.removeItem(CART_STORAGE_KEY);
+    await fetch("/api/carrito", { method: "DELETE", headers: csrfHeaders() }).catch(() => undefined);
     window.location.href = "/compra-exitosa";
   });
 });

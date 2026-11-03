@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/cliente/perfil", "/cliente/perfil/**",
                                 "/pago", "/compra-exitosa", "/compra-exitosa/**",
-                                "/api/pedidos/**").authenticated()
+                                "/api/pedidos/**", "/api/carrito/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

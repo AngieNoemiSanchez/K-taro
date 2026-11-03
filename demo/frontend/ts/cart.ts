@@ -9,50 +9,76 @@ interface CartItem {
   stock?: number;
 }
 
-const CART_STORAGE_KEY = "ktaro-cart";
+interface CartApiResponse {
+  items: CartItem[];
+  total: number;
+}
+
 const CART_PURPLE = "#3929b5";
 
 let isCartInitialized = false;
 
+let cart: CartItem[] = [];
+
+class SilentError extends Error {}
+
 function readCart(): CartItem[] {
-  try {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (!storedCart) return [];
-
-    const parsed: unknown = JSON.parse(storedCart);
-    if (!Array.isArray(parsed)) throw new TypeError("El carrito guardado no es una lista.");
-
-    return parsed.filter((item: unknown): item is CartItem => {
-      if (typeof item !== "object" || item === null) return false;
-      const entry = item as Record<string, unknown>;
-      return typeof entry.id === "string"
-        && typeof entry.name === "string"
-        && typeof entry.price === "number"
-        && Number.isFinite(entry.price)
-        && typeof entry.quantity === "number"
-        && Number.isInteger(entry.quantity)
-        && entry.quantity > 0;
-    });
-  } catch (error) {
-    console.error("No se pudo leer el carrito guardado.", error);
-    try {
-      localStorage.removeItem(CART_STORAGE_KEY);
-    } catch (storageError) {
-      console.error("No se pudo limpiar el carrito guardado.", storageError);
-    }
-    return [];
-  }
-}
-
-function saveCart(cart: CartItem[]): void {
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  return cart;
 }
 
 function formatPrice(value: number): string {
   return `S/ ${value.toFixed(2)}`;
 }
 
-/** Unidades realmente disponibles según el servidor (0 si está inactivo, agotado o fuera de horario). */
+function csrfHeaders(): Record<string, string> {
+  const token = document.querySelector<HTMLMetaElement>('meta[name="_csrf"]')?.content;
+  const header = document.querySelector<HTMLMetaElement>('meta[name="_csrf_header"]')?.content;
+  return token && header ? { [header]: token } : {};
+}
+
+async function loadCart(): Promise<void> {
+  try {
+    const response = await fetch("/api/carrito", { headers: { Accept: "application/json" } });
+    if (!response.ok || response.redirected) {
+      cart = [];
+      return;
+    }
+    const data = (await response.json()) as CartApiResponse;
+    cart = data.items;
+  } catch (error) {
+    console.error("No se pudo cargar el carrito.", error);
+    cart = [];
+  }
+}
+
+async function sendCart(method: string, body?: unknown, path = "/api/carrito/items"): Promise<void> {
+  const response = await fetch(path, {
+    method,
+    headers: { "Content-Type": "application/json", Accept: "application/json", ...csrfHeaders() },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+
+  if (response.redirected) {
+    window.location.href = response.url;
+    throw new SilentError("Sesión requerida");
+  }
+
+  const data = (await response.json()) as CartApiResponse & { mensaje?: string };
+  if (!response.ok) throw new Error(data.mensaje ?? "No se pudo actualizar el carrito.");
+  cart = data.items;
+}
+
+function showError(title: string, error: unknown): void {
+  if (error instanceof SilentError) return;
+  console.error(title, error);
+  void Swal.fire({
+    icon: "error",
+    title,
+    text: error instanceof Error ? error.message : undefined,
+    confirmButtonColor: CART_PURPLE,
+  });
+}
+
 async function fetchAvailableUnits(productId: string): Promise<number> {
   const response = await fetch(`/api/stock?ids=${encodeURIComponent(productId)}`);
   if (!response.ok) throw new Error("No se pudo consultar el stock.");
@@ -60,7 +86,6 @@ async function fetchAvailableUnits(productId: string): Promise<number> {
   return data[productId] ?? 0;
 }
 
-/** Devuelve true si se puede tener {@code wanted} unidades en el carrito; si no, avisa al cliente. */
 async function ensureStock(productId: string, name: string, wanted: number): Promise<boolean> {
   const available = await fetchAvailableUnits(productId);
   if (wanted <= available) return true;
@@ -86,7 +111,6 @@ export function initializeCart(): void {
   const cartEmpty = document.querySelector<HTMLElement>("#cartEmpty");
   const cartTotal = document.querySelector<HTMLElement>("#cartTotal");
 
-  // Elementos de la vista completa /carrito
   const cartTableBody = document.querySelector<HTMLTableSectionElement>("#cartTableBody");
   const itemsCountLabel = document.querySelector<HTMLElement>("#itemsCountLabel");
   const cartSubtotal = document.querySelector<HTMLElement>("#cartSubtotal");
@@ -95,8 +119,7 @@ export function initializeCart(): void {
 
   const btnContinuarCompra = document.querySelector<HTMLButtonElement>("#btnContinuarCompra");
   btnContinuarCompra?.addEventListener("click", () => {
-    const cart = readCart();
-    if (cart.length === 0) {
+    if (readCart().length === 0) {
       Swal.fire({
         icon: "warning",
         title: "Carrito vacío",
@@ -110,54 +133,31 @@ export function initializeCart(): void {
 
   async function updateCartQuantity(productId: string, change: number): Promise<void> {
     try {
-      const cart = readCart();
-      const item = cart.find((product) => product.id === productId);
-
+      const item = readCart().find((product) => product.id === productId);
       if (!item) return;
 
-      if (change > 0 && !(await ensureStock(productId, item.name, item.quantity + change))) return;
+      const newQuantity = item.quantity + change;
+      if (change > 0 && !(await ensureStock(productId, item.name, newQuantity))) return;
 
-      item.quantity += change;
-
-            if (change > 0 && item.stock !== undefined && item.quantity > item.stock) {
-              item.quantity = item.stock;
-              void Swal.fire({
-                icon: "warning",
-                title: "Stock máximo alcanzado",
-                text: `Solo hay ${item.stock} unidades disponibles de ${item.name}.`,
-                confirmButtonColor: CART_PURPLE,
-              });
-            }
-
-      if (item.quantity <= 0) {
-        const index = cart.findIndex((product) => product.id === productId);
-        cart.splice(index, 1);
-      }
-
-      saveCart(cart);
+      await sendCart("PUT", { id: productId, quantity: Math.max(0, newQuantity) });
       renderCart();
     } catch (error) {
-      console.error("Error al actualizar la cantidad:", error);
-      void Swal.fire({
-        icon: "error",
-        title: "No se pudo actualizar el carrito",
-      });
+      showError("No se pudo actualizar el carrito", error);
     }
   }
 
   function renderCart(): void {
-    const cart = readCart();
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const items = readCart();
+    const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     if (cartCount) cartCount.textContent = String(totalQuantity);
     if (cartTotal) cartTotal.textContent = formatPrice(totalPrice);
-    if (cartEmpty) cartEmpty.hidden = cart.length > 0;
+    if (cartEmpty) cartEmpty.hidden = items.length > 0;
     if (itemsCountLabel) itemsCountLabel.textContent = `${totalQuantity} productos`;
 
-    // Renderizar panel lateral flotante
     if (cartItems) {
-      cartItems.replaceChildren(...cart.map((item) => {
+      cartItems.replaceChildren(...items.map((item) => {
         const row = document.createElement("li");
         row.className = "cart-item";
 
@@ -196,18 +196,19 @@ export function initializeCart(): void {
       }));
     }
 
-    // Renderizar vista de tabla completa
     if (cartTableBody) {
-      cartTableBody.replaceChildren(...cart.map((item) => {
+      cartTableBody.replaceChildren(...items.map((item) => {
         const tr = document.createElement("tr");
 
         const tdDetails = document.createElement("td");
         tdDetails.style.width = "40%";
-        const categoryText = item.category ?? "Snack importado";
-        tdDetails.innerHTML = `
-          <span class="cart-item-title">${item.name}</span>
-          <span class="cart-item-category">${categoryText}</span>
-        `;
+        const title = document.createElement("span");
+        title.className = "cart-item-title";
+        title.textContent = item.name;
+        const category = document.createElement("span");
+        category.className = "cart-item-category";
+        category.textContent = item.category ?? "Snack importado";
+        tdDetails.append(title, category);
 
         const tdQty = document.createElement("td");
         tdQty.style.width = "20%";
@@ -266,41 +267,33 @@ export function initializeCart(): void {
 
   document.querySelectorAll<HTMLButtonElement>(".add-to-cart").forEach((button) => {
     button.addEventListener("click", async () => {
-           const { productId, productName, productPrice, productStock } = button.dataset;
-           const price = Number(productPrice);
-           const quantity = Number(button.dataset.quantity ?? "1");
-           const stock = productStock === undefined || productStock === "" ? undefined : Number(productStock);
-           if (!productId || !productName || !Number.isFinite(price) || price < 0
-             || !Number.isInteger(quantity) || quantity < 1
-             || (stock !== undefined && !Number.isFinite(stock))) {
-             console.error("No se pudo agregar el producto: sus datos son inválidos.");
-             await Swal.fire({ icon: "error", title: "No se pudo agregar", text: "Revisa los datos del producto e inténtalo nuevamente." });
-             return;
-           }
+      const { productId, productName, productPrice, productStock } = button.dataset;
+      const price = Number(productPrice);
+      const quantity = Number(button.dataset.quantity ?? "1");
+      const stock = productStock === undefined || productStock === "" ? undefined : Number(productStock);
+      if (!productId || !productName || !Number.isFinite(price) || price < 0
+        || !Number.isInteger(quantity) || quantity < 1
+        || (stock !== undefined && !Number.isFinite(stock))) {
+        console.error("No se pudo agregar el producto: sus datos son inválidos.");
+        await Swal.fire({ icon: "error", title: "No se pudo agregar", text: "Revisa los datos del producto e inténtalo nuevamente." });
+        return;
+      }
 
-           try {
-             const cart = readCart();
-             const existingItem = cart.find((item) => item.id === productId);
-             const alreadyInCart = existingItem?.quantity ?? 0;
-             if (stock !== undefined && alreadyInCart + quantity > stock) {
-               await Swal.fire({
-                 icon: "warning",
-                 title: "Stock insuficiente",
-                 text: stock === 0
-                   ? `${productName} está agotado.`
-                   : `Solo hay ${stock} unidades disponibles y ya tienes ${alreadyInCart} en el carrito.`,
-                 confirmButtonColor: CART_PURPLE,
-               });
-               return;
-             }
-             if (existingItem) {
-               existingItem.quantity += quantity;
-               existingItem.stock = stock;
-             } else {
-               cart.push({ id: productId, name: productName, price, quantity, stock });
-             }
+      try {
+        const alreadyInCart = readCart().find((item) => item.id === productId)?.quantity ?? 0;
+        if (stock !== undefined && alreadyInCart + quantity > stock) {
+          await Swal.fire({
+            icon: "warning",
+            title: "Stock insuficiente",
+            text: stock === 0
+              ? `${productName} está agotado.`
+              : `Solo hay ${stock} unidades disponibles y ya tienes ${alreadyInCart} en el carrito.`,
+            confirmButtonColor: CART_PURPLE,
+          });
+          return;
+        }
 
-        saveCart(cart);
+        await sendCart("POST", { id: productId, quantity });
         renderCart();
         await Swal.fire({
           icon: "success",
@@ -310,8 +303,7 @@ export function initializeCart(): void {
           showConfirmButton: false,
         });
       } catch (error) {
-        console.error("No se pudo guardar el carrito en este navegador.", error);
-        await Swal.fire({ icon: "error", title: "No se pudo guardar", text: "El navegador no permitió guardar el carrito." });
+        showError("No se pudo agregar al carrito", error);
       }
     });
   });
@@ -322,6 +314,7 @@ export function initializeCart(): void {
   });
 
   document.querySelector<HTMLButtonElement>("#cartClose")?.addEventListener("click", () => setCartOpen(false));
+
   document.querySelector<HTMLButtonElement>("#clearCart")?.addEventListener("click", async () => {
     if (readCart().length === 0) return;
     const result = await Swal.fire({
@@ -336,15 +329,14 @@ export function initializeCart(): void {
     if (!result.isConfirmed) return;
 
     try {
-      saveCart([]);
+      await sendCart("DELETE", undefined, "/api/carrito");
       renderCart();
     } catch (error) {
-      console.error("No se pudo vaciar el carrito guardado.", error);
-      await Swal.fire({ icon: "error", title: "No se pudo vaciar", text: "Inténtalo nuevamente." });
+      showError("No se pudo vaciar", error);
     }
   });
 
-  renderCart();
+  void loadCart().then(renderCart);
 }
 
 if (document.readyState === "loading") {

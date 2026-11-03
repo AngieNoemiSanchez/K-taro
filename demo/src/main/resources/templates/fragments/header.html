@@ -1,4 +1,7 @@
 <header class="site-header" th:fragment="siteHeader">
+  <meta name="_csrf" th:content="${_csrf?.token}">
+  <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+  <div class="header-inner">
   <div class="header-inner">
     <a class="brand" href="/" aria-label="K-TARO, inicio">
       <img src="/images/logo.png" alt="Logo K-TARO">
