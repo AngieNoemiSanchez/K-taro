@@ -13,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
     @Bean
     @Order(1)
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http,
@@ -41,7 +40,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     @Order(2)
     public SecurityFilterChain clienteSecurityFilterChain(HttpSecurity http,
@@ -49,13 +47,15 @@ public class SecurityConfig {
         http
                 .userDetailsService(customUserDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cliente/perfil", "/cliente/perfil/**").authenticated()
+                        .requestMatchers("/cliente/perfil", "/cliente/perfil/**",
+                                "/pago", "/compra-exitosa", "/compra-exitosa/**",
+                                "/api/pedidos/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/cliente/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)     // siempre al inicio
+                        .defaultSuccessUrl("/")
                         .failureUrl("/cliente/login?error")
                         .permitAll()
                 )

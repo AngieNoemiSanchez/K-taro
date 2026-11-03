@@ -9,6 +9,7 @@ interface CartItem {
 
 const CART_STORAGE_KEY = "ktaro-cart";
 const LAST_TOTAL_KEY = "ktaro-last-total";
+const LAST_METODO_KEY = "ktaro-last-metodo";
 
 function readCart(): CartItem[] {
   try {
@@ -28,26 +29,26 @@ function renderResumenPago(): void {
   const pagoTotal = document.querySelector<HTMLElement>("#pagoTotal");
   const finalTotal = document.querySelector<HTMLElement>("#finalTotal");
 
+  if (finalTotal) {
+    finalTotal.textContent = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
 
-if (finalTotal) {
-  const lastTotal = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
-  finalTotal.textContent = lastTotal;
+    const finalUsuario = document.querySelector<HTMLElement>("#finalUsuario");
+    if (finalUsuario) {
+      finalUsuario.textContent = localStorage.getItem("ktaro-last-usuario") ?? "No especificado";
+    }
 
-  const finalUsuario = document.querySelector<HTMLElement>("#finalUsuario");
+    const finalCorreo = document.querySelector<HTMLElement>("#finalCorreo");
+    if (finalCorreo) {
+      finalCorreo.textContent = localStorage.getItem("ktaro-last-correo") ?? "No especificado";
+    }
 
-  if (finalUsuario) {
-    finalUsuario.textContent =
-      localStorage.getItem("ktaro-last-usuario") ?? "No especificado";
+    const finalMetodoPago = document.querySelector<HTMLElement>("#finalMetodoPago");
+    const metodo = localStorage.getItem(LAST_METODO_KEY);
+    if (finalMetodoPago && metodo) {
+      finalMetodoPago.textContent = `Tarjeta ${metodo}`;
+    }
+    return;
   }
-  const finalCorreo = document.querySelector<HTMLElement>("#finalCorreo");
-
-if (finalCorreo) {
-  finalCorreo.textContent =
-    localStorage.getItem("ktaro-last-correo") ?? "No especificado";
-}
-
-  return;
-}
 
   if (!pagoItemsList) return;
 
@@ -76,26 +77,22 @@ if (finalCorreo) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const numeroTarjeta = document.querySelector<HTMLInputElement>("#numeroTarjeta");
-
   numeroTarjeta?.addEventListener("input", () => {
     numeroTarjeta.value = numeroTarjeta.value.replace(/\D/g, "").slice(0, 16);
   });
+
   const cvvTarjeta = document.querySelector<HTMLInputElement>("#cvvTarjeta");
+  cvvTarjeta?.addEventListener("input", () => {
+    cvvTarjeta.value = cvvTarjeta.value.replace(/\D/g, "").slice(0, 3);
+  });
 
-cvvTarjeta?.addEventListener("input", () => {
-  cvvTarjeta.value = cvvTarjeta.value.replace(/\D/g, "").slice(0, 4);
-});const fechaVencimiento = document.querySelector<HTMLInputElement>("#fechaVencimiento");
-
-fechaVencimiento?.addEventListener("input", () => {
-  const numeros = fechaVencimiento.value.replace(/\D/g, "").slice(0, 4);
-
-  fechaVencimiento.value =
-    numeros.length > 2
-      ? `${numeros.slice(0, 2)}/${numeros.slice(2)}`
-      : numeros;
-});
+  const fechaVencimiento = document.querySelector<HTMLInputElement>("#fechaVencimiento");
+  fechaVencimiento?.addEventListener("input", () => {
+    const numeros = fechaVencimiento.value.replace(/\D/g, "").slice(0, 4);
+    fechaVencimiento.value =
+      numeros.length > 2 ? `${numeros.slice(0, 2)}/${numeros.slice(2)}` : numeros;
+  });
 
   renderResumenPago();
 
@@ -103,36 +100,65 @@ fechaVencimiento?.addEventListener("input", () => {
   btnContinuarPago?.addEventListener("click", async (e) => {
     e.preventDefault();
 
-          const fechaInput = document.querySelector<HTMLInputElement>("#fechaVencimiento");
+    const fechaInput = document.querySelector<HTMLInputElement>("#fechaVencimiento");
 
-      if (fechaInput) {
-        const [mes, anio] = fechaInput.value.split("/").map(Number);
+    if (fechaInput) {
+      const [mes, anio] = fechaInput.value.split("/").map(Number);
 
-        const hoy = new Date();
-        const anioActual = hoy.getFullYear() % 100;
-        const mesActual = hoy.getMonth() + 1;
+      const hoy = new Date();
+      const anioActual = hoy.getFullYear() % 100;
+      const mesActual = hoy.getMonth() + 1;
 
-        if (anio < anioActual || (anio === anioActual && mes < mesActual)) {
-          Swal.fire({
-            icon: "error",
-            title: "Fecha vencida",
-            text: "La fecha de vencimiento debe ser posterior al mes actual."
-          });
-          return;
-        }
+      if (anio < anioActual || (anio === anioActual && mes < mesActual)) {
+        Swal.fire({
+          icon: "error",
+          title: "Fecha vencida",
+          text: "La fecha de vencimiento debe ser posterior al mes actual.",
+        });
+        return;
       }
+    }
 
     const cart = readCart();
     if (cart.length === 0) {
       await Swal.fire({ icon: "warning", title: "Carrito vacío", text: "Agrega productos antes de pagar." });
       return;
     }
+
+    const titular = document.querySelector<HTMLInputElement>("#titularTarjeta")?.value.trim() ?? "";
+    const numero = document.querySelector<HTMLInputElement>("#numeroTarjeta")?.value ?? "";
+    const cvv = document.querySelector<HTMLInputElement>("#cvvTarjeta")?.value ?? "";
+    const vencimiento = fechaInput?.value ?? "";
+
+    if (!titular || numero.length !== 16 || cvv.length !== 3 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimiento)) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Datos incompletos",
+        text: "Completa el titular, el número (16 dígitos), el vencimiento (MM/AA) y el CVV (3 dígitos).",
+      });
+      return;
+    }
+
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="_csrf"]')?.content;
+    const csrfHeader = document.querySelector<HTMLMetaElement>('meta[name="_csrf_header"]')?.content;
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
     try {
       const response = await fetch("/api/pedidos/confirmar", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cart.map((item) => ({ id: item.id, quantity: item.quantity }))),
+        headers,
+        body: JSON.stringify({
+          items: cart.map((item) => ({ id: item.id, quantity: item.quantity })),
+          tarjeta: { numeroTarjeta: numero, cvv, titular, vencimiento },
+        }),
       });
+
+      if (response.redirected) {
+        window.location.href = "/cliente/login";
+        return;
+      }
+
       if (!response.ok) {
         const body = (await response.json().catch(() => ({}))) as { mensaje?: string };
         await Swal.fire({
@@ -142,31 +168,22 @@ fechaVencimiento?.addEventListener("input", () => {
         });
         return;
       }
+
+      const resultado = (await response.json().catch(() => ({}))) as { tarjeta?: string };
+      if (resultado.tarjeta) localStorage.setItem(LAST_METODO_KEY, resultado.tarjeta);
     } catch {
       await Swal.fire({ icon: "error", title: "Sin conexión", text: "No se pudo confirmar la compra. Inténtalo nuevamente." });
       return;
     }
 
-
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     localStorage.setItem(LAST_TOTAL_KEY, `s/ ${totalPrice.toFixed(2)}`);
-    const nombreTitular = document.querySelector<HTMLInputElement>(
-  '#formPago input[placeholder="Nombre del titular"]'
-);
 
-localStorage.setItem(
-  "ktaro-last-usuario",
-  nombreTitular?.value.trim() || "No especificado"
-);
-const correoComprador = document.querySelector<HTMLInputElement>(
-  "#correoComprador"
-);
+    const nombreCliente = document.querySelector<HTMLMetaElement>('meta[name="nombre-cliente"]')?.content;
+    localStorage.setItem("ktaro-last-usuario", nombreCliente?.trim() || "No especificado");
 
-localStorage.setItem(
-  "ktaro-last-correo",
-  correoComprador?.value.trim() || "No especificado"
-);
-
+    const correoCliente = document.querySelector<HTMLMetaElement>('meta[name="correo-cliente"]')?.content;
+    localStorage.setItem("ktaro-last-correo", correoCliente?.trim() || "No especificado");
 
     localStorage.removeItem(CART_STORAGE_KEY);
     window.location.href = "/compra-exitosa";
