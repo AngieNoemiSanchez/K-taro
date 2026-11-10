@@ -11,4 +11,9 @@ public enum EstadoPedido {
     EstadoPedido(String etiqueta) { this.etiqueta = etiqueta; }
 
     public String getEtiqueta() { return etiqueta; }
+
+    public EstadoPedido siguiente() {
+        EstadoPedido[] todos = values();
+        return ordinal() + 1 < todos.length ? todos[ordinal() + 1] : null;
+    }
 }

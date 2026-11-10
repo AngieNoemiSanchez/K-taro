@@ -2,105 +2,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectFiltro = document.getElementById('filtroEstado');
     const tablaBody = document.getElementById('tablaPedidosBody');
 
-    // Referencias del Modal
     const modal = document.getElementById('modalEditar');
+    const form = document.getElementById('formEstado');
     const modalNombre = document.getElementById('modalPedidoNombre');
+    const modalActual = document.getElementById('modalEstadoActual');
     const selectNuevoEstado = document.getElementById('nuevoEstado');
     const btnCancelar = document.getElementById('btnCancelarModal');
-    const btnGuardar = document.getElementById('btnGuardarModal');
 
-    let filaSeleccionada = null;
-
-    // 1. Cargar estado guardado desde localStorage
-    function cargarEstadoGuardado() {
-        const pedidosGuardados = JSON.parse(localStorage.getItem('ktaro_pedidos_estado'));
-        if (!pedidosGuardados) return;
-
-        const filas = tablaBody.querySelectorAll('tr');
-        filas.forEach((fila, index) => {
-            if (pedidosGuardados[index]) {
-                const nuevoEstado = pedidosGuardados[index];
-                actualizarFilaEstado(fila, nuevoEstado);
-            }
+    if (selectFiltro) {
+        selectFiltro.addEventListener('change', function () {
+            const seleccion = this.value;
+            tablaBody.querySelectorAll('tr[data-estado]').forEach(fila => {
+                const coincide = seleccion === 'todos' || fila.dataset.estado === seleccion;
+                fila.style.display = coincide ? '' : 'none';
+            });
         });
     }
 
-    // 2. Guardar estado actual de la tabla en localStorage
-    function guardarEstadoTabla() {
-        const filas = tablaBody.querySelectorAll('tr');
-        const estados = Array.from(filas).map(fila => fila.getAttribute('data-estado'));
-        localStorage.setItem('ktaro_pedidos_estado', JSON.stringify(estados));
-    }
-
-    // 3. Helper para actualizar DOM de una fila
-    function actualizarFilaEstado(fila, nuevoEstado) {
-        fila.setAttribute('data-estado', nuevoEstado);
-        const badge = fila.querySelector('.badge-status');
-        badge.innerText = nuevoEstado;
-        badge.className = 'badge-status';
-
-        if (nuevoEstado === 'Aceptado') {
-            badge.classList.add('badge-accepted');
-        } else if (nuevoEstado === 'Listo') {
-            badge.classList.add('badge-ready');
-        } else if (nuevoEstado === 'En curso') {
-            badge.classList.add('badge-in-progress');
-        }
-    }
-
-    // 4. Lógica del Filtro por Estado
-    selectFiltro.addEventListener('change', function () {
-        const seleccion = this.value.trim().toLowerCase();
-        const filas = tablaBody.querySelectorAll('tr');
-
-        filas.forEach(fila => {
-            const estadoFila = (fila.getAttribute('data-estado') || '').trim().toLowerCase();
-
-            if (seleccion === 'todos' || estadoFila === seleccion) {
-                fila.style.display = '';
-            } else {
-                fila.style.display = 'none';
-            }
-        });
-    });
-
-    // 5. Abrir Modal al pulsar "Editar"
     tablaBody.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-edit-order')) {
-            e.preventDefault();
-            filaSeleccionada = e.target.closest('tr');
+        const boton = e.target.closest('.btn-edit-order');
+        if (!boton) return;
+        e.preventDefault();
 
-            const nombrePedido = filaSeleccionada.querySelector('.order-name').innerText;
-            const estadoActual = filaSeleccionada.getAttribute('data-estado');
+        const { id, nombre, actual, siguiente, siguienteEtiqueta } = boton.dataset;
 
-            modalNombre.innerText = nombrePedido;
-            selectNuevoEstado.value = estadoActual;
+        form.action = form.dataset.base + id + '/estado';
+        modalNombre.textContent = nombre;
+        modalActual.textContent = actual;
 
-            modal.classList.add('active');
-        }
+        selectNuevoEstado.replaceChildren(new Option(siguienteEtiqueta, siguiente));
+        selectNuevoEstado.value = siguiente;
+
+        modal.classList.add('active');
     });
 
-    // 6. Cerrar Modal
-    btnCancelar.addEventListener('click', () => {
-        modal.classList.remove('active');
-        filaSeleccionada = null;
+    const cerrarModal = () => modal.classList.remove('active');
+    btnCancelar.addEventListener('click', cerrarModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
+
+    form.addEventListener('submit', () => {
+        document.getElementById('btnGuardarModal').disabled = true;
     });
-
-    // 7. Guardar Cambios de Estado
-    btnGuardar.addEventListener('click', () => {
-        if (!filaSeleccionada) return;
-
-        const nuevoEstado = selectNuevoEstado.value;
-        actualizarFilaEstado(filaSeleccionada, nuevoEstado);
-        guardarEstadoTabla();
-
-        modal.classList.remove('active');
-        filaSeleccionada = null;
-
-        // Re-aplicar el filtro activo
-        selectFiltro.dispatchEvent(new Event('change'));
-    });
-
-    // Ejecución inicial al cargar la vista
-    cargarEstadoGuardado();
 });

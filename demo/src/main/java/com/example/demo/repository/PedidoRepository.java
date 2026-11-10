@@ -3,6 +3,7 @@ package com.example.demo.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.Entity.pedido.PedidoEntity;
@@ -13,4 +14,10 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity, Long> {
     List<PedidoEntity> findByClienteCorreoAndEstadoNotOrderByIdAsc(String correo, EstadoPedido estado);
 
     Optional<PedidoEntity> findByIdAndClienteCorreo(Long id, String correo);
+
+    @EntityGraph(attributePaths = "cliente")
+    List<PedidoEntity> findByEstadoNotOrderByIdAsc(EstadoPedido estado);
+
+    @EntityGraph(attributePaths = "cliente")
+    List<PedidoEntity> findByEstadoOrderByIdDesc(EstadoPedido estado);
 }

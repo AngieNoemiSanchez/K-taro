@@ -8,10 +8,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final String ADMIN_CONTEXT_KEY = "ADMIN_SPRING_SECURITY_CONTEXT";
+
+    private SecurityContextRepository adminContextRepository() {
+        HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
+        repo.setSpringSecurityContextKey(ADMIN_CONTEXT_KEY);
+        return repo;
+    }
 
     @Bean
     @Order(1)
@@ -20,6 +32,7 @@ public class SecurityConfig {
         http
                 .securityMatcher("/admin/**")
                 .userDetailsService(adminUserDetailsService)
+                .securityContext(ctx -> ctx.securityContextRepository(adminContextRepository()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login").permitAll()
                         .anyRequest().hasRole("ADMIN")
@@ -34,6 +47,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/admin/login?logout")
+                        .invalidateHttpSession(false)   // no tumbar la sesión del cliente
+                        .addLogoutHandler((request, response, auth) -> {
+                            HttpSession session = request.getSession(false);
+                            if (session != null) session.removeAttribute(ADMIN_CONTEXT_KEY);
+                        })
                         .permitAll()
                 );
 
@@ -61,6 +79,13 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/cliente/login?logout")
+                        .invalidateHttpSession(false)   // no tumbar la sesión del admin
+                        .addLogoutHandler((request, response, auth) -> {
+                            HttpSession session = request.getSession(false);
+                            if (session != null) {
+                                session.removeAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+                            }
+                        })
                         .permitAll()
                 );
 

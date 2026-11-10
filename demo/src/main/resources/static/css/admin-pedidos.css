@@ -224,3 +224,63 @@ body {
 .btn-save:hover {
     background-color: #2e2098;
 }
+
+.badge-delivered { background-color: #8A8BB3; }
+
+.orders-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0e2fb;
+}
+
+.orders-tabs a {
+    padding: 10px 18px;
+    margin-bottom: -2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8A8BB3;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+.orders-tabs a.active {
+    color: #3929b5;
+    border-bottom-color: #3929b5;
+}
+
+.orders-flash {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.orders-flash.ok { background-color: #e6f7ee; color: #1e7a4a; }
+.orders-flash.error { background-color: #fdeaea; color: #b3261e; }
+
+.empty-row {
+    padding: 30px 12px !important;
+    text-align: center;
+    color: #8A8BB3;
+}
+
+.order-final {
+    color: #8A8BB3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.modal-current {
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+.modal-hint {
+    color: #8A8BB3;
+    font-size: 12px;
+    font-weight: 600;
+}
