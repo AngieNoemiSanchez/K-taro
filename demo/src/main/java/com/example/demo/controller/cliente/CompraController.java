@@ -1,5 +1,6 @@
 package com.example.demo.controller.cliente;
 
+import java.security.Principal;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class CompraController {
     }
 
     @PostMapping("/confirmar")
-    public CompraResponse confirmar(@Valid @RequestBody CompraRequest request) {
-        return compraService.confirmar(request);
+    public CompraResponse confirmar(Principal principal, @Valid @RequestBody CompraRequest request) {
+        return compraService.confirmar(request, principal.getName());
     }
 
     @ExceptionHandler(BusinessException.class)

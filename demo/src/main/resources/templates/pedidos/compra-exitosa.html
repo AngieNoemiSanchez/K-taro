@@ -111,7 +111,6 @@
           position: absolute;
           top: 20px;
           left: 60px;
-          width: 33%;
           height: 3px;
           background: #3929b5;
           z-index: 1;
@@ -175,61 +174,62 @@
     <div class="breadcrumb-content">Inicio/Carrito</div>
 </div>
 
-<main class="exito-container">
+<main class="exito-container" th:with="paso=${pedido.paso()}">
     <h1 class="exito-title">COMPRA EXITOSA</h1>
-    <p class="exito-subtitle">Tu pedido se ha realizado con éxito</p>
+    <p class="exito-subtitle" th:text="${pedido.codigo()}">Pedido #00001</p>
 
     <div class="exito-card">
         <div class="exito-header">Confirmación pago</div>
         <div class="exito-row">
             <span>Usuario</span>
-            <strong id="finalUsuario">No especificado</strong>
+            <strong th:text="${pedido.usuario()}">Usuario</strong>
         </div>
         <div class="exito-row">
             <span>Correo electrónico</span>
-            <strong id="finalCorreo">No especificado</strong>
+            <strong th:text="${pedido.correo()}">correo</strong>
         </div>
         <div class="exito-row">
             <span>Método de pago</span>
-            <strong id="finalMetodoPago">Pago de demostración</strong>
+            <strong th:text="${pedido.metodoPago()}">Tarjeta</strong>
         </div>
         <div class="exito-row">
             <span>Total pagado</span>
-            <strong id="finalTotal">s/ 0.00</strong>
+            <strong th:text="${'s/ ' + #numbers.formatDecimal(pedido.total(), 1, 'COMMA', 2, 'POINT')}">s/ 0.00</strong>
         </div>
         <div class="exito-row">
             <span>Estado pedido</span>
-            <strong style="color: #2e7d32;">Registrado</strong>
+            <strong style="color: #2e7d32;" th:text="${pedido.estadoEtiqueta()}">Registrado</strong>
         </div>
     </div>
 
     <div class="timeline">
-        <div class="timeline-progress" style="width: 0;"></div>
+        <div class="timeline-progress" th:style="'width: calc((100% - 120px) * ' + ${paso} + ' / 3)'"></div>
+
         <div class="timeline-step">
-            <div class="step-circle">1</div>
-            <div class="step-label">Pedido<br>Registrado</div>
+            <div class="step-circle" th:classappend="${paso >= 0} ? '' : 'inactive'">1</div>
+            <div class="step-label" th:classappend="${paso >= 0} ? '' : 'inactive'">Pedido<br>Registrado</div>
         </div>
         <div class="timeline-step">
-            <div class="step-circle inactive">2</div>
-            <div class="step-label inactive">Pedido<br>en preparación</div>
+            <div class="step-circle" th:classappend="${paso >= 1} ? '' : 'inactive'">2</div>
+            <div class="step-label" th:classappend="${paso >= 1} ? '' : 'inactive'">Pedido<br>en preparación</div>
         </div>
         <div class="timeline-step">
-            <div class="step-circle inactive">3</div>
-            <div class="step-label inactive">Pedido<br>terminado</div>
+            <div class="step-circle" th:classappend="${paso >= 2} ? '' : 'inactive'">3</div>
+            <div class="step-label" th:classappend="${paso >= 2} ? '' : 'inactive'">Pedido<br>terminado</div>
         </div>
         <div class="timeline-step">
-            <div class="step-circle inactive">4</div>
-            <div class="step-label inactive">Pedido<br>recogido</div>
+            <div class="step-circle" th:classappend="${paso >= 3} ? '' : 'inactive'">4</div>
+            <div class="step-label" th:classappend="${paso >= 3} ? '' : 'inactive'">Pedido<br>recogido</div>
         </div>
     </div>
 
     <div>
-        <a th:href="@{/}" class="btn-volver">Volver al Inicio</a>
+        <a th:href="@{/carrito}" class="btn-volver">Volver al carrito</a>
     </div>
 </main>
 
 <div th:replace="~{fragments/footer :: siteFooter}"></div>
 
-<script th:src="@{/js/ts/pago.js}"></script>
+<script th:src="@{/js/ts/cart.js}"></script>
 </body>
 </html>

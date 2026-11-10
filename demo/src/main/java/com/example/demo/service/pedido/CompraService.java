@@ -6,7 +6,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.Entity.catalogo.ProductoEntity;
 import com.example.demo.Entity.catalogo.PromocionEntity;
+import com.example.demo.Entity.cliente.ClienteEntity;
+import com.example.demo.Entity.pedido.PedidoEntity;
 import com.example.demo.Entity.pedido.TarjetaEntity;
 import com.example.demo.dto.CompraRequest;
 import com.example.demo.dto.CompraResponse;
@@ -27,6 +31,8 @@ import com.example.demo.mapper.TarjetaMapper;
 import com.example.demo.model.catalogo.Estado;
 import com.example.demo.model.catalogo.TipoPromocion;
 import com.example.demo.model.pedido.Tarjeta;
+import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProductoRepository;
 import com.example.demo.repository.PromocionRepository;
 import com.example.demo.repository.TarjetaRepository;
@@ -53,19 +59,27 @@ public class CompraService {
     private final ProductoRepository productos;
     private final PromocionRepository promociones;
     private final PasswordEncoder passwordEncoder;
+    private final ClienteRepository clientes;
+    private final PedidoRepository pedidos;
 
     public CompraService(TarjetaRepository tarjetas, TarjetaMapper tarjetaMapper,
                          ProductoRepository productos, PromocionRepository promociones,
-                         PasswordEncoder passwordEncoder) {
+                         PasswordEncoder passwordEncoder,
+                         ClienteRepository clientes, PedidoRepository pedidos) {
         this.tarjetas = tarjetas;
         this.tarjetaMapper = tarjetaMapper;
         this.productos = productos;
         this.promociones = promociones;
         this.passwordEncoder = passwordEncoder;
+        this.clientes = clientes;
+        this.pedidos = pedidos;
     }
 
     @Transactional
-    public CompraResponse confirmar(CompraRequest request) {
+    public CompraResponse confirmar(CompraRequest request, String correo) {
+        ClienteEntity cliente = clientes.findByCorreo(correo)
+                .orElseThrow(() -> new BusinessException("Inicia sesión para comprar"));
+
         MetodoDePago datos = request.tarjeta();
 
         TarjetaEntity tarjeta = tarjetas.findByNumeroForUpdate(datos.getNumeroTarjeta())
@@ -76,14 +90,19 @@ public class CompraService {
         Map<Long, Integer> unidadesPorProducto = new TreeMap<>();
         BigDecimal total = BigDecimal.ZERO;
 
+        record Linea(String nombre, int cantidad, BigDecimal precio) {}
+        List<Linea> lineas = new ArrayList<>();
+
         for (Map.Entry<String, Integer> item : cantidades.entrySet()) {
             String id = item.getKey();
             int cantidad = item.getValue();
             BigDecimal precioUnitario;
+            String nombre;
 
             if (id.startsWith(PREFIJO_COMBO)) {
                 PromocionEntity promo = promocionVigente(id, PREFIJO_COMBO, TipoPromocion.COMBO);
                 precioUnitario = promo.getPrecio();
+                nombre = promo.getNombre();
                 promo.getProductos().forEach(p -> unidadesPorProducto.merge(p.getId(), cantidad, Integer::sum));
             } else if (id.startsWith(PREFIJO_OFERTA)) {
                 PromocionEntity oferta = promocionVigente(id, PREFIJO_OFERTA, TipoPromocion.OFERTA);
@@ -93,13 +112,16 @@ public class CompraService {
                     throw new BusinessException("La oferta ya no está disponible");
                 }
                 precioUnitario = oferta.getPrecio();
+                nombre = producto.getNombre();
                 unidadesPorProducto.merge(producto.getId(), cantidad, Integer::sum);
             } else {
                 ProductoEntity producto = productos.findById(parseId(id))
                         .orElseThrow(() -> new BusinessException("Un producto del carrito ya no existe"));
                 precioUnitario = producto.getPrecio();
+                nombre = producto.getNombre();
                 unidadesPorProducto.merge(producto.getId(), cantidad, Integer::sum);
             }
+            lineas.add(new Linea(nombre, cantidad, precioUnitario));
             total = total.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
         }
         total = total.setScale(2, RoundingMode.HALF_UP);
@@ -125,7 +147,16 @@ public class CompraService {
         }
         tarjeta.setSaldo(tarjeta.getSaldo().subtract(total));
 
-        return new CompraResponse(total, tarjetaMapper.toModel(tarjeta).getNumeroEnmascarado());
+        String enmascarada = tarjetaMapper.toModel(tarjeta).getNumeroEnmascarado();
+
+        PedidoEntity pedido = new PedidoEntity();
+        pedido.setCliente(cliente);
+        pedido.setTotal(total);
+        pedido.setTarjeta(enmascarada);
+        lineas.forEach(l -> pedido.agregarItem(l.nombre(), l.cantidad(), l.precio()));
+        pedidos.save(pedido);
+
+        return new CompraResponse(total, enmascarada, pedido.getId());
     }
 
     private void validarTarjeta(TarjetaEntity entidad, MetodoDePago datos) {

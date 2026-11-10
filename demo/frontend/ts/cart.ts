@@ -14,6 +14,11 @@ interface CartApiResponse {
   total: number;
 }
 
+interface PedidoPendiente {
+  id: number;
+  codigo: string;
+}
+
 const CART_PURPLE = "#3929b5";
 
 let isCartInitialized = false;
@@ -100,6 +105,47 @@ async function ensureStock(productId: string, name: string, wanted: number): Pro
   return false;
 }
 
+async function showPendingOrders(): Promise<void> {
+  try {
+    const response = await fetch("/api/pedidos/pendientes", { headers: { Accept: "application/json" } });
+    if (response.redirected) {
+      window.location.href = response.url;
+      return;
+    }
+    if (!response.ok) throw new Error("No se pudieron cargar tus pedidos.");
+
+    const pedidos = (await response.json()) as PedidoPendiente[];
+    if (pedidos.length === 0) {
+      await Swal.fire({
+        icon: "info",
+        title: "Sin pedidos pendientes",
+        text: "No tienes pedidos por recoger.",
+        confirmButtonColor: CART_PURPLE,
+      });
+      return;
+    }
+
+    const lista = document.createElement("div");
+    lista.className = "pedidos-lista";
+    pedidos.forEach((pedido) => {
+      const enlace = document.createElement("a");
+      enlace.className = "pedido-link";
+      enlace.href = `/compra-exitosa/${pedido.id}`;
+      enlace.textContent = pedido.codigo;
+      lista.append(enlace);
+    });
+
+    await Swal.fire({
+      title: "Pedidos pendientes",
+      html: lista,
+      showConfirmButton: false,
+      showCloseButton: true,
+    });
+  } catch (error) {
+    showError("No se pudieron cargar los pedidos", error);
+  }
+}
+
 export function initializeCart(): void {
   if (isCartInitialized) return;
   isCartInitialized = true;
@@ -130,6 +176,9 @@ export function initializeCart(): void {
     }
     window.location.href = "/pago";
   });
+
+  document.querySelector<HTMLButtonElement>("#btnPedidosPendientes")
+    ?.addEventListener("click", () => void showPendingOrders());
 
   async function updateCartQuantity(productId: string, change: number): Promise<void> {
     try {

@@ -7,9 +7,6 @@ interface CartItem {
   quantity: number;
 }
 
-const LAST_TOTAL_KEY = "ktaro-last-total";
-const LAST_METODO_KEY = "ktaro-last-metodo";
-
 let cart: CartItem[] = [];
 
 function readCart(): CartItem[] {
@@ -49,28 +46,6 @@ function renderResumenPago(): void {
   const pagoSubtotal = document.querySelector<HTMLElement>("#pagoSubtotal");
   const pagoIgv = document.querySelector<HTMLElement>("#pagoIgv");
   const pagoTotal = document.querySelector<HTMLElement>("#pagoTotal");
-  const finalTotal = document.querySelector<HTMLElement>("#finalTotal");
-
-  if (finalTotal) {
-    finalTotal.textContent = localStorage.getItem(LAST_TOTAL_KEY) ?? "s/ 0.00";
-
-    const finalUsuario = document.querySelector<HTMLElement>("#finalUsuario");
-    if (finalUsuario) {
-      finalUsuario.textContent = localStorage.getItem("ktaro-last-usuario") ?? "No especificado";
-    }
-
-    const finalCorreo = document.querySelector<HTMLElement>("#finalCorreo");
-    if (finalCorreo) {
-      finalCorreo.textContent = localStorage.getItem("ktaro-last-correo") ?? "No especificado";
-    }
-
-    const finalMetodoPago = document.querySelector<HTMLElement>("#finalMetodoPago");
-    const metodo = localStorage.getItem(LAST_METODO_KEY);
-    if (finalMetodoPago && metodo) {
-      finalMetodoPago.textContent = `Tarjeta ${metodo}`;
-    }
-    return;
-  }
 
   if (!pagoItemsList) return;
 
@@ -171,6 +146,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const headers: Record<string, string> = { "Content-Type": "application/json", ...csrfHeaders() };
 
+    let pedidoId: number | undefined;
+
     try {
       const response = await fetch("/api/pedidos/confirmar", {
         method: "POST",
@@ -196,23 +173,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      const resultado = (await response.json().catch(() => ({}))) as { tarjeta?: string };
-      if (resultado.tarjeta) localStorage.setItem(LAST_METODO_KEY, resultado.tarjeta);
+      const resultado = (await response.json().catch(() => ({}))) as { pedidoId?: number };
+      pedidoId = resultado.pedidoId;
     } catch {
       await Swal.fire({ icon: "error", title: "Sin conexión", text: "No se pudo confirmar la compra. Inténtalo nuevamente." });
       return;
     }
 
-    const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    localStorage.setItem(LAST_TOTAL_KEY, `s/ ${totalPrice.toFixed(2)}`);
-
-    const nombreCliente = document.querySelector<HTMLMetaElement>('meta[name="nombre-cliente"]')?.content;
-    localStorage.setItem("ktaro-last-usuario", nombreCliente?.trim() || "No especificado");
-
-    const correoCliente = document.querySelector<HTMLMetaElement>('meta[name="correo-cliente"]')?.content;
-    localStorage.setItem("ktaro-last-correo", correoCliente?.trim() || "No especificado");
-
     await fetch("/api/carrito", { method: "DELETE", headers: csrfHeaders() }).catch(() => undefined);
-    window.location.href = "/compra-exitosa";
+    window.location.replace(pedidoId ? `/compra-exitosa/${pedidoId}` : "/carrito");
   });
 });

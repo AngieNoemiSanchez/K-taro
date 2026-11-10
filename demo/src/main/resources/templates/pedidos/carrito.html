@@ -95,7 +95,6 @@
       display: block;
     }
 
-    /* Selector + cantidad - */
     .qty-controls {
       display: flex;
       align-items: center;
@@ -135,7 +134,6 @@
       text-decoration: none;
     }
 
-    /* Resumen Subtotal e IGV */
     .subtotal-section {
       background-color: #ffffff;
       padding: 15px 24px;
@@ -152,7 +150,6 @@
       gap: 40px;
     }
 
-    /* Pie morado claro de tarjeta */
     .cart-card-footer {
       display: flex;
       justify-content: space-between;
@@ -174,7 +171,7 @@
       font-size: 18px;
     }
 
-    /* Botones principales de acción */
+
     .btn-actions {
       display: flex;
       gap: 20px;
@@ -205,6 +202,38 @@
       text-decoration: none;
       display: inline-block;
     }
+
+    .pedidos-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    .btn-pedidos {
+      background: #e8eafc;
+      color: #3929b5;
+      border: 2px solid #3929b5;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .pedidos-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .pedido-link {
+      display: block;
+      padding: 12px 16px;
+      background: #e8eafc;
+      color: #3929b5;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .pedido-link:hover { background: #d3d7f8; }
   </style>
 </head>
 <body>
@@ -218,6 +247,10 @@
 
   <main class="cart-page-container">
     <h1 class="cart-title">MI CARRITO</h1>
+
+    <div class="pedidos-bar">
+      <button id="btnPedidosPendientes" class="btn-pedidos" type="button">Mis pedidos pendientes</button>
+    </div>
 
     <div class="cart-card">
       <div class="cart-card-header">
