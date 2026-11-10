@@ -1,7 +1,5 @@
-/* Importar la fuente Poppins desde Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
-/* Reset global y tipografía unificada */
 * {
     font-family: 'Poppins', sans-serif !important;
     box-sizing: border-box;
@@ -10,18 +8,27 @@
 }
 
 body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
     background-color: #ffffff;
     color: #1a1a1a;
 }
 
-/* Contenedor Principal Centrado */
-.orders-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 30px 60px;
+body > footer {
+    margin-top: auto !important;
+    flex-shrink: 0;
 }
 
-/* Encabezado con Filtro alineado a la derecha */
+.orders-container {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 60px 80px;
+}
+
 .orders-header-row {
     display: flex;
     justify-content: space-between;
@@ -45,7 +52,6 @@ body {
     margin: 0;
 }
 
-/* Select de Filtro */
 .filter-select {
     padding: 8px 35px 8px 18px;
     border: 1.5px solid #a49ee3;
@@ -58,7 +64,39 @@ body {
     background-color: #ffffff;
 }
 
-/* Tabla de Pedidos */
+.orders-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0e2fb;
+}
+
+.orders-tabs a {
+    padding: 10px 18px;
+    margin-bottom: -2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8A8BB3;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+.orders-tabs a.active {
+    color: #3929b5;
+    border-bottom-color: #3929b5;
+}
+
+.orders-flash {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.orders-flash.ok { background-color: #e6f7ee; color: #1e7a4a; }
+.orders-flash.error { background-color: #fdeaea; color: #b3261e; }
+
 .orders-table {
     width: 100%;
     border-collapse: collapse;
@@ -90,18 +128,12 @@ body {
     vertical-align: middle;
 }
 
-/* Fila Destacada en Morado */
-.orders-table tbody tr.row-purple {
-    background-color: #3929b5;
-    color: #ffffff;
+.empty-row {
+    padding: 30px 12px !important;
+    text-align: center;
+    color: #8A8BB3;
 }
 
-.orders-table tbody tr.row-purple td,
-.orders-table tbody tr.row-purple a {
-    color: #ffffff !important;
-}
-
-/* Badges de Estado */
 .badge-status {
     display: inline-block;
     padding: 4px 16px;
@@ -115,8 +147,8 @@ body {
 .badge-accepted { background-color: #FFC107; }
 .badge-ready { background-color: #2ECC71; }
 .badge-in-progress { background-color: #FF4747; }
+.badge-delivered { background-color: #8A8BB3; }
 
-/* Botón Editar */
 .btn-edit-order {
     color: #8A8BB3;
     text-decoration: none;
@@ -128,7 +160,12 @@ body {
     color: #3929b5;
 }
 
-/* --- MODAL DE EDICIÓN --- */
+.order-final {
+    color: #8A8BB3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -173,6 +210,13 @@ body {
     margin-bottom: 20px;
 }
 
+.modal-current {
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
 .modal-form-group {
     display: flex;
     flex-direction: column;
@@ -193,6 +237,12 @@ body {
     outline: none;
     font-weight: 600;
     color: #333;
+}
+
+.modal-hint {
+    color: #8A8BB3;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .modal-actions {
@@ -223,64 +273,4 @@ body {
 
 .btn-save:hover {
     background-color: #2e2098;
-}
-
-.badge-delivered { background-color: #8A8BB3; }
-
-.orders-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e0e2fb;
-}
-
-.orders-tabs a {
-    padding: 10px 18px;
-    margin-bottom: -2px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #8A8BB3;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
-}
-
-.orders-tabs a.active {
-    color: #3929b5;
-    border-bottom-color: #3929b5;
-}
-
-.orders-flash {
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.orders-flash.ok { background-color: #e6f7ee; color: #1e7a4a; }
-.orders-flash.error { background-color: #fdeaea; color: #b3261e; }
-
-.empty-row {
-    padding: 30px 12px !important;
-    text-align: center;
-    color: #8A8BB3;
-}
-
-.order-final {
-    color: #8A8BB3;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.modal-current {
-    margin-bottom: 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #555;
-}
-
-.modal-hint {
-    color: #8A8BB3;
-    font-size: 12px;
-    font-weight: 600;
 }
