@@ -5,108 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil | K-TARO Admin</title>
 
-    <!-- Estilos de Fragmentos y Perfil -->
     <link rel="stylesheet" th:href="@{/css/admin-fragments.css}">
     <link rel="stylesheet" th:href="@{/css/admin-perfil.css}">
 </head>
 <body>
 
-    <!-- Header / Navbar Superior -->
-    <header>
-        <div th:replace="~{fragments/admin-header :: adminHeader('perfil')}"></div>
-    </header>
+<header>
+    <div th:replace="~{fragments/admin-header :: adminHeader('perfil')}"></div>
+</header>
 
-    <!-- Contenido Principal -->
-    <main class="profile-container">
-        <h1 class="main-title">MI PERFIL</h1>
+<main class="profile-container">
+    <h1 class="main-title">MI PERFIL</h1>
 
-        <div class="profile-layout">
-            <!-- Tarjeta Izquierda (Info Personal Principal) -->
-            <section class="card-left">
-                <div class="avatar-circle">JR</div>
-                <h2 class="user-name">Magaly Bozzoo</h2>
-                <p class="user-role">ADM-01</p>
+    <div class="profile-layout">
+        <section class="card-left">
+            <div class="avatar-circle" th:text="${iniciales}">JR</div>
+            <h2 class="user-name" th:text="${admin.nombre + ' ' + admin.apellido}">Admin</h2>
+            <p class="user-role" th:text="${codigoAdmin}">ADM-01</p>
 
-                <div class="info-list">
-                    <div class="info-row">
-                        <span class="label">Nombres</span>
-                        <span class="value">Magaly Andrea</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Apellidos</span>
-                        <span class="value">Bozzo Zarate</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">DNI</span>
-                        <span class="value">74505672</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Teléfono</span>
-                        <span class="value">153 777 123</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Email</span>
-                        <span class="value">MBozzo@gmail.com</span>
-                    </div>
+            <div class="info-list">
+                <div class="info-row">
+                    <span class="label">Nombres</span>
+                    <span class="value" th:text="${admin.nombre}">Nombres</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Apellidos</span>
+                    <span class="value" th:text="${admin.apellido}">Apellidos</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">DNI</span>
+                    <span class="value" th:text="${admin.dni}">DNI</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Teléfono</span>
+                    <span class="value" th:text="${admin.telefono}">Teléfono</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email</span>
+                    <span class="value" th:text="${admin.correo}">Email</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="column-right">
+            <!-- Bloque Morado Horario -->
+            <section class="schedule-card">
+                <h3>Horario de trabajo</h3>
+                <div class="schedule-header">
+                    <span>Día</span>
+                    <span>Hora</span>
+                </div>
+                <div class="schedule-row" th:if="${admin.horarioAdmin != null}">
+                    <span th:text="${admin.horarioAdmin.dias}">LUN-VIE</span>
+                    <span th:text="${#temporals.format(admin.horarioAdmin.horaInicio, 'HH:mm') + ' - ' + #temporals.format(admin.horarioAdmin.horaFin, 'HH:mm')}">08:00 - 16:00</span>
+                </div>
+                <div class="schedule-row" th:if="${admin.horarioAdmin == null}">
+                    <span>Sin horario asignado</span>
+                    <span>-</span>
                 </div>
             </section>
 
-            <!-- Columna Derecha (Horario y Configuración) -->
-            <div class="column-right">
-                <!-- Bloque Morado Horario -->
-                <section class="schedule-card">
-                    <h3>Horario de trabajo</h3>
-                    <div class="schedule-header">
-                        <span>Día</span>
-                        <span>Hora</span>
+            <section class="config-card">
+                <div class="config-header">
+                    <span>Configurar perfil</span>
+                    <a href="#" class="edit-link">Editar</a>
+                </div>
+                <div class="config-body">
+                    <div class="config-row">
+                        <span class="cfg-label">Nombres</span>
+                        <span class="cfg-value" th:text="${admin.nombre}">Nombres</span>
                     </div>
-                    <div class="schedule-row">
-                        <span>Lunes - Viernes</span>
-                        <span>8:00 - 14:00</span>
+                    <div class="config-row">
+                        <span class="cfg-label">Apellidos</span>
+                        <span class="cfg-value" th:text="${admin.apellido}">Apellidos</span>
                     </div>
-                </section>
-
-                <!-- Bloque Configurar Perfil -->
-                <section class="config-card">
-                    <div class="config-header">
-                        <span>Configurar perfil</span>
-                        <a href="#" class="edit-link">Editar</a>
+                    <div class="config-row">
+                        <span class="cfg-label">DNI</span>
+                        <span class="cfg-value" th:text="${admin.dni}">DNI</span>
                     </div>
-                    <div class="config-body">
-                        <div class="config-row">
-                            <span class="cfg-label">Nombres</span>
-                            <span class="cfg-value">Magaly Andrea</span>
-                        </div>
-                        <div class="config-row">
-                            <span class="cfg-label">Apellidos</span>
-                            <span class="cfg-value">Bozzo Zarate</span>
-                        </div>
-                        <div class="config-row">
-                            <span class="cfg-label">DNI</span>
-                            <span class="cfg-value">74505672</span>
-                        </div>
-                        <div class="config-row">
-                            <span class="cfg-label">Teléfono</span>
-                            <span class="cfg-value">153 777 123</span>
-                        </div>
-                        <div class="config-row">
-                            <span class="cfg-label">Fecha de nac.</span>
-                            <span class="cfg-value">10/10/99</span>
-                        </div>
-                        <div class="config-row">
-                            <span class="cfg-label">Email</span>
-                            <span class="cfg-value">MBozzo@gmail.com</span>
-                        </div>
+                    <div class="config-row">
+                        <span class="cfg-label">Teléfono</span>
+                        <span class="cfg-value" th:text="${admin.telefono}">Teléfono</span>
                     </div>
-                </section>
-            </div>
+                    <div class="config-row">
+                        <span class="cfg-label">Fecha de nac.</span>
+                        <span class="cfg-value" th:text="${#temporals.format(admin.fechaNacimiento, 'dd/MM/yyyy')}">10/10/1999</span>
+                    </div>
+                    <div class="config-row">
+                        <span class="cfg-label">Email</span>
+                        <span class="cfg-value" th:text="${admin.correo}">Email</span>
+                    </div>
+                </div>
+            </section>
         </div>
-    </main>
+    </div>
+    <form class="logout-form" th:action="@{/admin/logout}" method="post">
+        <button type="submit" class="logout-btn">Cerrar sesión</button>
+    </form>
+</main>
 
-    <!-- Footer Compartido -->
-    <footer>
-        <div th:replace="~{fragments/footer :: footer}"></div>
-    </footer>
+<footer>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</footer>
 
 </body>
 </html>

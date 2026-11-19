@@ -225,7 +225,7 @@ main.perfil-pagina {
     color: #ff4d4d;
 }
 
-/* Ajustes responsivos */
+
 @media (max-width: 760px) {
     .perfil-columnas { grid-template-columns: 1fr; }
     .perfil-hero { padding: 24px 20px; }

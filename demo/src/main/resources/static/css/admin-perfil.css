@@ -1,7 +1,5 @@
-/* Importar la fuente Poppins desde Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
-/* Reset global y tipografía unificada */
 * {
     font-family: 'Poppins', sans-serif !important;
     box-sizing: border-box;
@@ -12,10 +10,18 @@
 body {
     background-color: #ffffff;
     color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Contenedor Principal Centrado */
+footer {
+    margin-top: auto !important;
+}
+
 .profile-container {
+    flex: 1;
+    width: 100%;
     max-width: 1000px;
     margin: 0 auto;
     padding: 30px 40px;
@@ -30,14 +36,12 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Layout de 2 columnas */
 .profile-layout {
     display: flex;
     gap: 35px;
     align-items: stretch;
 }
 
-/* Tarjeta Izquierda (Información Principal) */
 .card-left {
     flex: 1;
     border: 1.5px solid #dcdcdc;
@@ -104,7 +108,6 @@ body {
     font-weight: 800;
 }
 
-/* Columna Derecha */
 .column-right {
     flex: 1;
     display: flex;
@@ -112,7 +115,6 @@ body {
     gap: 20px;
 }
 
-/* Bloque Horario de Trabajo */
 .schedule-card {
     background-color: #4a3bc6;
     color: #ffffff;
@@ -143,7 +145,6 @@ body {
     font-weight: 700;
 }
 
-/* Bloque Configurar Perfil */
 .config-card {
     border: 1.5px solid #dcdcdc;
     border-radius: 12px;
@@ -197,4 +198,27 @@ body {
 .cfg-value {
     color: #333333;
     font-weight: 700;
+}
+
+.logout-form {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.logout-btn {
+    background-color: #3929b5;
+    color: #ffffff;
+    border: 1.5px solid #3929b5;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: #2e209e;
+    border-color: #2e209e;
 }
