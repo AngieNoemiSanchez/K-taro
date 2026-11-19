@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity, Long> {
 
     @EntityGraph(attributePaths = "cliente")
     List<PedidoEntity> findByEstadoOrderByIdDesc(EstadoPedido estado);
+
+    List<PedidoEntity> findByFechaBetween(LocalDateTime inicio, LocalDateTime fin);
 }
