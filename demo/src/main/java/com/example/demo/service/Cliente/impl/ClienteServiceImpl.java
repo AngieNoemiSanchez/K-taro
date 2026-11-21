@@ -44,8 +44,12 @@ public class ClienteServiceImpl implements ClienteService {
         ClienteEntity entity = clienteRepository.findById(idCliente)
                 .orElseThrow(() -> new BusinessException("Cliente no encontrado"));
 
-        entity.setNombre(form.getNombre());
-        entity.setApellidos(form.getApellidos());
+        String correo = form.getCorreo().trim();
+        if (!correo.equalsIgnoreCase(entity.getCorreo()) && clienteRepository.existsByCorreo(correo)) {
+            throw new BusinessException("El correo ya está registrado");
+        }
+
+        entity.setCorreo(correo);
         entity.setTelefono(form.getTelefono());
         entity.setDireccion(form.getDireccion());
 

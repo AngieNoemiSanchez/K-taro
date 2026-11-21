@@ -22,8 +22,8 @@ public class ClienteMapper {
         return entity;
     }
 
-    public Cliente toModel (ClienteEntity entity){
-        if (entity ==null) return null;
+    public Cliente toModel(ClienteEntity entity) {
+        if (entity == null) return null;
         return new Cliente(
                 entity.getId(),
                 entity.getNombre(),
@@ -38,8 +38,7 @@ public class ClienteMapper {
     }
 
     public void updateEntityFromForm(PerfilForm form, ClienteEntity entity) {
-        entity.setNombre(form.getNombre());
-        entity.setApellidos(form.getApellidos());
+        entity.setCorreo(form.getCorreo());
         entity.setTelefono(form.getTelefono());
         entity.setDireccion(form.getDireccion());
     }

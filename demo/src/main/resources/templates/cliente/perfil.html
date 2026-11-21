@@ -8,123 +8,136 @@
   <link rel="stylesheet" th:href="@{/css/perfil.css}">
 </head>
 <body>
-<div th:replace="~{fragments/header :: siteHeader}"></div>
+  <div th:replace="~{fragments/header :: siteHeader}"></div>
 
-<div class="perfil-ruta">
-  <a th:href="@{/}">Inicio</a> / Perfil
-</div>
+  <div class="perfil-ruta">
+    <a th:href="@{/}">Inicio</a> / Perfil
+  </div>
 
-<main class="perfil-pagina">
+  <main class="perfil-pagina">
 
-  <div th:if="${success}" class="perfil-alerta ok" th:text="${success}"></div>
+    <div th:if="${success}" class="perfil-alerta ok" th:text="${success}"></div>
 
-  <section class="perfil-hero">
-    <div class="perfil-avatar"
-         th:text="${#strings.toUpperCase(cliente.nombre.substring(0,1) + cliente.apellidos.substring(0,1))}">KT</div>
+    <section class="perfil-hero">
+      <div class="perfil-avatar"
+           th:text="${#strings.toUpperCase(cliente.nombre.substring(0,1) + cliente.apellidos.substring(0,1))}">KT</div>
 
-    <div class="perfil-hero-info">
-      <span class="perfil-etiqueta">Cliente K-TARO</span>
-      <h1 th:text="${cliente.nombre + ' ' + cliente.apellidos}">Nombre Apellido</h1>
-      <p th:text="${cliente.correo}">correo@ejemplo.com</p>
-    </div>
-
-    <div class="perfil-hero-acciones">
-      <button type="button" id="btnEditarPerfil" class="btn-perfil btn-claro">Editar perfil</button>
-      <form th:action="@{/logout}" method="post">
-        <button type="submit" class="btn-perfil btn-borde">Cerrar sesión</button>
-      </form>
-    </div>
-  </section>
-
-  <div class="perfil-columnas">
-
-    <div class="perfil-izquierda">
-      <section class="perfil-tarjeta">
-        <div class="tarjeta-titulo">
-          <h2>Datos de la cuenta</h2>
-        </div>
-        <ul class="perfil-lista">
-          <li><span>DNI</span><strong th:text="${cliente.dni}">—</strong></li>
-          <li><span>Fecha de nacimiento</span>
-            <strong th:if="${cliente.fechaNac != null}" th:text="${#temporals.format(cliente.fechaNac, 'dd/MM/yyyy')}">—</strong>
-            <strong th:if="${cliente.fechaNac == null}">—</strong>
-          </li>
-          <li><span>Correo</span><strong th:text="${cliente.correo}">—</strong></li>
-        </ul>
-        <p class="perfil-nota">Estos datos no se pueden modificar desde aquí.</p>
-      </section>
-
-      <section class="perfil-tarjeta">
-        <div class="tarjeta-titulo">
-          <h2>Métodos de pago</h2>
-        </div>
-        <p class="perfil-vacio">Aún no tienes métodos de pago guardados.</p>
-      </section>
-    </div>
-
-    <section class="perfil-tarjeta">
-      <div class="tarjeta-titulo titulo-claro">
-        <h2>Datos personales</h2>
+      <div class="perfil-hero-info">
+        <span class="perfil-etiqueta">Cliente K-TARO</span>
+        <h1 th:text="${cliente.nombre + ' ' + cliente.apellidos}">Nombre Apellido</h1>
+        <p th:text="${cliente.correo}">correo@ejemplo.com</p>
       </div>
 
-      <div class="perfil-form" style="padding-top: 15px; padding-bottom: 25px;">
-        <ul class="perfil-lista" style="border-bottom: none;">
-          <li><span>Nombres</span><strong th:text="${cliente.nombre}">—</strong></li>
-          <li><span>Apellidos</span><strong th:text="${cliente.apellidos}">—</strong></li>
-          <li><span>Teléfono</span><strong th:text="${cliente.telefono}">—</strong></li>
-          <li><span>Dirección</span><strong th:text="${cliente.direccion}">—</strong></li>
-        </ul>
+      <div class="perfil-hero-acciones">
+        <button type="button" id="btnEditarPerfil" class="btn-perfil btn-claro">Editar perfil</button>
+        <form th:action="@{/logout}" method="post">
+          <button type="submit" class="btn-perfil btn-borde">Cerrar sesión</button>
+        </form>
       </div>
     </section>
+
+    <div class="perfil-columnas">
+
+      <div class="perfil-izquierda">
+        <section class="perfil-tarjeta">
+          <div class="tarjeta-titulo">
+            <h2>Datos de la cuenta</h2>
+          </div>
+          <ul class="perfil-lista">
+            <li><span>DNI</span><strong th:text="${cliente.dni}">—</strong></li>
+            <li><span>Fecha de nacimiento</span>
+              <strong th:if="${cliente.fechaNac != null}" th:text="${#temporals.format(cliente.fechaNac, 'dd/MM/yyyy')}">—</strong>
+              <strong th:if="${cliente.fechaNac == null}">—</strong>
+            </li>
+            <li><span>Correo</span><strong th:text="${cliente.correo}">—</strong></li>
+          </ul>
+          <p class="perfil-nota">Tu nombre, apellidos, DNI y fecha de nacimiento no se pueden modificar desde aquí.</p>
+        </section>
+
+        <section class="perfil-tarjeta">
+          <div class="tarjeta-titulo">
+            <h2>Métodos de pago</h2>
+          </div>
+          <p class="perfil-vacio">Aún no tienes métodos de pago guardados.</p>
+        </section>
+      </div>
+
+      <section class="perfil-tarjeta">
+        <div class="tarjeta-titulo titulo-claro">
+          <h2>Datos personales</h2>
+        </div>
+
+        <div class="perfil-form" style="padding-top: 15px; padding-bottom: 25px;">
+          <ul class="perfil-lista" style="border-bottom: none;">
+            <li><span>Nombres</span><strong th:text="${cliente.nombre}">—</strong></li>
+            <li><span>Apellidos</span><strong th:text="${cliente.apellidos}">—</strong></li>
+            <li><span>Teléfono</span><strong th:text="${cliente.telefono}">—</strong></li>
+            <li><span>Dirección</span><strong th:text="${cliente.direccion}">—</strong></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+  <div id="modalEditar" class="modal-fondo" style="display: none;">
+    <div class="modal-contenido">
+      <span class="cerrar-modal" id="btnCerrarModal">&times;</span>
+      <h2>Editar mis datos</h2>
+
+      <form th:action="@{/cliente/perfil}" th:object="${perfilForm}" method="post" class="perfil-form">
+
+        <div th:if="${#fields.hasGlobalErrors()}" class="perfil-alerta error">
+          <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" type="email" th:field="*{correo}" maxlength="50">
+          <small class="field-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></small>
+        </div>
+
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" type="tel" th:field="*{telefono}" maxlength="9" inputmode="numeric">
+          <small class="field-error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></small>
+        </div>
+
+        <div class="campo">
+          <label for="direccion">Dirección</label>
+          <input id="direccion" type="text" th:field="*{direccion}" maxlength="100">
+          <small class="field-error" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></small>
+        </div>
+
+        <div class="perfil-botones">
+          <button type="submit" class="btn-perfil btn-primario">Guardar cambios</button>
+          <button type="button" id="btnCancelarModal" class="btn-perfil btn-gris">Cancelar</button>
+        </div>
+      </form>
+    </div>
   </div>
-</main>
 
-<div th:replace="~{fragments/footer :: siteFooter}"></div>
+  <script th:inline="none">
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("modalEditar");
+        const abrir = () => { modal.style.display = "flex"; };
+        const cerrar = () => { modal.style.display = "none"; };
 
-<div id="modalEditar" class="modal-fondo" style="display: none;">
-  <div class="modal-contenido">
-    <span class="cerrar-modal" id="btnCerrarModal">&times;</span>
-    <h2>Editar mis datos</h2>
+        document.getElementById("btnEditarPerfil").addEventListener("click", abrir);
+        document.getElementById("btnCerrarModal").addEventListener("click", cerrar);
+        document.getElementById("btnCancelarModal").addEventListener("click", cerrar);
+        modal.addEventListener("click", e => { if (e.target === modal) cerrar(); });
+        document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
 
-    <form th:action="@{/cliente/perfil}" th:object="${perfilForm}" method="post" class="perfil-form">
+        document.getElementById("telefono").addEventListener("input", e => {
+            e.target.value = e.target.value.replace(/\D/g, "").slice(0, 9);
+        });
 
-      <div th:if="${#fields.hasGlobalErrors()}" class="perfil-alerta error">
-        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-      </div>
-
-      <div class="campo">
-        <label for="nombre">Nombres</label>
-        <input id="nombre" type="text" th:field="*{nombre}" maxlength="20">
-        <small class="field-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
-      </div>
-
-      <div class="campo">
-        <label for="apellidos">Apellidos</label>
-        <input id="apellidos" type="text" th:field="*{apellidos}" maxlength="30">
-        <small class="field-error" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></small>
-      </div>
-
-      <div class="campo">
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" type="tel" th:field="*{telefono}" maxlength="9" inputmode="numeric">
-        <small class="field-error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></small>
-      </div>
-
-      <div class="campo">
-        <label for="direccion">Dirección</label>
-        <input id="direccion" type="text" th:field="*{direccion}" maxlength="100">
-        <small class="field-error" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></small>
-      </div>
-
-      <div class="perfil-botones">
-        <button type="submit" class="btn-perfil btn-primario">Guardar cambios</button>
-        <button type="button" id="btnCancelarModal" class="btn-perfil btn-gris">Cancelar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<script th:src="@{/js/ts/perfil.js}" defer></script>
+        if (document.querySelector("#modalEditar .field-error, #modalEditar .perfil-alerta.error")) {
+            abrir();
+        }
+    });
+  </script>
 </body>
 </html>
