@@ -8,7 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/admin-fragments.css}">
     <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
 
-    <!-- Librería Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -21,151 +20,215 @@
         <div class="title-section">
             <div>
                 <h1>MÉTRICAS CLAVES</h1>
-                <p class="subtitle">Estado de las principales métricas claves de esta semana</p>
+                <p class="subtitle" id="weekSubtitle">Cargando semana...</p>
             </div>
             <div class="filter-dropdown">
-                <select id="reportFilter">
+                <select id="weekFilter" aria-label="Semana">
+                    <option th:each="s : ${semanas}" th:value="${s.valor}" th:text="${s.etiqueta}">Semana</option>
+                </select>
+                <select id="reportFilter" aria-label="Tipo de reporte">
                     <option value="ventas">Reporte de ventas</option>
                     <option value="pedidos">Reporte de pedidos</option>
                 </select>
+                <a class="btn-reporte" id="btnReporte" href="#">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"/>
+                    </svg>
+                    Descargar reporte
+                </a>
             </div>
         </div>
 
-        <!-- Tarjeta del Gráfico -->
+        <section class="kpi-grid">
+            <article class="kpi-card">
+                <span class="kpi-label">Pedidos recibidos</span>
+                <strong class="kpi-value" id="kpiRecibidos">0</strong>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label">Pedidos completados</span>
+                <strong class="kpi-value" id="kpiCompletados">0</strong>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label">Unidades vendidas</span>
+                <strong class="kpi-value" id="kpiUnidades">0</strong>
+            </article>
+            <article class="kpi-card kpi-destacada">
+                <span class="kpi-label">Monto total</span>
+                <strong class="kpi-value" id="kpiMonto">S/ 0.00</strong>
+            </article>
+        </section>
+
         <section class="chart-card">
-            <h2 id="chartTitle">REPORTE DE VENTAS</h2>
+            <div class="chart-head">
+                <h2 id="chartTitle">REPORTE DE VENTAS</h2>
+                <span class="chart-badge" id="chartBadge">Semana en curso</span>
+            </div>
             <div class="chart-container">
                 <canvas id="salesChart"></canvas>
+                <p class="chart-empty" id="chartEmpty" hidden>Aún no hay movimientos en esta semana</p>
             </div>
         </section>
 
-        <!-- Acordeón / Desplegable de Tabla -->
         <section class="accordion-section">
-            <button class="accordion-btn" id="btnToggleTable">
+            <button class="accordion-btn" id="btnToggleTable" type="button">
                 <span id="accordionBtnText">+ Expandir tabla de reporte de ventas</span>
                 <span class="arrow">&#9660;</span>
             </button>
             <div class="accordion-content" id="tableContent">
                 <table class="report-table">
                     <thead>
-                        <tr id="tableHeaderRow">
-                            <th>Día</th>
-                            <th>Ventas Realizadas</th>
-                            <th>Monto Total (S/)</th>
-                        </tr>
+                    <tr id="tableHeaderRow"></tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Se llena dinámicamente con JavaScript -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </section>
     </main>
 
-<footer>
+    <footer>
         <div th:replace="~{fragments/footer :: footer}"></div>
     </footer>
 
-    <!-- Script de métricas (Ventas y Pedidos) integrado directamente -->
-    <script>
+    <script th:inline="none">
         document.addEventListener("DOMContentLoaded", () => {
-            const dataVentas = {
-                title: "REPORTE DE VENTAS",
-                btnText: "tabla de reporte de ventas",
-                headers: ["Día", "Ventas Realizadas", "Monto Total (S/)"],
-                values: [25, 18, 12, 22, 15, 22, 28],
-                tableRows: [
-                    ["Lunes", "25", "S/ 1,250.00"],
-                    ["Martes", "18", "S/ 890.00"],
-                    ["Miércoles", "12", "S/ 540.00"],
-                    ["Jueves", "22", "S/ 1,100.00"],
-                    ["Viernes", "15", "S/ 720.00"],
-                    ["Sábado", "22", "S/ 1,080.00"],
-                    ["Domingo", "28", "S/ 1,400.00"]
-                ]
+            const weekFilter = document.getElementById("weekFilter");
+            const reportFilter = document.getElementById("reportFilter");
+            const btnReporte = document.getElementById("btnReporte");
+            const btnToggle = document.getElementById("btnToggleTable");
+            const subtitle = document.getElementById("weekSubtitle");
+            const vacio = document.getElementById("chartEmpty");
+            let semana = null;
+            let temporizador = null;
+
+            const soles = n => "S/ " + Number(n).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const iso = f => (Array.isArray(f) ? f.map(n => String(n).padStart(2, "0")).join("-") : f);
+            const fecha = f => iso(f).split("-").reverse().join("/");
+            const hoyIso = () => {
+                const h = new Date();
+                return h.getFullYear() + "-" + String(h.getMonth() + 1).padStart(2, "0") + "-" + String(h.getDate()).padStart(2, "0");
             };
 
-            const dataPedidos = {
-                title: "REPORTE DE PEDIDOS",
-                btnText: "tabla de reporte de pedidos",
-                headers: ["Día", "Pedidos Recibidos", "Pedidos Completados"],
-                values: [10, 14, 8, 16, 20, 25, 30],
-                tableRows: [
-                    ["Lunes", "10", "9"],
-                    ["Martes", "14", "12"],
-                    ["Miércoles", "8", "8"],
-                    ["Jueves", "16", "15"],
-                    ["Viernes", "20", "18"],
-                    ["Sábado", "25", "22"],
-                    ["Domingo", "30", "27"]
-                ]
-            };
-
-            const labels = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-
-            const ctx = document.getElementById("salesChart").getContext("2d");
-            const chart = new Chart(ctx, {
+            const chart = new Chart(document.getElementById("salesChart").getContext("2d"), {
                 type: "bar",
                 data: {
-                    labels: labels,
+                    labels: [],
                     datasets: [{
-                        label: "Métrica",
-                        data: dataVentas.values,
-                        backgroundColor: "#3b2cb4",
-                        borderRadius: 4,
-                        barThickness: 35
+                        label: "",
+                        data: [],
+                        backgroundColor: [],
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        maxBarThickness: 44
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: "#2e209e",
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: ctx => reportFilter.value === "ventas"
+                                    ? soles(ctx.parsed.y)
+                                    : ctx.parsed.y + (ctx.parsed.y === 1 ? " pedido" : " pedidos")
+                            }
+                        }
+                    },
                     scales: {
-                        y: { display: false, beginAtZero: true },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: "#eeeaff" },
+                            border: { display: false },
+                            ticks: { color: "#8c82d4", precision: 0, maxTicksLimit: 5 }
+                        },
                         x: {
                             grid: { display: false },
-                            ticks: { color: "#3b2cb4", font: { weight: "bold" } }
+                            border: { display: false },
+                            ticks: { color: "#3929b5", font: { weight: "bold" } }
                         }
                     }
                 }
             });
 
-            function cargarMetrica(data) {
-                document.getElementById("chartTitle").innerText = data.title;
-                document.getElementById("accordionBtnText").innerText = `+ Expandir ${data.btnText}`;
+            const vistas = {
+                ventas: {
+                    title: "REPORTE DE VENTAS",
+                    btnText: "tabla de reporte de ventas",
+                    headers: ["Día", "Pedidos", "Unidades vendidas", "Monto Total (S/)"],
+                    valor: d => Number(d.monto),
+                    fila: d => [d.dia, d.pedidosRecibidos, d.unidades, soles(d.monto)],
+                    total: s => ["TOTAL", s.totalRecibidos, s.totalUnidades, soles(s.totalMonto)]
+                },
+                pedidos: {
+                    title: "REPORTE DE PEDIDOS",
+                    btnText: "tabla de reporte de pedidos",
+                    headers: ["Día", "Pedidos Recibidos", "Pedidos Completados", "Pendientes"],
+                    valor: d => d.pedidosRecibidos,
+                    fila: d => [d.dia, d.pedidosRecibidos, d.pedidosCompletados, d.pedidosRecibidos - d.pedidosCompletados],
+                    total: s => ["TOTAL", s.totalRecibidos, s.totalCompletados, s.totalRecibidos - s.totalCompletados]
+                }
+            };
 
-                const headerRow = document.getElementById("tableHeaderRow");
-                headerRow.innerHTML = data.headers.map(h => `<th>${h}</th>`).join("");
+            function pintar() {
+                if (!semana) return;
+                const v = vistas[reportFilter.value];
 
-                const tableBody = document.getElementById("tableBody");
-                tableBody.innerHTML = data.tableRows.map(row => `
-                    <tr>
-                        <td>${row[0]}</td>
-                        <td>${row[1]}</td>
-                        <td>${row[2]}</td>
-                    </tr>
-                `).join("");
+                document.getElementById("kpiRecibidos").innerText = semana.totalRecibidos;
+                document.getElementById("kpiCompletados").innerText = semana.totalCompletados;
+                document.getElementById("kpiUnidades").innerText = semana.totalUnidades;
+                document.getElementById("kpiMonto").innerText = soles(semana.totalMonto);
 
-                chart.data.datasets[0].data = data.values;
+                document.getElementById("chartTitle").innerText = v.title;
+                document.getElementById("chartBadge").innerText = semana.enCurso ? "Semana en curso" : "Semana cerrada";
+                document.getElementById("chartBadge").classList.toggle("cerrada", !semana.enCurso);
+                document.getElementById("accordionBtnText").innerText =
+                    (document.getElementById("tableContent").classList.contains("open") ? "- Ocultar " : "+ Expandir ") + v.btnText;
+
+                document.getElementById("tableHeaderRow").innerHTML = v.headers.map(h => `<th>${h}</th>`).join("");
+                const filas = semana.dias.map(v.fila).concat([v.total(semana)]);
+                document.getElementById("tableBody").innerHTML = filas.map((f, i) => {
+                    const clase = i === filas.length - 1 ? ' class="total-row"' : "";
+                    return `<tr${clase}>${f.map(c => `<td>${c}</td>`).join("")}</tr>`;
+                }).join("");
+
+                const hoy = hoyIso();
+                const valores = semana.dias.map(v.valor);
+                chart.data.labels = semana.dias.map(d => d.dia);
+                chart.data.datasets[0].label = reportFilter.value === "ventas" ? "Monto (S/)" : "Pedidos recibidos";
+                chart.data.datasets[0].data = valores;
+                chart.data.datasets[0].backgroundColor = semana.dias.map(d =>
+                    semana.enCurso && iso(d.fecha) === hoy ? "#3929b5" : "#8b83dd");
+                chart.options.scales.y.suggestedMax = valores.every(x => x === 0) ? 5 : undefined;
                 chart.update();
+                vacio.hidden = !valores.every(x => x === 0);
+
+                subtitle.innerText = `Semana del ${fecha(semana.lunes)} al ${fecha(semana.domingo)}` +
+                    (semana.enCurso ? " · en curso, se actualiza automáticamente" : " · semana cerrada");
             }
 
-            const reportFilter = document.getElementById("reportFilter");
-            reportFilter.addEventListener("change", (e) => {
-                if (e.target.value === "pedidos") {
-                    cargarMetrica(dataPedidos);
-                } else {
-                    cargarMetrica(dataVentas);
-                }
+            async function cargar() {
+                const res = await fetch("/admin/dashboard/datos?semana=" + encodeURIComponent(weekFilter.value), { credentials: "same-origin" });
+                if (!res.ok) return;
+                semana = await res.json();
+                btnReporte.href = "/admin/dashboard/exportar?semana=" + encodeURIComponent(weekFilter.value);
+                pintar();
+                clearInterval(temporizador);
+                if (semana.enCurso) temporizador = setInterval(cargar, 30000);
+            }
+
+            weekFilter.addEventListener("change", cargar);
+            reportFilter.addEventListener("change", pintar);
+            btnToggle.addEventListener("click", () => {
+                document.getElementById("tableContent").classList.toggle("open");
+                btnToggle.classList.toggle("open");
+                pintar();
             });
 
-            const btnToggleTable = document.getElementById("btnToggleTable");
-            const tableContent = document.getElementById("tableContent");
-            btnToggleTable.addEventListener("click", () => {
-                tableContent.classList.toggle("open");
-            });
-
-            cargarMetrica(dataVentas);
+            cargar();
         });
     </script>
 </body>
