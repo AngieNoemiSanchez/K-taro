@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-TARO - Iniciar Sesión</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
-    <!-- Fuente moderna opcional desde Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,23 +12,20 @@
 <body class="login-body">
 
     <div class="login-wrapper">
-        <!-- Logo K-TARO -->
         <div class="logo-container">
             <img th:src="@{/images/LOGOKTARO_blanco.png}" alt="K-TARO Logo" class="login-logo">
         </div>
 
-        <!-- Eslogan principal -->
         <h1 class="login-title">La auténtica experiencia coreana</h1>
 
-        <!-- Alertas de Spring Security -->
         <div th:if="${param.error}" class="alert-error">
             Usuario o contraseña incorrectos.
         </div>
         <div th:if="${param.logout}" class="alert-success">
             Has cerrado sesión correctamente.
         </div>
+        <div th:if="${success}" class="alert-success" th:text="${success}"></div>
 
-        <!-- Formulario de Login -->
         <form th:action="@{/login}" method="post" class="login-form">
             <div class="form-group">
                 <label for="username">Usuario (correo electrónico):</label>
@@ -44,9 +40,8 @@
             <button type="submit" class="btn-primary">Ingresar</button>
         </form>
 
-        <a href="#" class="forgot-password">Olvidaste tu contraseña?</a>
+        <a th:href="@{/cliente/olvide}" class="forgot-password">Olvidaste tu contraseña?</a>
 
-        <!-- Sección de Registro -->
         <div class="divider-section">
             <p>No tienes una cuenta aún?</p>
             <a th:href="@{/cliente/registro}" class="btn-secondary">Registrarse con correo electrónico</a>
