@@ -113,14 +113,22 @@ public class AdminProductoController {
 
     @PostMapping("/{id}/stock")
     public String aumentarStock(@PathVariable Long id,
-                                @RequestParam(defaultValue = "1") Integer cantidad,
+                                @RequestParam(required = false) Integer cantidad,
+                                @RequestParam(defaultValue = "agregar") String operacion,
                                 RedirectAttributes redirect) {
-        if (cantidad == null || cantidad < 1 || cantidad > 100000) {
-            redirect.addFlashAttribute("error", "La cantidad a agregar debe ser un número entero mayor a 0.");
+        if (cantidad == null || cantidad < 1) {
+            redirect.addFlashAttribute("error", "La cantidad debe ser un número entero mayor a 0.");
         } else {
             try {
-                productoService.agregarStock(id, cantidad);
-                redirect.addFlashAttribute("mensaje", "Se agregaron " + cantidad + " unidades al stock.");
+                if ("agregar".equals(operacion)) {
+                    productoService.agregarStock(id, cantidad);
+                    redirect.addFlashAttribute("mensaje", "Se agregaron " + cantidad + " unidades al stock.");
+                } else if ("retirar".equals(operacion)) {
+                    productoService.retirarStock(id, cantidad);
+                    redirect.addFlashAttribute("mensaje", "Se retiraron " + cantidad + " unidades del stock.");
+                } else {
+                    redirect.addFlashAttribute("error", "La operación de stock no es válida.");
+                }
             } catch (BusinessException ex) {
                 redirect.addFlashAttribute("error", ex.getMessage());
             }

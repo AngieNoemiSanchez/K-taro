@@ -4,7 +4,7 @@
 
 <form th:fragment="productForm(action, submitLabel, stockLabel, isNew)" id="productForm"
       th:action="${action}" th:object="${productForm}" method="post"
-      enctype="multipart/form-data" novalidate>
+      enctype="multipart/form-data">
 
     <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
         <p class="mb-0" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
@@ -14,6 +14,7 @@
         <div class="col-md-6">
             <label for="name" class="form-label fw-bold">Nombre del producto</label>
             <input type="text" id="name" th:field="*{name}" class="form-control" maxlength="100"
+                   required
                    th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
             <div class="invalid-feedback" th:errors="*{name}"></div>
         </div>
@@ -21,6 +22,7 @@
         <div class="col-md-6">
             <label for="tipoProducto" class="form-label fw-bold">Tipo de producto</label>
             <select id="tipoProducto" th:field="*{tipoProducto}" class="form-select"
+                    required
                     th:classappend="${#fields.hasErrors('tipoProducto')} ? 'is-invalid'">
                 <option value="">Selecciona un tipo...</option>
                 <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.etiqueta}">Tipo</option>
@@ -31,7 +33,7 @@
         <div class="col-12">
             <label for="description" class="form-label fw-bold">Descripción</label>
             <textarea id="description" th:field="*{description}" class="form-control" rows="3"
-                      maxlength="500"
+                      maxlength="500" required
                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
             <div class="invalid-feedback" th:errors="*{description}"></div>
         </div>
@@ -39,7 +41,7 @@
         <div class="col-md-4">
             <label for="price" class="form-label fw-bold">Precio (S/)</label>
             <input type="number" id="price" th:field="*{price}" class="form-control"
-                   min="0.01" step="0.01"
+                   min="0.01" step="0.01" required
                    th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'">
             <div class="invalid-feedback" th:errors="*{price}"></div>
         </div>
@@ -47,14 +49,17 @@
         <div class="col-md-4">
             <label for="stock" class="form-label fw-bold" th:text="${stockLabel}">Stock</label>
             <input type="number" id="stock" th:field="*{stock}" class="form-control"
-                   min="0" step="1"
+                   min="0" max="100" step="1" required
+                   th:readonly="${!isNew}"
                    th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'">
             <div class="invalid-feedback" th:errors="*{stock}"></div>
+            <div class="form-text" th:unless="${isNew}">El stock se modifica desde el catálogo mediante la opción + Stock.</div>
         </div>
 
         <div class="col-md-4">
             <label for="estado" class="form-label fw-bold">Estado</label>
             <select id="estado" th:field="*{estado}" class="form-select"
+                    required
                     th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'">
                 <option th:each="e : ${estados}" th:value="${e}" th:text="${e.etiqueta}">Estado</option>
             </select>

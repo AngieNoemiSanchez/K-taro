@@ -23,7 +23,6 @@ public class ProductoMapper {
         e.setNombre(f.getName().trim());
         e.setDescripcion(f.getDescription().trim());
         e.setPrecio(f.getPrice());
-        e.setStock(f.getStock());
         e.setTipoProducto(f.getTipoProducto());
         e.setEstado(f.getEstado());
     }

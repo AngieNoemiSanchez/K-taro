@@ -4,6 +4,8 @@ package com.example.demo.model.catalogo;
 import java.math.BigDecimal;
 
 public class Producto {
+    public static final int MAX_STOCK = 100;
+
     private Long idProducto;
     private String nombre;
     private String descripcion;
