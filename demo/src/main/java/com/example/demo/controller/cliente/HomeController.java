@@ -35,4 +35,9 @@ public class HomeController {
     public String perfil() {
         return "redirect:/cliente/perfil";
     }
+
+    @GetMapping("/acceso-denegado")
+    public String accesoDenegado() {
+        return "error/403";
+    }
 }
