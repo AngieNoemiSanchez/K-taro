@@ -11,38 +11,39 @@
 </head>
 <body class="login-body">
 
-  <div class="login-wrapper">
-    <div class="logo-container">
-      <img th:src="@{/images/LOGOKTARO_blanco.png}" alt="K-TARO Logo" class="login-logo">
-    </div>
-
-    <h1 class="login-title">Nueva contraseña</h1>
-
-    <div th:if="${tokenInvalido}">
-      <div class="alert-error">El enlace es inválido o ha expirado.</div>
-      <a th:href="@{/cliente/olvide}" class="btn-secondary">Solicitar un nuevo enlace</a>
-    </div>
-
-    <form th:unless="${tokenInvalido}" th:action="@{/cliente/restablecer}" th:object="${restablecerForm}" method="post" class="login-form">
-      <input type="hidden" th:field="*{token}">
-
-      <div class="form-group">
-        <label for="password">Nueva contraseña:</label>
-        <input type="password" id="password" th:field="*{password}" required minlength="6" maxlength="30" autofocus autocomplete="new-password">
-        <small class="alert-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
-      </div>
-
-      <div class="form-group">
-        <label for="confirmarPassword">Confirmar contraseña:</label>
-        <input type="password" id="confirmarPassword" th:field="*{confirmarPassword}" required minlength="6" maxlength="30" autocomplete="new-password">
-        <small class="alert-error" th:if="${#fields.hasErrors('confirmarPassword')}" th:errors="*{confirmarPassword}"></small>
-      </div>
-
-      <button type="submit" class="btn-primary">Cambiar contraseña</button>
-    </form>
-
-    <a th:href="@{/cliente/login}" class="forgot-password">Volver a iniciar sesión</a>
+<div class="login-wrapper">
+  <div class="logo-container">
+    <img th:src="@{/images/LOGOKTARO_blanco.png}" alt="K-TARO Logo" class="login-logo">
   </div>
+
+  <h1 class="login-title">Nueva contraseña</h1>
+
+  <div th:if="${tokenInvalido}">
+    <div class="alert-error">El enlace es inválido o ha expirado.</div>
+    <a th:href="@{/cliente/olvide}" class="btn-secondary">Solicitar un nuevo enlace</a>
+  </div>
+
+  <form th:unless="${tokenInvalido}" th:action="@{/cliente/restablecer}" th:object="${restablecerForm}" method="post" class="login-form">
+    <input type="hidden" th:field="*{token}">
+
+    <div class="form-group">
+      <label for="password">Nueva contraseña:</label>
+      <input type="password" id="password" th:field="*{password}" required minlength="8" maxlength="30" autofocus autocomplete="new-password">
+      <small class="password-hint">Mínimo 8 caracteres, una mayúscula, un número y un carácter especial (por ejemplo ! @ # $ %).</small>
+      <small class="alert-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmarPassword">Confirmar contraseña:</label>
+      <input type="password" id="confirmarPassword" th:field="*{confirmarPassword}" required minlength="8" maxlength="30" autocomplete="new-password">
+      <small class="alert-error" th:if="${#fields.hasErrors('confirmarPassword')}" th:errors="*{confirmarPassword}"></small>
+    </div>
+
+    <button type="submit" class="btn-primary">Cambiar contraseña</button>
+  </form>
+
+  <a th:href="@{/cliente/login}" class="forgot-password">Volver a iniciar sesión</a>
+</div>
 
 </body>
 </html>

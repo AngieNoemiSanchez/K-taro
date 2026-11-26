@@ -1,5 +1,6 @@
 package com.example.demo.dto.cliente;
 
+import com.example.demo.validation.PasswordSegura;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,13 +28,12 @@ public class RegistroForm {
     @Email(message = "Ingresa un correo válido")
     private String correo;
 
-    @NotBlank(message = "Ingresa tus contraseña")
-    @Size(max = 30, message = "Máximo 30 caracteres")
+    @NotBlank(message = "Ingresa tu contraseña")
+    @PasswordSegura
     private String password;
 
-
-    @NotBlank (message = "Ingresa tu DNI")
-    @Size(max = 8 , message = "Máximo 8 caracteres")
+    @NotBlank(message = "Ingresa tu DNI")
+    @Size(max = 8, message = "Máximo 8 caracteres")
     private String dni;
 
     @NotNull(message = "Ingresa tu fecha de nacimiento")

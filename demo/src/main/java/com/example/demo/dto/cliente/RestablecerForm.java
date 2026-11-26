@@ -1,7 +1,7 @@
 package com.example.demo.dto.cliente;
 
+import com.example.demo.validation.PasswordSegura;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 public class RestablecerForm {
 
@@ -9,7 +9,7 @@ public class RestablecerForm {
     private String token;
 
     @NotBlank(message = "Ingresa tu nueva contraseña")
-    @Size(min = 6, max = 30, message = "Entre 6 y 30 caracteres")
+    @PasswordSegura
     private String password;
 
     @NotBlank(message = "Confirma tu nueva contraseña")

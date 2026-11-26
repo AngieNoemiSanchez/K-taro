@@ -231,3 +231,10 @@ body.login-body {
     margin-top: 4px;
     text-align: left;
 }
+
+.password-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
