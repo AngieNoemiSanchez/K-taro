@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/admin/login?logout")
-                        .invalidateHttpSession(false)   // no tumbar la sesión del cliente
+                        .invalidateHttpSession(false)
                         .addLogoutHandler((request, response, auth) -> {
                             HttpSession session = request.getSession(false);
                             if (session != null) session.removeAttribute(ADMIN_CONTEXT_KEY);
