@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Denegado - K-TARO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 440px;
+        }
+        h1 { color: #3b2d99; font-size: 48px; margin: 0 0 10px; }
+        h2 { color: #222; margin: 0 0 12px; }
+        p { color: #555; line-height: 1.5; margin-bottom: 24px; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3b2d99;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 4px;
+        }
+        .btn-sec { background: #eee; color: #333; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>403</h1>
+    <h2>Acceso Denegado</h2>
+    <p>No tienes los permisos necesarios para acceder a esta sección de K-TARO. Si eres administrador, inicia sesión con tus credenciales autorizadas.</p>
+    <a th:href="@{/admin/login}" class="btn">Iniciar sesión Administrador</a>
+    <a th:href="@{/cliente/login}" class="btn btn-sec">Iniciar sesión Cliente</a>
+</div>
+</body>
+</html>

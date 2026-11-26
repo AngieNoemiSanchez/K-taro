@@ -12,4 +12,5 @@ public interface ProductoService {
     Producto crear(ProductForm form);
     Producto actualizar(Long id, ProductForm form);
     Producto agregarStock(Long id, int cantidad);
+    Producto retirarStock(Long id, int cantidad);
 }

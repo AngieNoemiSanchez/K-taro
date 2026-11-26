@@ -1,11 +1,13 @@
 package com.example.demo.dto.admin;
 
 import com.example.demo.model.catalogo.Estado;
+import com.example.demo.model.catalogo.Producto;
 import com.example.demo.model.catalogo.TipoProducto;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +36,7 @@ public class ProductForm {
 
     @NotNull(message = "Ingresa el stock")
     @Min(value = 0, message = "El stock no puede ser negativo")
+    @Max(value = Producto.MAX_STOCK, message = "El stock no puede superar 100 unidades")
     private Integer stock;
 
     @NotNull(message = "Selecciona el estado")

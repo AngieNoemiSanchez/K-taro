@@ -1,8 +1,10 @@
 package com.example.demo.config;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,10 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
-import jakarta.servlet.http.HttpSession;
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final String ADMIN_CONTEXT_KEY = "ADMIN_SPRING_SECURITY_CONTEXT";
@@ -28,13 +29,13 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http,
-                                                        AdminUserDetailsService adminUserDetailsService) throws Exception {
+                                                        AdminUserDetailsService adminUserDetailsService) {
         http
-                .securityMatcher("/admin/**")
+                .securityMatcher("/admin/**", "/js/admin-pedidos.js")
                 .userDetailsService(adminUserDetailsService)
                 .securityContext(ctx -> ctx.securityContextRepository(adminContextRepository()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login").permitAll()
+                        .requestMatchers("/admin/login", "/css/admin-login.css").permitAll()
                         .anyRequest().hasRole("ADMIN")
                 )
                 .formLogin(form -> form
@@ -43,6 +44,11 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/admin/dashboard", true)
                         .failureUrl("/admin/login?error")
                         .permitAll()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendRedirect("/acceso-denegado"))
+                        .accessDeniedPage("/acceso-denegado")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
@@ -61,13 +67,14 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain clienteSecurityFilterChain(HttpSecurity http,
-                                                          CustomUserDetailsService customUserDetailsService) throws Exception {
+                                                          CustomUserDetailsService customUserDetailsService) {
         http
                 .userDetailsService(customUserDetailsService)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/cliente/perfil", "/cliente/perfil/**",
                                 "/pago", "/compra-exitosa", "/compra-exitosa/**",
-                                "/api/pedidos/**", "/api/carrito/**").authenticated()
+                                "/api/pedidos/**", "/api/carrito/**").hasRole("CLIENTE")
+                        .requestMatchers("/acceso-denegado", "/error/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
@@ -77,9 +84,12 @@ public class SecurityConfig {
                         .failureUrl("/cliente/login?error")
                         .permitAll()
                 )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/acceso-denegado")
+                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/cliente/login?logout")
-                        .invalidateHttpSession(false)   // no tumbar la sesión del admin
+                        .invalidateHttpSession(false)
                         .addLogoutHandler((request, response, auth) -> {
                             HttpSession session = request.getSession(false);
                             if (session != null) {

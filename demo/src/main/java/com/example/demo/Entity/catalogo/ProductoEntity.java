@@ -1,8 +1,16 @@
 package com.example.demo.Entity.catalogo;
 
 import com.example.demo.model.catalogo.Estado;
+import com.example.demo.model.catalogo.Producto;
 import com.example.demo.model.catalogo.TipoProducto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
@@ -16,23 +24,35 @@ public class ProductoEntity {
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 100)
+    @NotBlank
+    @Size(max = 100)
     private String nombre;
 
     @Column(name = "descripcion", nullable = false, length = 500)
+    @NotBlank
+    @Size(max = 500)
     private String descripcion;
 
     @Column(name = "precio", nullable = false, precision = 8, scale = 2)
+    @NotNull
+    @DecimalMin("0.01")
+    @Digits(integer = 6, fraction = 2)
     private BigDecimal precio;
 
     @Column(name = "stock", nullable = false)
+    @NotNull
+    @Min(0)
+    @Max(Producto.MAX_STOCK)
     private Integer stock;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_producto", nullable = false, length = 20)
+    @NotNull
     private TipoProducto tipoProducto;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
+    @NotNull
     private Estado estado = Estado.ACTIVO;
 
     @Column(name = "imagen", length = 255)

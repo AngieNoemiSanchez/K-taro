@@ -57,9 +57,13 @@
                             <span class="fs-5" th:text="${p.stock}">30</span>
                             <form class="input-group input-group-sm" style="width: 130px;"
                                   th:action="@{/admin/productos/{id}/stock(id=${p.idProducto})}" method="post">
-                                <input type="number" name="cantidad" value="1" min="1" step="1" class="form-control text-center px-1 py-1"
-                                       th:attr="aria-label='Cantidad a agregar al stock de ' + ${p.nombre}">
-                                <button type="submit" class="btn btn-primary fw-bold" title="Aumentar stock">+ Stock</button>
+                                <input type="number" name="cantidad" value="1" min="1"
+                                       max="100" step="1" required class="form-control text-center px-1 py-1"
+                                       th:attr="aria-label='Cantidad para ajustar el stock de ' + ${p.nombre}">
+                                <button type="submit" name="operacion" value="agregar"
+                                        class="btn btn-primary fw-bold" title="Aumentar stock">+ Stock</button>
+                                <button type="submit" name="operacion" value="retirar"
+                                        class="btn btn-outline-danger fw-bold" title="Retirar stock">- Stock</button>
                             </form>
                             <span class="badge rounded-pill text-bg-warning" th:if="${p.stock <= 10}">Bajo</span>
                         </div>
