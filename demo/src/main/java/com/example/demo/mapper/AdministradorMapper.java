@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class AdministradorMapper {
 
@@ -31,12 +33,15 @@ public class AdministradorMapper {
         return new HorarioAdmin(h.getId(), h.getDias(), h.getHoraInicio(), h.getHoraFin());
     }
 
-
     public UserDetails toUserDetails(AdministradorEntity e) {
+        boolean bloqueado = e.getBloqueadoHasta() != null
+                && e.getBloqueadoHasta().isAfter(LocalDateTime.now());
+
         return User.builder()
                 .username(e.getCorreo())
                 .password(e.getPassword())
                 .roles("ADMIN")
+                .accountLocked(bloqueado)
                 .build();
     }
 }

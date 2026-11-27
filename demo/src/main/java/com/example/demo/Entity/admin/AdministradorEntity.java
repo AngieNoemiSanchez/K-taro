@@ -3,6 +3,7 @@ package com.example.demo.Entity.admin;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "administrador")
@@ -22,7 +23,7 @@ public class AdministradorEntity {
     private String correo;
 
     @Column(name = "password", nullable = false, length = 60)
-    private String password;            // hash BCrypt
+    private String password;
 
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
@@ -36,6 +37,12 @@ public class AdministradorEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_horario")
     private HorarioAdminEntity horarioAdmin;
+
+    @Column(name = "intentos_fallidos", nullable = false, columnDefinition = "int default 0")
+    private int intentosFallidos;
+
+    @Column(name = "bloqueado_hasta")
+    private LocalDateTime bloqueadoHasta;
 
     public AdministradorEntity() {
     }
@@ -110,5 +117,21 @@ public class AdministradorEntity {
 
     public void setHorarioAdmin(HorarioAdminEntity horarioAdmin) {
         this.horarioAdmin = horarioAdmin;
+    }
+
+    public int getIntentosFallidos() {
+        return intentosFallidos;
+    }
+
+    public void setIntentosFallidos(int intentosFallidos) {
+        this.intentosFallidos = intentosFallidos;
+    }
+
+    public LocalDateTime getBloqueadoHasta() {
+        return bloqueadoHasta;
+    }
+
+    public void setBloqueadoHasta(LocalDateTime bloqueadoHasta) {
+        this.bloqueadoHasta = bloqueadoHasta;
     }
 }

@@ -15,6 +15,9 @@
     <div th:if="${param.error}" class="error-message">
         <p>Correo o contraseña incorrectos.</p>
     </div>
+    <div th:if="${param.locked}" class="error-message">
+        <p th:text="'Cuenta bloqueada por demasiados intentos fallidos. Intenta de nuevo en ' + ${param.locked[0]} + ' minuto(s).'"></p>
+    </div>
     <div th:if="${param.logout}" class="error-message">
         <p>Has cerrado sesión correctamente.</p>
     </div>
