@@ -2,15 +2,19 @@ package com.example.demo.Entity.pedido;
 
 import java.math.BigDecimal;
 
+import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.model.pedido.EstadoTarjeta;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,14 +29,14 @@ public class TarjetaEntity {
     @Column(name = "numero", nullable = false, unique = true, length = 16)
     private String numero;
 
-    @Column(name = "titular", nullable = false, length = 60)
+    @Column(name = "titular", length = 60)
     private String titular;
 
     @Column(name = "vencimiento", nullable = false, length = 5)
-    private String vencimiento;            // MM/AA
+    private String vencimiento;
 
-    @Column(name = "cvv_hash", nullable = false, length = 60)
-    private String cvvHash;                // BCrypt
+    @Column(name = "cvv", nullable = false, length = 4)
+    private String cvv;
 
     @Column(name = "saldo", nullable = false, precision = 10, scale = 2)
     private BigDecimal saldo;
@@ -40,6 +44,10 @@ public class TarjetaEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoTarjeta estado = EstadoTarjeta.ACTIVA;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente")
+    private ClienteEntity cliente;
 
     public TarjetaEntity() {
     }
@@ -52,10 +60,12 @@ public class TarjetaEntity {
     public void setTitular(String titular) { this.titular = titular; }
     public String getVencimiento() { return vencimiento; }
     public void setVencimiento(String vencimiento) { this.vencimiento = vencimiento; }
-    public String getCvvHash() { return cvvHash; }
-    public void setCvvHash(String cvvHash) { this.cvvHash = cvvHash; }
+    public String getCvv() { return cvv; }
+    public void setCvv(String cvv) { this.cvv = cvv; }
     public BigDecimal getSaldo() { return saldo; }
     public void setSaldo(BigDecimal saldo) { this.saldo = saldo; }
     public EstadoTarjeta getEstado() { return estado; }
     public void setEstado(EstadoTarjeta estado) { this.estado = estado; }
+    public ClienteEntity getCliente() { return cliente; }
+    public void setCliente(ClienteEntity cliente) { this.cliente = cliente; }
 }

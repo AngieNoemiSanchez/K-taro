@@ -10,6 +10,10 @@
     <meta name="nombre-cliente" th:content="${nombreCliente}">
     <link rel="stylesheet" th:href="@{/css/inicio.css}">
     <style>
+        [hidden] {
+          display: none !important;
+        }
+
         body {
           background-color: #faf6f5;
           margin: 0;
@@ -84,6 +88,51 @@
           accent-color: #3929b5;
         }
 
+        .tarjeta-option.deshabilitada {
+          opacity: 0.55;
+          cursor: not-allowed;
+        }
+
+        .tarjeta-option small {
+          font-weight: normal;
+          color: #777;
+          margin-left: 8px;
+        }
+
+        .panel-tarjetas {
+          margin: -4px 0 14px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .tarjeta-guardada {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #f6f6ff;
+          border: 1.5px solid #c9ccf6;
+          border-radius: 8px;
+          padding: 10px 14px;
+          color: #3929b5;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        .tarjeta-guardada input {
+          accent-color: #3929b5;
+        }
+
+        .tarjeta-guardada strong {
+          margin-right: 6px;
+        }
+
+        .aviso-tarjeta {
+          margin: 0 0 4px;
+          font-size: 12px;
+          color: #777;
+        }
+
         .form-group {
           margin-bottom: 15px;
         }
@@ -105,6 +154,15 @@
           font-size: 14px;
           color: #3929b5;
           outline: none;
+        }
+
+        .tipo-badge {
+          display: inline-block;
+          margin-top: 6px;
+          font-size: 12px;
+          font-weight: bold;
+          color: #3929b5;
+          min-height: 16px;
         }
 
         .resumen-purple {
@@ -207,28 +265,29 @@
         <div class="box-pago">
             <h3>Método de pago</h3>
 
-            <label class="tarjeta-option">
+            <label class="tarjeta-option" id="opcionRegistrada">
                 <div>
-                    <input type="radio" name="metodoTarjeta" checked>
-                    <span>Tarjeta registrada</span>
+                    <input type="radio" name="metodoTarjeta" id="radioRegistrada" value="registrada">
+                    <span>Usar tarjeta registrada</span>
+                    <small id="subRegistrada" hidden>No tienes tarjetas registradas</small>
                 </div>
             </label>
+            <div id="panelRegistradas" class="panel-tarjetas" hidden></div>
+
+            <label class="tarjeta-option" id="opcionNueva">
+                <div>
+                    <input type="radio" name="metodoTarjeta" id="radioNueva" value="nueva">
+                    <span>Ingresar nueva tarjeta</span>
+                </div>
+            </label>
+            <p id="avisoNueva" class="aviso-tarjeta" hidden>
+                Ya tienes 2 tarjetas guardadas. Descarta una desde tu perfil para ingresar otra.
+            </p>
         </div>
 
-        <div class="box-pago">
+        <div class="box-pago" id="boxNueva" hidden>
             <h3>Datos de la tarjeta</h3>
             <form id="formPago" autocomplete="off" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="titularTarjeta">Nombre del titular</label>
-                    <input
-                            type="text"
-                            id="titularTarjeta"
-                            placeholder="Nombre del titular"
-                            maxlength="60"
-                            required
-                    >
-                </div>
-
                 <div class="form-group">
                     <label for="numeroTarjeta">Número de tarjeta</label>
                     <input
@@ -236,12 +295,9 @@
                             id="numeroTarjeta"
                             placeholder="Número de tarjeta"
                             inputmode="numeric"
-                            minlength="16"
                             maxlength="16"
-                            pattern="[0-9]{16}"
-                            title="Ingresa 16 dígitos numéricos"
-                            required
                     >
+                    <span id="tipoTarjeta" class="tipo-badge"></span>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -253,9 +309,6 @@
                                 placeholder="MM/AA"
                                 inputmode="numeric"
                                 maxlength="5"
-                                pattern="(0[1-9]|1[0-2])/[0-9]{2}"
-                                title="Ingresa una fecha válida en formato MM/AA"
-                                required
                         >
                     </div>
                     <div class="form-group">
@@ -265,10 +318,7 @@
                                 id="cvvTarjeta"
                                 placeholder="CVV"
                                 inputmode="numeric"
-                                maxlength="3"
-                                pattern="[0-9]{3}"
-                                title="Ingresa 3 dígitos"
-                                required
+                                maxlength="4"
                         >
                     </div>
                 </div>

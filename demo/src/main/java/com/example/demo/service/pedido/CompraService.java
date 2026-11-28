@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +23,15 @@ import com.example.demo.Entity.pedido.PedidoEntity;
 import com.example.demo.Entity.pedido.TarjetaEntity;
 import com.example.demo.dto.CompraRequest;
 import com.example.demo.dto.CompraResponse;
-import com.example.demo.dto.cliente.MetodoDePago;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.TarjetaMapper;
 import com.example.demo.model.catalogo.Estado;
 import com.example.demo.model.catalogo.TipoPromocion;
-import com.example.demo.model.pedido.Tarjeta;
+import com.example.demo.model.pedido.TipoTarjeta;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProductoRepository;
 import com.example.demo.repository.PromocionRepository;
-import com.example.demo.repository.TarjetaRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -49,28 +45,23 @@ public class CompraService {
     private static final String PREFIJO_OFERTA = "oferta-";
     private static final int MAX_UNIDADES_POR_ITEM = 99;
 
-    private static final String TARJETA_INVALIDA = "Los datos de la tarjeta no son válidos";
-
     @PersistenceContext
     private EntityManager em;
 
-    private final TarjetaRepository tarjetas;
+    private final TarjetaService tarjetaService;
     private final TarjetaMapper tarjetaMapper;
     private final ProductoRepository productos;
     private final PromocionRepository promociones;
-    private final PasswordEncoder passwordEncoder;
     private final ClienteRepository clientes;
     private final PedidoRepository pedidos;
 
-    public CompraService(TarjetaRepository tarjetas, TarjetaMapper tarjetaMapper,
+    public CompraService(TarjetaService tarjetaService, TarjetaMapper tarjetaMapper,
                          ProductoRepository productos, PromocionRepository promociones,
-                         PasswordEncoder passwordEncoder,
                          ClienteRepository clientes, PedidoRepository pedidos) {
-        this.tarjetas = tarjetas;
+        this.tarjetaService = tarjetaService;
         this.tarjetaMapper = tarjetaMapper;
         this.productos = productos;
         this.promociones = promociones;
-        this.passwordEncoder = passwordEncoder;
         this.clientes = clientes;
         this.pedidos = pedidos;
     }
@@ -80,11 +71,7 @@ public class CompraService {
         ClienteEntity cliente = clientes.findByCorreo(correo)
                 .orElseThrow(() -> new BusinessException("Inicia sesión para comprar"));
 
-        MetodoDePago datos = request.tarjeta();
-
-        TarjetaEntity tarjeta = tarjetas.findByNumeroForUpdate(datos.getNumeroTarjeta())
-                .orElseThrow(() -> new BusinessException(TARJETA_INVALIDA));
-        validarTarjeta(tarjeta, datos);
+        TarjetaEntity tarjeta = tarjetaService.vincularParaPago(request.tarjeta(), cliente);
 
         Map<String, Integer> cantidades = agruparItems(request);
         Map<Long, Integer> unidadesPorProducto = new TreeMap<>();
@@ -148,38 +135,29 @@ public class CompraService {
         tarjeta.setSaldo(tarjeta.getSaldo().subtract(total));
 
         String enmascarada = tarjetaMapper.toModel(tarjeta).getNumeroEnmascarado();
+        String etiqueta = TarjetaService.etiquetaTipo(tarjeta.getNumero());
 
         PedidoEntity pedido = new PedidoEntity();
         pedido.setCliente(cliente);
         pedido.setTotal(total);
         pedido.setTarjeta(enmascarada);
+        pedido.setTarjetaTipo(resolverTipo(etiqueta));
         lineas.forEach(l -> pedido.agregarItem(l.nombre(), l.cantidad(), l.precio()));
         pedidos.save(pedido);
 
-        return new CompraResponse(total, enmascarada, pedido.getId());
+        return new CompraResponse(total, etiqueta + " " + enmascarada, pedido.getId());
     }
 
-    private void validarTarjeta(TarjetaEntity entidad, MetodoDePago datos) {
-        Tarjeta tarjeta = tarjetaMapper.toModel(entidad);
-
-        boolean datosCorrectos =
-                normalizar(tarjeta.getTitular()).equals(normalizar(datos.getTitular()))
-                        && tarjeta.getFechaVencimiento()
-                        .equals(tarjetaMapper.aFechaVencimiento(datos.getVencimiento()))
-                        && passwordEncoder.matches(datos.getCvv(), tarjeta.getCvvHash());
-        if (!datosCorrectos) {
-            throw new BusinessException(TARJETA_INVALIDA);
+    private static TipoTarjeta resolverTipo(String etiqueta) {
+        String buscado = etiqueta.toUpperCase(Locale.ROOT).replaceAll("[^A-Z]", "");
+        for (TipoTarjeta t : TipoTarjeta.values()) {
+            String nombre = t.name().toUpperCase(Locale.ROOT).replaceAll("[^A-Z]", "");
+            if (buscado.equals(nombre) || buscado.startsWith(nombre) || nombre.startsWith(buscado)
+                    || (buscado.startsWith("AMERICAN") && nombre.startsWith("AMEX"))) {
+                return t;
+            }
         }
-        if (!tarjeta.isActiva()) {
-            throw new BusinessException("La tarjeta no está habilitada para pagar");
-        }
-        if (tarjeta.estaVencida(LocalDateTime.now(ZONA_TIENDA))) {
-            throw new BusinessException("La tarjeta está vencida");
-        }
-    }
-
-    private static String normalizar(String texto) {
-        return texto.trim().replaceAll("\\s+", " ").toUpperCase(Locale.ROOT);
+        return null;
     }
 
     private static Map<String, Integer> agruparItems(CompraRequest request) {

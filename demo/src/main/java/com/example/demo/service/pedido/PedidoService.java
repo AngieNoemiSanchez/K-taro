@@ -25,6 +25,11 @@ public class PedidoService {
         return String.format("Pedido #%05d", id);
     }
 
+    public static String metodoPago(PedidoEntity p) {
+        String tipo = p.getTarjetaTipo() == null ? "Tarjeta" : p.getTarjetaTipo().getEtiqueta();
+        return p.getTarjeta() == null ? tipo : tipo + " " + p.getTarjeta();
+    }
+
     @Transactional(readOnly = true)
     public List<PedidoResumen> pendientes(String correo) {
         return pedidos.findByClienteCorreoAndEstadoNotOrderByIdAsc(correo, EstadoPedido.RECOGIDO)
@@ -42,7 +47,7 @@ public class PedidoService {
                 codigo(p.getId()),
                 p.getCliente().getNombre() + " " + p.getCliente().getApellidos(),
                 p.getCliente().getCorreo(),
-                p.getTarjeta() == null ? "Tarjeta" : "Tarjeta " + p.getTarjeta(),
+                metodoPago(p),
                 p.getTotal(),
                 p.getEstado().getEtiqueta(),
                 p.getEstado().ordinal());

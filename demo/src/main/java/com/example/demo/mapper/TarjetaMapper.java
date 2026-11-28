@@ -19,7 +19,6 @@ public class TarjetaMapper {
         return new Tarjeta(
                 e.getId(),
                 e.getNumero(),
-                e.getCvvHash(),
                 e.getTitular(),
                 aFechaVencimiento(e.getVencimiento()),
                 e.getSaldo(),

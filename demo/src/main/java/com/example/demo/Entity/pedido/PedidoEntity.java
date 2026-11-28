@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.model.pedido.EstadoPedido;
+import com.example.demo.model.pedido.TipoTarjeta;
 
 import jakarta.persistence.*;
 
@@ -36,6 +37,10 @@ public class PedidoEntity {
     @Column(name = "tarjeta", length = 30)
     private String tarjeta;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tarjeta_tipo", length = 20)
+    private TipoTarjeta tarjetaTipo;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoItemEntity> items = new ArrayList<>();
 
@@ -60,5 +65,7 @@ public class PedidoEntity {
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
     public String getTarjeta() { return tarjeta; }
     public void setTarjeta(String tarjeta) { this.tarjeta = tarjeta; }
+    public TipoTarjeta getTarjetaTipo() { return tarjetaTipo; }
+    public void setTarjetaTipo(TipoTarjeta tarjetaTipo) { this.tarjetaTipo = tarjetaTipo; }
     public List<PedidoItemEntity> getItems() { return items; }
 }

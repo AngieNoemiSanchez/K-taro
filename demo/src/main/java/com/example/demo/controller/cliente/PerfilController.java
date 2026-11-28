@@ -3,11 +3,13 @@ package com.example.demo.controller.cliente;
 import com.example.demo.Entity.cliente.ClienteEntity;
 import com.example.demo.config.CustomUserDetailsService;
 import com.example.demo.dto.cliente.PerfilForm;
+import com.example.demo.dto.cliente.TarjetaVista;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.cliente.Cliente;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.Cliente.ClienteService;
+import com.example.demo.service.pedido.TarjetaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/cliente/perfil")
@@ -32,13 +35,26 @@ public class PerfilController {
     private final ClienteRepository clienteRepository;
     private final ClienteMapper clienteMapper;
     private final CustomUserDetailsService userDetailsService;
+    private final TarjetaService tarjetaService;
 
     public PerfilController(ClienteService clienteService, ClienteRepository clienteRepository,
-                            ClienteMapper clienteMapper, CustomUserDetailsService userDetailsService) {
+                            ClienteMapper clienteMapper, CustomUserDetailsService userDetailsService,
+                            TarjetaService tarjetaService) {
         this.clienteService = clienteService;
         this.clienteRepository = clienteRepository;
         this.clienteMapper = clienteMapper;
         this.userDetailsService = userDetailsService;
+        this.tarjetaService = tarjetaService;
+    }
+
+    @ModelAttribute("tarjetas")
+    public List<TarjetaVista> tarjetas(Principal principal) {
+        return tarjetaService.listar(principal.getName());
+    }
+
+    @ModelAttribute("maxTarjetas")
+    public int maxTarjetas() {
+        return TarjetaService.MAX_TARJETAS;
     }
 
     @GetMapping

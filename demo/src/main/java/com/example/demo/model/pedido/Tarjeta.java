@@ -6,17 +6,15 @@ import java.time.LocalDateTime;
 public class Tarjeta {
     private final Long id;
     private final String numeroTarjeta;
-    private final String cvvHash;
     private final String titular;
     private final LocalDateTime fechaVencimiento;
     private final BigDecimal saldo;
     private final EstadoTarjeta estado;
 
-    public Tarjeta(Long id, String numeroTarjeta, String cvvHash, String titular,
+    public Tarjeta(Long id, String numeroTarjeta, String titular,
                    LocalDateTime fechaVencimiento, BigDecimal saldo, EstadoTarjeta estado) {
         this.id = id;
         this.numeroTarjeta = numeroTarjeta;
-        this.cvvHash = cvvHash;
         this.titular = titular;
         this.fechaVencimiento = fechaVencimiento;
         this.saldo = saldo;
@@ -29,10 +27,6 @@ public class Tarjeta {
 
     public String getNumeroTarjeta() {
         return numeroTarjeta;
-    }
-
-    public String getCvvHash() {
-        return cvvHash;
     }
 
     public String getTitular() {
