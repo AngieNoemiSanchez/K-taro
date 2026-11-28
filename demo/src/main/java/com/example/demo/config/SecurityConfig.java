@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.service.seguridad.IntentosLoginService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,10 +27,34 @@ public class SecurityConfig {
 
     private static final String ADMIN_CONTEXT_KEY = "ADMIN_SPRING_SECURITY_CONTEXT";
 
+    @Value("${app.sesion.cliente-minutos:20}")
+    private int clienteMinutos;
+
+    @Value("${app.sesion.admin-minutos:10}")
+    private int adminMinutos;
+
     private SecurityContextRepository adminContextRepository() {
         HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
         repo.setSpringSecurityContextKey(ADMIN_CONTEXT_KEY);
         return repo;
+    }
+
+    private boolean sesionExpirada(jakarta.servlet.http.HttpServletRequest request) {
+        return request.getRequestedSessionId() != null && !request.isRequestedSessionIdValid();
+    }
+
+    private AuthenticationEntryPoint clienteEntryPoint() {
+        return (request, response, exception) -> {
+            String destino = sesionExpirada(request) ? "/cliente/login?expired" : "/cliente/login";
+            response.sendRedirect(request.getContextPath() + destino);
+        };
+    }
+
+    private AuthenticationEntryPoint adminEntryPoint() {
+        return (request, response, exception) -> {
+            String destino = sesionExpirada(request) ? "/admin/login?expired" : "/acceso-denegado";
+            response.sendRedirect(request.getContextPath() + destino);
+        };
     }
 
     private AuthenticationSuccessHandler clienteSuccessHandler(IntentosLoginService intentos) {
@@ -36,6 +62,7 @@ public class SecurityConfig {
         delegate.setDefaultTargetUrl("/");
         return (request, response, authentication) -> {
             intentos.limpiarCliente(authentication.getName());
+            request.getSession().setMaxInactiveInterval(clienteMinutos * 60);
             delegate.onAuthenticationSuccess(request, response, authentication);
         };
     }
@@ -58,6 +85,7 @@ public class SecurityConfig {
         delegate.setAlwaysUseDefaultTargetUrl(true);
         return (request, response, authentication) -> {
             intentos.limpiarAdmin(authentication.getName());
+            request.getSession().setMaxInactiveInterval(adminMinutos * 60);
             delegate.onAuthenticationSuccess(request, response, authentication);
         };
     }
@@ -95,8 +123,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) ->
-                                response.sendRedirect("/acceso-denegado"))
+                        .authenticationEntryPoint(adminEntryPoint())
                         .accessDeniedPage("/acceso-denegado")
                 )
                 .logout(logout -> logout
@@ -135,6 +162,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(clienteEntryPoint())
                         .accessDeniedPage("/acceso-denegado")
                 )
                 .logout(logout -> logout

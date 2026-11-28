@@ -24,6 +24,9 @@
     <div th:if="${param.locked}" class="alert-error"
          th:text="'Cuenta bloqueada por demasiados intentos fallidos. Intenta de nuevo en ' + ${param.locked[0]} + ' minuto(s).'">
     </div>
+    <div th:if="${param.expired}" class="alert-error">
+        Tu sesión se cerró por inactividad. Inicia sesión nuevamente.
+    </div>
     <div th:if="${param.logout}" class="alert-success">
         Has cerrado sesión correctamente.
     </div>
